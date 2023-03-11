@@ -1,28 +1,30 @@
-// src/firebase.js
-
+// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
 import {createUserWithEmailAndPassword, signInWithEmailAndPassword, getAuth} from "firebase/auth";
-
-
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyC4m7VHfM8hy_VUUAlpFCSK3AfrRX4bkQ0",
-    authDomain: "react-firebase-auth-d4e6b.firebaseapp.com",
-    projectId: "react-firebase-auth-d4e6b",
-    storageBucket: "react-firebase-auth-d4e6b.appspot.com",
-    messagingSenderId: "1084832623816",
-    appId: "1:1084832623816:web:a526bb5b9beff5e26e89fd",
-    measurementId: "G-1DXS0RGXPT"
+  apiKey: "AIzaSyBiEOmjydppc-KE9AVDbPSW-EP7Ah79EPc",
+  authDomain: "acatravel-a98ac.firebaseapp.com",
+  projectId: "acatravel-a98ac",
+  storageBucket: "acatravel-a98ac.appspot.com",
+  messagingSenderId: "631270502365",
+  appId: "1:631270502365:web:7f1215dcf99bfd04315034",
+  measurementId: "G-DX2FZNZQW8"
 };
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
 export const createUser = async (email, password) => {
     return createUserWithEmailAndPassword(getAuth(app), email, password);
-}
-
-export const signInUser = async (email, password) => {
+  }
+  
+  export const signInUser = async (email, password) => {
     return signInWithEmailAndPassword(getAuth(app), email, password);
-}
+  }

@@ -1,17 +1,29 @@
-import {Alert, Box, Button, Container, Link, TextField, Typography} from "@mui/material";
+import {Alert, Box, Button, Container, InputLabel, Link, MenuItem, Select, TextField, Typography} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
 import { startSession } from "../storage/session";
-import { createUser } from "../firebase";
-
+import { createUser, db } from "../firebase";
+import { AggregateField, doc, setDoc } from "firebase/firestore"; 
 export default function Register() {
 
   const navigate = useNavigate();
 
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [age, setAge] = useState("")
+  const [gender, setGender] = useState("")
+  const [image, setImage] = useState("text")
+
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
+
+  
+
+  // Add a new document in collection "cities"
+
+
+
 
   const onSubmit = async (event) => {
     event.preventDefault();
@@ -32,6 +44,16 @@ export default function Register() {
     try {
         let registerResponse = await createUser(email, password);
         startSession(registerResponse.user);
+        // registerResponse.displayName ="Hello"
+        console.log(registerResponse)
+        await setDoc(doc(db, "User", registerResponse.user.uid ), {
+          name: username,
+          age,
+          gender,
+          image,
+
+          
+        });
         navigate("/user");
       } catch (error) {
         console.error(error.message);
@@ -52,6 +74,39 @@ export default function Register() {
           autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          sx={{mt: 1}}
+          fullWidth
+        />
+        <TextField
+          label="Username"
+          variant="outlined"
+          autoComplete="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          sx={{mt: 1}}
+          fullWidth
+        />
+        {/* <FormControl fullWidth> */}
+  <InputLabel id="demo-simple-select-label">Age</InputLabel>
+  <Select
+    labelId="demo-simple-select-label"
+    id="demo-simple-select"
+    value={gender}
+    label="Age"
+    onChange={(e)=>{setGender(e.target.value)}}
+  >
+    <MenuItem value={"male"}>male</MenuItem>
+    <MenuItem value={"female"}>female</MenuItem>
+    {/* <MenuItem value={30}>Thirty</MenuItem> */}
+  </Select>
+{/* </FormControl> */}
+         <TextField
+          label="Age"
+          variant="outlined"
+          type="number"
+          autoComplete="age"
+          value={age}
+          onChange={(e) => setAge(e.target.value)}
           sx={{mt: 1}}
           fullWidth
         />

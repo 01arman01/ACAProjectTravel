@@ -8,6 +8,7 @@ import Login from "./routes/login";
 import Register from "./routes/register";
 import User from "./routes/user";
 import ErrorPage from './error-page'
+import ResponsiveAppBar from './components/ResponsiveAppBar';
 // const root = ReactDOM.createRoot(document.getElementById('root'));
 // root.render(
 //   <React.StrictMode>
@@ -19,9 +20,6 @@ import ErrorPage from './error-page'
 // // to log results (for example: reportWebVitals(console.log))
 // // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 // reportWebVitals();
-
-
-
 
 
 const router = createBrowserRouter([
@@ -49,7 +47,11 @@ const router = createBrowserRouter([
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <React.StrictMode>
+    // <React.StrictMode>
+    <>
+        <ResponsiveAppBar/>
         <RouterProvider router={router}/>
-    </React.StrictMode>
+        
+    </>
+    // </React.StrictMode>
 );

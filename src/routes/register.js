@@ -67,7 +67,7 @@ export default function Register() {
     try {
       let registerResponse = await createUser(email, password);
       startSession(registerResponse.user);
-      console.log(registerResponse);
+      // console.log(registerResponse);
       await setDoc(doc(db, "User", registerResponse.user.uid), {
         name: username,
         age,
@@ -76,7 +76,7 @@ export default function Register() {
       });
       navigate("/user");
     } catch (error) {
-      console.error(error.message);
+      // console.error(error.message);
       setError(error.message);
     }
   };

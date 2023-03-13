@@ -47,3 +47,5 @@ export const createUser = async (email, username, password, displayName) => {
 export const signInUser = async (email, password) => {
   return signInWithEmailAndPassword(getAuth(app), email, password);
 };
+
+

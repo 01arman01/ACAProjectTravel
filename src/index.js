@@ -8,7 +8,7 @@ import Login from "./routes/login";
 import Register from "./routes/register";
 import User from "./routes/user";
 import ErrorPage from './error-page'
-import ResponsiveAppBar from './components/ResponsiveAppBar';
+import { Margin } from '@mui/icons-material';
 // const root = ReactDOM.createRoot(document.getElementById('root'));
 // root.render(
 //   <React.StrictMode>
@@ -21,7 +21,6 @@ import ResponsiveAppBar from './components/ResponsiveAppBar';
 // // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 // reportWebVitals();
 
-
 const router = createBrowserRouter([
     {
         path: "/",
@@ -30,7 +29,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/login",
-        element: <Login/>,
+        element: <Login />,
     },
     {
         path: "/register",
@@ -47,11 +46,7 @@ const router = createBrowserRouter([
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    // <React.StrictMode>
-    <>
-        <ResponsiveAppBar/>
-        <RouterProvider router={router}/>
-        
-    </>
-    // </React.StrictMode>
+    <React.StrictMode>
+        <RouterProvider router={router} />
+    </React.StrictMode>
 );

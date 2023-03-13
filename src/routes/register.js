@@ -17,9 +17,24 @@ import { createUser, db } from "../firebase";
 import { doc, setDoc } from "firebase/firestore";
 import styles from "../CSS/loginregister.module.css";
 
+import { createUseStyles } from "react-jss";
+
+const useStyles = createUseStyles({
+  btn: {
+    width: "100px",
+    height: "35px",
+    marginTop: "10px",
+    backgroundColor: "#01bdda",
+    transition: "background .3s linear",
+    "&:hover": {
+      backgroundColor: "#1e5aaf",
+    },
+  },
+});
+
 export default function Register() {
   const navigate = useNavigate();
-  // const styles = useStyles();
+  const style = useStyles();
 
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
@@ -152,7 +167,15 @@ export default function Register() {
             <Box sx={{ mt: 2 }}>
               Already have an account? <Link href="/login">Login</Link>
             </Box>
-            <buuton className={styles.btn}>Register</buuton>
+            <Button
+              variant="contained"
+              type="submit"
+              sx={{ mt: 3 }}
+              fullWidth
+              className={style.btn}
+            >
+              Register
+            </Button>
           </div>
         </Box>
       </Container>

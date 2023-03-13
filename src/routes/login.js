@@ -12,10 +12,24 @@ import { useState } from "react";
 import { startSession } from "../storage/session";
 import { signInUser } from "../firebase";
 import styles from "../CSS/loginregister.module.css";
+import { createUseStyles } from "react-jss";
+
+const useStyles = createUseStyles({
+  btn: {
+    width: "100px",
+    height: "35px",
+    marginTop: "10px",
+    backgroundColor: "#01bdda",
+    transition: "background .3s linear",
+    "&:hover": {
+      backgroundColor: "#1e5aaf",
+    },
+  },
+});
 
 export default function Login() {
   const navigate = useNavigate();
-  // const styles = useStyles();
+  const style = useStyles();
 
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
@@ -81,7 +95,9 @@ export default function Login() {
             <Box sx={{ mt: 2 }}>
               Don't have an account yet? <Link href="/register">Register</Link>
             </Box>
-            <buuton className={styles.btn}>Login</buuton>
+            <Button variant="contained" type="submit" className={style.btn}>
+              Login
+            </Button>
           </div>
         </Box>
       </Container>

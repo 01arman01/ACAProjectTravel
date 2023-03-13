@@ -13,11 +13,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { Link } from '@mui/material';
-// import { Link } from 'react-router-dom';
 import logo from '../logo.png'
-// import { Link } from 'react-router-dom'
-// import {Link} from "react-router-dom";
-// import { Switch } from '@mui/material';
 const pages = ['Login', 'Register', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
@@ -40,11 +36,6 @@ function ResponsiveAppBar(props) {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-  const handleUserMenu = (e) => {
-    console.log(e)
-    console.log(e.target.outerText)
-    // props.setOpenProfile(true)
-  }
 
   return (
     <AppBar position="fixed" >

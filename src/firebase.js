@@ -34,11 +34,6 @@ export const db =getFirestore(app)
 export const createUser = async (email,username, password,displayName) => {
     return createUserWithEmailAndPassword(getAuth(app), email,username, password,displayName);
   }
-  
-
-updateProfile(getAuth(app),
-   { displayName: "helllo"})
-
 
   export const signInUser = async (email, password) => {
     return signInWithEmailAndPassword(getAuth(app), email, password);

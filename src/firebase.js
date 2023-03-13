@@ -1,9 +1,13 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import {createUserWithEmailAndPassword, signInWithEmailAndPassword, getAuth, updateProfile} from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  getAuth,
+} from "firebase/auth";
 import { getDatabase } from "firebase/database";
-import {getFirestore} from "firebase/firestore"
+import { getFirestore } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -17,7 +21,7 @@ const firebaseConfig = {
   storageBucket: "acatravel-a98ac.appspot.com",
   messagingSenderId: "631270502365",
   appId: "1:631270502365:web:7f1215dcf99bfd04315034",
-  measurementId: "G-DX2FZNZQW8"
+  measurementId: "G-DX2FZNZQW8",
 };
 
 // Initialize Firebase
@@ -26,15 +30,20 @@ const analytics = getAnalytics(app);
 
 const database = getDatabase(app);
 
-export {database}
+export { database };
 
-export const db =getFirestore(app)
+export const db = getFirestore(app);
 
+export const createUser = async (email, username, password, displayName) => {
+  return createUserWithEmailAndPassword(
+    getAuth(app),
+    email,
+    username,
+    password,
+    displayName
+  );
+};
 
-export const createUser = async (email,username, password,displayName) => {
-    return createUserWithEmailAndPassword(getAuth(app), email,username, password,displayName);
-  }
-
-  export const signInUser = async (email, password) => {
-    return signInWithEmailAndPassword(getAuth(app), email, password);
-  }
+export const signInUser = async (email, password) => {
+  return signInWithEmailAndPassword(getAuth(app), email, password);
+};

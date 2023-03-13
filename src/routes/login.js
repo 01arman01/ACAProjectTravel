@@ -11,54 +11,11 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { startSession } from "../storage/session";
 import { signInUser } from "../firebase";
-import { createUseStyles } from "react-jss";
-
-const useStyles = createUseStyles({
-  wrapper: {
-    width: "100vw",
-    height: "100vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  bg_img: {
-    width: "100vw",
-    height: "100vh",
-    background:
-      "url(https://img.freepik.com/free-vector/flat-design-travel-background_23-2149193475.jpg?w=2000) no-repeat",
-    backgroundSize: "cover",
-    position: "absolute",
-  },
-  container: {
-    border: "2px solid #56EEE7",
-    borderRadius: "15px",
-    padding: "25px 25px",
-    position: "relative",
-    zIndex: "1000",
-  },
-  inputBox:{
-    borderRadius:"5px"
-  },
-  loginButton:{
-    width:"100px",
-    height:"35px",
-    marginTop:"10px",
-    backgroundColor:"#00FFDC",
-    transition:"background .3s linear",
-    '&:hover':{
-      backgroundColor:"#38B4A3"
-    }
-  },
-  loginBlock:{
-    display:'flex',
-    justifyContent:"space-between",
-    alignItems:"center"
-  },
-});
+import styles from "../CSS/loginregister.module.css";
 
 export default function Login() {
   const navigate = useNavigate();
-  const styles = useStyles();
+  // const styles = useStyles();
 
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
@@ -120,13 +77,11 @@ export default function Login() {
             fullWidth
             className={styles.inputBox}
           />
-          <div className={styles.loginBlock}>
+          <div className={styles.buttonBlock}>
             <Box sx={{ mt: 2 }}>
               Don't have an account yet? <Link href="/register">Register</Link>
             </Box>
-            <Button variant="contained" type="submit" className={styles.loginButton}>
-              Login
-            </Button>
+            <buuton className={styles.btn}>Login</buuton>
           </div>
         </Box>
       </Container>

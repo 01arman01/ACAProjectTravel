@@ -14,61 +14,12 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { startSession } from "../storage/session";
 import { createUser, db } from "../firebase";
-import { AggregateField, doc, setDoc } from "firebase/firestore";
-
-import { createUseStyles } from "react-jss";
-
-const useStyles = createUseStyles({
-  wrapper: {
-    width: "100vw",
-    height: "100vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  bg_img: {
-    width: "100vw",
-    height: "100vh",
-    background:
-      "url(https://img.freepik.com/free-vector/flat-design-travel-background_23-2149193475.jpg?w=2000) no-repeat",
-    backgroundSize: "cover",
-    position: "absolute",
-  },
-  container: {
-    border: "2px solid #56EEE7",
-    borderRadius: "15px",
-    padding: "25px 25px",
-    position: "relative",
-    zIndex: "1000",
-  },
-  infoBlock: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  inputBox: {
-    borderRadius: "5px",
-  },
-  registerButton: {
-    width: "100px",
-    height: "35px",
-    marginTop: "10px",
-    backgroundColor: "#00FFDC",
-    transition: "background .3s linear",
-    "&:hover": {
-      backgroundColor: "#38B4A3",
-    },
-  },
-  registerBlock: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-});
+import { doc, setDoc } from "firebase/firestore";
+import styles from "../CSS/loginregister.module.css";
 
 export default function Register() {
   const navigate = useNavigate();
-  const styles = useStyles();
+  // const styles = useStyles();
 
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
@@ -101,7 +52,6 @@ export default function Register() {
     try {
       let registerResponse = await createUser(email, password);
       startSession(registerResponse.user);
-      // registerResponse.displayName ="Hello"
       console.log(registerResponse);
       await setDoc(doc(db, "User", registerResponse.user.uid), {
         name: username,
@@ -147,6 +97,7 @@ export default function Register() {
             sx={{ mt: 1 }}
             fullWidth
           />
+
           <div className={styles.infoBlock}>
             <div>
               <InputLabel id="demo-simple-select-label">Gender</InputLabel>
@@ -158,24 +109,24 @@ export default function Register() {
                 onChange={(e) => {
                   setGender(e.target.value);
                 }}
+                sx={{ width: "150px" }}
               >
                 <MenuItem value={"male"}>male</MenuItem>
                 <MenuItem value={"female"}>female</MenuItem>
-
-                {/* <MenuItem value={30}>Thirty</MenuItem> */}
               </Select>
             </div>
-            {/* </FormControl> */}
-            <TextField
-              label="Age"
-              variant="outlined"
-              type="number"
-              autoComplete="age"
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-              sx={{ mt: 1, width: "80px" }}
-              fullWidth
-            />
+            <div>
+              <InputLabel id="demo-simple-select-label">Age</InputLabel>
+              <TextField
+                variant="outlined"
+                type="number"
+                autoComplete="age"
+                value={age}
+                onChange={(e) => setAge(e.target.value)}
+                sx={{ mt: 1, width: "150px" }}
+                fullWidth
+              />
+            </div>
           </div>
           <TextField
             label="Password"
@@ -197,13 +148,11 @@ export default function Register() {
             sx={{ mt: 3 }}
             fullWidth
           />
-          <div className={styles.registerBlock}>
+          <div className={styles.buttonBlock}>
             <Box sx={{ mt: 2 }}>
               Already have an account? <Link href="/login">Login</Link>
             </Box>
-            <Button variant="contained" type="submit" sx={{ mt: 3 }} fullWidth className={styles.registerButton}>
-              Register
-            </Button>
+            <buuton className={styles.btn}>Register</buuton>
           </div>
         </Box>
       </Container>

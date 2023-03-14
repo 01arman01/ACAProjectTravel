@@ -20,9 +20,9 @@ export default function Homepage(props) {
  const [posts,setPosts] = useState([])
 
  const postAsync = async ()=>{
-    const heloo = await getDocs(collection(db, "Post")).then((e)=>{return e.docs.map((doc)=>({...doc.data(),id:doc.id}))}).
+    const data = await getDocs(collection(db, "Post")).then((e)=>{return e.docs.map((doc)=>({...doc.data(),id:doc.id}))}).
     then((res)=>res)
-    setPosts(heloo)
+    setPosts(data)
   }
 
 

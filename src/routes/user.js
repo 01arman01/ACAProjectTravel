@@ -31,6 +31,7 @@ export default function User() {
   const [ImageUpload, setImageUpload] = useState(null);
   const [date, setDate] = useState(Timestamp.fromDate(new Date()));
   const [share, setShare] = useState(false);
+ let postID = ''
 
   useEffect(() => {
     if (!isLoggedIn()) {
@@ -53,9 +54,10 @@ export default function User() {
         share,
       }).then((res) => {
         console.log(res);
+        // postID  = res.id
+        uploadImage(res.id);
       });
     } catch (err) {
-      console.log(err);
     }
   }, [title, text, ImageUpload, date, share]);
 
@@ -64,15 +66,15 @@ export default function User() {
     navigate("/login");
   };
 
-  const uploadImage = () => {
+  const uploadImage = (id) => {
     if (uploadImage == null) return;
 
-    const imageRef = ref(storage, `images/${ImageUpload.name + v4()}`);
+    const imageRef = ref(storage, `images/${id}/${ImageUpload.name }`);
     uploadBytes(imageRef, ImageUpload).then(() => alert("post sended"));
   };
 
   const addPost = () => {
-    uploadImage();
+    // uploadImage();
     getPost();
   };
 

@@ -31,9 +31,27 @@ export default function User() {
   const [ImageUpload, setImageUpload] = useState(null);
   const [date, setDate] = useState(Timestamp.fromDate(new Date()));
   const [share, setShare] = useState(false);
- let postID = ''
+  const [posts,setPosts] = useState()
+
+  // -------test
+  // const postList = ref(db, 'Post');
+
+  // ------test end
+
+
+  const getPoster = useCallback( async ()=>{
+    const data =await getDocs(collection(db, "Post"))
+    setPosts(data.docs.map((doc)=>({...doc.data(),id:doc.id})))
+    // console.log(data.docs.map((doc)=>({...doc.data(),id:doc.id})),posts)
+
+  },[])
+  useEffect(()=>{
+    getPoster()
+  },[])
+
 
   useEffect(() => {
+
     if (!isLoggedIn()) {
       navigate("/login");
     }
@@ -42,7 +60,21 @@ export default function User() {
     setEmail(session.email);
   }, [navigate]);
 
+  // console.log(posts)
+
   const getPost = useCallback(async () => {
+
+
+    // ----------test
+    // const data = await getDocs(postList)
+    // console.log(data.docs.map((doc)=>({...doc.data(),id:doc.id})))
+
+
+
+    // -----------------test.end
+
+
+
     try {
       let loginResponse = getAuth(app);
       await addDoc(collection(db, "Post"), {
@@ -75,6 +107,7 @@ export default function User() {
 
   const addPost = () => {
     // uploadImage();
+
     getPost();
   };
 

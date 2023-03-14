@@ -21,17 +21,35 @@ import {
   Typography,
 } from "@mui/material";
 import { async } from "@firebase/util";
+import CardComponent from "../components/CardComponent/CardComponent";
 
 export default function User() {
   let navigate = useNavigate();
-  
+  const [userId,setUserId] =useState("")
   const [email, setEmail] = useState("");
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [ImageUpload, setImageUpload] = useState(null);
   const [date, setDate] = useState(Timestamp.fromDate(new Date()));
   const [share, setShare] = useState(false);
- let postID = ''
+  const [posts,setPosts] = useState([])
+
+  const postAsync = async ()=>{
+    let loginResponse = getAuth(app);
+    // setUserId(loginResponse.lastNotifiedUid)
+     const heloo = await getDocs(collection(db, "Post")).then((e)=>{return e.docs.map((doc)=>({...doc.data(),id:doc.id}))}).
+     then((res)=>res.filter((elem)=>elem.userId === loginResponse.lastNotifiedUid ))
+     
+     setPosts(heloo)
+   }
+ 
+ 
+   useEffect(()=>{
+
+     postAsync()
+     },[])
+
+
 
   useEffect(() => {
     if (!isLoggedIn()) {
@@ -45,6 +63,7 @@ export default function User() {
   const getPost = useCallback(async () => {
     try {
       let loginResponse = getAuth(app);
+      // setUserId(loginResponse.lastNotifiedUid)
       await addDoc(collection(db, "Post"), {
         userId: loginResponse.lastNotifiedUid,
         title,
@@ -79,6 +98,7 @@ export default function User() {
   };
 
   return (
+    <>
     <Container maxWidth="xs" sx={{ mt: 2 }}>
       <TextField
         label="Title"
@@ -136,5 +156,14 @@ export default function User() {
         Log out
       </Button>
     </Container>
+     <div >
+     {posts.map((elem)=>{
+      console.log(elem)
+      return <CardComponent key={elem.date.id} value={elem} />
+      
+     })}
+      
+  </div>
+  </>
   );
 }

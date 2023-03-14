@@ -21,6 +21,7 @@ import { createUseStyles } from 'react-jss';
 const useStyles = createUseStyles({
     cardFrame:{
         margin:"20px"
+        
     }
 })
 
@@ -35,7 +36,7 @@ const ExpandMore = styled((props) => {
     }),
 }));
 
-export default function RecipeReviewCard() {
+export default function RecipeReviewCard({value}) {
     const [expanded, setExpanded] = React.useState(false);
     const styles = useStyles()
 
@@ -57,8 +58,8 @@ export default function RecipeReviewCard() {
                             <MoreVertIcon/>
                         </IconButton>
                     }
-                    title="Shrimp and Chorizo Paella"
-                    subheader="September 14, 2016"
+                    title={value.title}
+                    subheader={new Date(value.date.seconds).toString()}
                 />
                 <CardMedia
                     component="img"
@@ -68,9 +69,7 @@ export default function RecipeReviewCard() {
                 />
                 <CardContent>
                     <Typography variant="body2" color="text.secondary">
-                        This impressive paella is a perfect party dish and a fun meal to cook
-                        together with your guests. Add 1 cup of frozen peas along with the mussels,
-                        if you like.
+                        {value.text}
                     </Typography>
                 </CardContent>
                 <CardActions disableSpacing>

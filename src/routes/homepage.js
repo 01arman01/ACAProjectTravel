@@ -1,25 +1,47 @@
 import CardComponent from "../components/CardComponent/CardComponent";
 import {createUseStyles} from "react-jss";
+import { useCallback, useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
+import { Podcasts } from "@mui/icons-material";
+import { async } from "@firebase/util";
 
 const useStyles = createUseStyles({
     hompageMain: {
         textAlign: 'center',
         display: 'flex',
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
+        width:"100vw"
     }
 })
 
 
 export default function Homepage(props) {
+ const [posts,setPosts] = useState([])
+
+ const postAsync = async ()=>{
+    const heloo = await getDocs(collection(db, "Post")).then((e)=>{return e.docs.map((doc)=>({...doc.data(),id:doc.id}))}).
+    then((res)=>res)
+    setPosts(heloo)
+  }
+
+
+  useEffect(()=>{
+    postAsync()
+    },[])
+//    postPost()
+
+
+
     const styles = useStyles()
     return (
         <div className={styles.hompageMain}>
-            <CardComponent/>
-            <CardComponent/>
-            <CardComponent/>
-            <CardComponent/>
-            <CardComponent/>
-            <CardComponent/>
+           {posts.filter((elem=>elem.share === true)).map((elem)=>{
+            console.log(elem)
+            return <CardComponent key={elem.date.id} value={elem} />
+            
+           })}
+            
         </div>
     );
 }

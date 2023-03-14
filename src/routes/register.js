@@ -41,7 +41,6 @@ export default function Register() {
   const [username, setUsername] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
-  const [image, setImage] = useState("text");
 
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
@@ -72,7 +71,6 @@ export default function Register() {
         name: username,
         age,
         gender,
-        image,
       });
       navigate("/user");
     } catch (error) {

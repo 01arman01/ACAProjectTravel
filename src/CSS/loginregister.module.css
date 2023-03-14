@@ -9,8 +9,7 @@
 .bg_img {
   width: 100vw;
   height: 100vh;
-  background: url(https://img.freepik.com/free-vector/flat-design-travel-background_23-2149193475.jpg?w=2000)
-    no-repeat;
+  background: url(../imgs/travel-bg.avif) no-repeat;
   background-size: cover;
   position: absolute;
 }

@@ -1,6 +1,5 @@
 import React from 'react';
 import {Container, TextField} from "@mui/material";
-import styles from './CardContainer.module.css'
 import testimg from '../../imgs/turist.jpg'
 import {styled} from '@mui/material/styles';
 import Card from '@mui/material/Card';
@@ -17,6 +16,13 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { createUseStyles } from 'react-jss';
+
+const useStyles = createUseStyles({
+    cardFrame:{
+        margin:"20px"
+    }
+})
 
 const ExpandMore = styled((props) => {
     const {expand, ...other} = props;
@@ -31,6 +37,7 @@ const ExpandMore = styled((props) => {
 
 export default function RecipeReviewCard() {
     const [expanded, setExpanded] = React.useState(false);
+    const styles = useStyles()
 
     const handleExpandClick = () => {
         setExpanded(!expanded);

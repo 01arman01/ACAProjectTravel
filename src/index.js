@@ -12,12 +12,17 @@ import Login from "./routes/login";
 import Register from "./routes/register";
 import User from "./routes/user";
 import ErrorPage from "./error-page";
+import Homepage from "./routes/homepage";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Navigate to="login" />,
+    element: <Navigate to="homepage" />,
     errorElement: <ErrorPage />,
+  },
+  {
+    path:"/homepage",
+    element:<Homepage />
   },
   {
     path: "/login",

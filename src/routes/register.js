@@ -45,12 +45,9 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
 
-  // Add a new document in collection "cities"
-
   const onSubmit = async (event) => {
     event.preventDefault();
 
-    // validate the inputs
     if (!email || !password || !repeatPassword) {
       setError("Please fill out all the fields.");
       return;
@@ -60,13 +57,11 @@ export default function Register() {
       return;
     }
 
-    // clear the errors
     setError("");
 
     try {
       let registerResponse = await createUser(email, password);
       startSession(registerResponse.user);
-      console.log(registerResponse);
       await setDoc(doc(db, "User", registerResponse.user.uid), {
         name: username,
         age,

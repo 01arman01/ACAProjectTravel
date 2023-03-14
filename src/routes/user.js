@@ -1,30 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { app, database, db, signInUser, storage } from "../firebase";
+import { app, db, storage } from "../firebase";
 import { ref, uploadBytes } from "firebase/storage";
-import {
-  addDoc,
-  collection,
-  doc,
-  getDocs,
-  setDoc,
-  Timestamp,
-} from "firebase/firestore";
+import { addDoc, collection, Timestamp } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { endSession, getSession, isLoggedIn } from "../storage/session";
 import { v4 } from "uuid";
-import {
-  Button,
-  Checkbox,
-  Container,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { async } from "@firebase/util";
+import { Button, Checkbox, Container, TextField } from "@mui/material";
 
 export default function User() {
   let navigate = useNavigate();
-  
+
   const [email, setEmail] = useState("");
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
@@ -44,6 +30,7 @@ export default function User() {
   const getPost = useCallback(async () => {
     try {
       let loginResponse = getAuth(app);
+      console.log(loginResponse)
       await addDoc(collection(db, "Post"), {
         userId: loginResponse.lastNotifiedUid,
         title,

@@ -38,13 +38,11 @@ export default function Login() {
   const onSubmit = async (event) => {
     event.preventDefault();
 
-    // validate the inputs
     if (!email || !password) {
       setError("Please enter your username and password.");
       return;
     }
 
-    // // clear the errors
     setError("");
 
     try {

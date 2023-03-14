@@ -11,25 +11,11 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { startSession } from "../storage/session";
 import { signInUser } from "../firebase";
-import styles from "../CSS/loginregister.module.css";
-import { createUseStyles } from "react-jss";
-
-const useStyles = createUseStyles({
-  btn: {
-    width: "100px",
-    height: "35px",
-    marginTop: "10px",
-    backgroundColor: "#01bdda",
-    transition: "background .3s linear",
-    "&:hover": {
-      backgroundColor: "#1e5aaf",
-    },
-  },
-});
+import { useLoginStyles } from "./login.styles";
 
 export default function Login() {
   const navigate = useNavigate();
-  const style = useStyles();
+  const styles = useLoginStyles();
 
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
@@ -38,13 +24,11 @@ export default function Login() {
   const onSubmit = async (event) => {
     event.preventDefault();
 
-    // validate the inputs
     if (!email || !password) {
       setError("Please enter your username and password.");
       return;
     }
 
-    // // clear the errors
     setError("");
 
     try {
@@ -91,11 +75,11 @@ export default function Login() {
             fullWidth
             className={styles.inputBox}
           />
-          <div className={styles.buttonBlock}>
+          <div className={styles.loginBlock}>
             <Box sx={{ mt: 2 }}>
               Don't have an account yet? <Link href="/register">Register</Link>
             </Box>
-            <Button variant="contained" type="submit" className={style.btn}>
+            <Button variant="contained" type="submit" className={styles.loginButton}>
               Login
             </Button>
           </div>

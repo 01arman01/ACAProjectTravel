@@ -26,8 +26,8 @@ export default function User() {
 
 
   const getPoster = useCallback( async ()=>{
-    const data =await getDocs(collection(db, "Post"))
-    setPosts(data.docs.map((doc)=>({...doc.data(),id:doc.id})))
+    // const data =await getDocs(collection(db, "Post"))
+    // setPosts(data.docs.map((doc)=>({...doc.data(),id:doc.id})))
     // console.log(data.docs.map((doc)=>({...doc.data(),id:doc.id})),posts)
 
   },[])

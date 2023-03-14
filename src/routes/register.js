@@ -15,24 +15,43 @@ import { useState } from "react";
 import { startSession } from "../storage/session";
 import { createUser, db } from "../firebase";
 import { doc, setDoc } from "firebase/firestore";
-import { useRegisterStyles } from "./register.styles";
+import styles from "../CSS/loginregister.module.css";
+
+import { createUseStyles } from "react-jss";
+
+const useStyles = createUseStyles({
+  btn: {
+    width: "100px",
+    height: "35px",
+    marginTop: "10px",
+    backgroundColor: "#01bdda",
+    transition: "background .3s linear",
+    "&:hover": {
+      backgroundColor: "#1e5aaf",
+    },
+  },
+});
 
 export default function Register() {
   const navigate = useNavigate();
-  const styles = useRegisterStyles();
+  const style = useStyles();
 
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
+  const [image, setImage] = useState("text");
 
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
 
+  // Add a new document in collection "cities"
+
   const onSubmit = async (event) => {
     event.preventDefault();
 
+    // validate the inputs
     if (!email || !password || !repeatPassword) {
       setError("Please fill out all the fields.");
       return;
@@ -42,19 +61,22 @@ export default function Register() {
       return;
     }
 
+    // clear the errors
     setError("");
 
     try {
       let registerResponse = await createUser(email, password);
       startSession(registerResponse.user);
+      // console.log(registerResponse);
       await setDoc(doc(db, "User", registerResponse.user.uid), {
         name: username,
         age,
         gender,
+        image,
       });
       navigate("/user");
     } catch (error) {
-      console.error(error.message);
+      // console.error(error.message);
       setError(error.message);
     }
   };
@@ -141,7 +163,7 @@ export default function Register() {
             sx={{ mt: 3 }}
             fullWidth
           />
-          <div className={styles.registerBlock}>
+          <div className={styles.buttonBlock}>
             <Box sx={{ mt: 2 }}>
               Already have an account? <Link href="/login">Login</Link>
             </Box>
@@ -150,7 +172,7 @@ export default function Register() {
               type="submit"
               sx={{ mt: 3 }}
               fullWidth
-              className={styles.registerButton}
+              className={style.btn}
             >
               Register
             </Button>

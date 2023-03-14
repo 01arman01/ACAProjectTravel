@@ -1,43 +1,39 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { app, db, storage } from "../firebase";
+import { app, database, db, signInUser, storage } from "../firebase";
 import { ref, uploadBytes } from "firebase/storage";
-import { addDoc, collection, Timestamp } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  setDoc,
+  Timestamp,
+} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { endSession, getSession, isLoggedIn } from "../storage/session";
 import { v4 } from "uuid";
-import { Button, Checkbox, Container, TextField } from "@mui/material";
+import {
+  Button,
+  Checkbox,
+  Container,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { async } from "@firebase/util";
 
 export default function User() {
   let navigate = useNavigate();
-
+  
   const [email, setEmail] = useState("");
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [ImageUpload, setImageUpload] = useState(null);
   const [date, setDate] = useState(Timestamp.fromDate(new Date()));
   const [share, setShare] = useState(false);
-  const [posts,setPosts] = useState()
-
-  // -------test
-  // const postList = ref(db, 'Post');
-
-  // ------test end
-
-
-  const getPoster = useCallback( async ()=>{
-    // const data =await getDocs(collection(db, "Post"))
-    // setPosts(data.docs.map((doc)=>({...doc.data(),id:doc.id})))
-    // console.log(data.docs.map((doc)=>({...doc.data(),id:doc.id})),posts)
-
-  },[])
-  useEffect(()=>{
-    getPoster()
-  },[])
-
+ let postID = ''
 
   useEffect(() => {
-
     if (!isLoggedIn()) {
       navigate("/login");
     }
@@ -46,24 +42,9 @@ export default function User() {
     setEmail(session.email);
   }, [navigate]);
 
-  // console.log(posts)
-
   const getPost = useCallback(async () => {
-
-
-    // ----------test
-    // const data = await getDocs(postList)
-    // console.log(data.docs.map((doc)=>({...doc.data(),id:doc.id})))
-
-
-
-    // -----------------test.end
-
-
-
     try {
       let loginResponse = getAuth(app);
-      console.log(loginResponse)
       await addDoc(collection(db, "Post"), {
         userId: loginResponse.lastNotifiedUid,
         title,
@@ -94,7 +75,6 @@ export default function User() {
 
   const addPost = () => {
     // uploadImage();
-
     getPost();
   };
 

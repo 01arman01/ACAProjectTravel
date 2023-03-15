@@ -37,10 +37,10 @@ export default function User() {
   const postAsync = async ()=>{
     let loginResponse = getAuth(app);
     // setUserId(loginResponse.lastNotifiedUid)
-     const heloo = await getDocs(collection(db, "Post")).then((e)=>{return e.docs.map((doc)=>({...doc.data(),id:doc.id}))}).
+     const data = await getDocs(collection(db, "Post")).then((e)=>{return e.docs.map((doc)=>({...doc.data(),id:doc.id}))}).
      then((res)=>res.filter((elem)=>elem.userId === loginResponse.lastNotifiedUid ))
      
-     setPosts(heloo)
+     setPosts(data)
    }
  
  

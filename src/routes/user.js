@@ -157,7 +157,7 @@ export default function User() {
       </Button>
     </Container>
      <div >
-     {posts.filter((elem)=>elem.userId === userId).map((elem)=>{
+     {posts.map((elem)=>{
       console.log(elem)
       return <CardComponent key={elem.date.id} value={elem} />
       

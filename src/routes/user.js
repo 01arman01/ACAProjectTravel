@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { app, database, db, signInUser, storage } from "../firebase";
-import { ref, uploadBytes } from "firebase/storage";
+import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
 import {
   addDoc,
   collection,
@@ -22,34 +22,37 @@ import {
 } from "@mui/material";
 import { async } from "@firebase/util";
 import CardComponent from "../components/CardComponent/CardComponent";
+import PostAdd from "../components/PostAdd/PostAdd";
 
 export default function User() {
   let navigate = useNavigate();
-  const [userId,setUserId] =useState("")
   const [email, setEmail] = useState("");
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [ImageUpload, setImageUpload] = useState(null);
   const [date, setDate] = useState(Timestamp.fromDate(new Date()));
   const [share, setShare] = useState(false);
-  const [posts,setPosts] = useState([])
+  const [posts, setPosts] = useState([]);
+  const [postsImageUrls, setPostsImageUrls] = useState([])
 
-  const postAsync = async ()=>{
+  const postsImageUrlsRef = ref(storage, "Images/")
+
+  const postAsync = async () => {
     let loginResponse = getAuth(app);
-    // setUserId(loginResponse.lastNotifiedUid)
-     const data = await getDocs(collection(db, "Post")).then((e)=>{return e.docs.map((doc)=>({...doc.data(),id:doc.id}))}).
-     then((res)=>res.filter((elem)=>elem.userId === loginResponse.lastNotifiedUid ))
-     
-     setPosts(data)
-   }
- 
- 
-   useEffect(()=>{
+    const data = await getDocs(collection(db, "Post"))
+      .then((e) => {
+        return e.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      })
+      .then((res) =>
+        res.filter((elem) => elem.userId === loginResponse.lastNotifiedUid)
+      );
 
-     postAsync()
-     },[])
+    setPosts(data);
+  };
 
-
+  useEffect(() => {
+    postAsync();
+  }, []);
 
   useEffect(() => {
     if (!isLoggedIn()) {
@@ -60,10 +63,9 @@ export default function User() {
     setEmail(session.email);
   }, [navigate]);
 
-  const getPost = useCallback(async () => {
+  const onSendPost = useCallback(async () => {
     try {
       let loginResponse = getAuth(app);
-      // setUserId(loginResponse.lastNotifiedUid)
       await addDoc(collection(db, "Post"), {
         userId: loginResponse.lastNotifiedUid,
         title,
@@ -71,80 +73,46 @@ export default function User() {
         image: ImageUpload.name,
         date,
         share,
-      }).then((res) => {
-        console.log(res);
-        // postID  = res.id
-        uploadImage(res.id);
+      })
+      .then((res) => {
+        uploadImage();
       });
-    } catch (err) {
-    }
+    } catch (err) {}
   }, [title, text, ImageUpload, date, share]);
+
+  useEffect(() =>{
+    listAll(postsImageUrlsRef).then((res) =>{
+      res.items.forEach((item) =>{
+        getDownloadURL(item).then((url) =>{
+          setPostsImageUrls((prev) => [...prev, url])
+        })
+      })
+    })
+  },[])
 
   const onLogout = () => {
     endSession();
     navigate("/login");
   };
 
-  const uploadImage = (id) => {
+  const uploadImage = () => {
     if (uploadImage == null) return;
 
-    const imageRef = ref(storage, `images/${id}/${ImageUpload.name }`);
+    const imageRef = ref(storage, `Images/${ImageUpload.name}`);
     uploadBytes(imageRef, ImageUpload).then(() => alert("post sended"));
-  };
-
-  const addPost = () => {
-    // uploadImage();
-    getPost();
   };
 
   return (
     <>
-    <Container maxWidth="xs" sx={{ mt: 2 }}>
-      <TextField
-        label="Title"
-        variant="outlined"
-        type="text"
-        autoComplete="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        sx={{ mt: 1 }}
-        fullWidth
-      />
-      <TextField
-        label="Text"
-        variant="outlined"
-        type="text"
-        autoComplete="Text"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        sx={{ mt: 3 }}
-        fullWidth
-      />
-      <Button variant="contained" component="label">
-        Upload Image
-        <input
-          hidden
-          accept="image/*"
-          onChange={(e) => {
-            setImageUpload(e.target.files[0]);
-          }}
-          multiple
-          type="file"
-        />
-      </Button>
-      <Button
-        variant="contained"
-        onClick={addPost}
-        type="submit"
-        sx={{ mt: 3 }}
-        fullWidth
-      >
-        add Post
-      </Button>
-      <Checkbox
-        checked={share}
-        onChange={() => setShare(!share)}
-        inputProps={{ "aria-label": "controlled" }}
+      <PostAdd
+        title={title}
+        setTitle={setTitle}
+        text={text}
+        setText={setText}
+        onSendPost={onSendPost}
+        setImageUpload={setImageUpload}
+        share={share}
+        setShare={setShare}
       />
       <Button
         variant="contained"
@@ -155,15 +123,12 @@ export default function User() {
       >
         Log out
       </Button>
-    </Container>
-     <div >
-     {posts.map((elem)=>{
-      console.log(elem)
-      return <CardComponent key={elem.date.id} value={elem} />
-      
-     })}
-      
-  </div>
-  </>
+      <div>
+        {posts.map((elem, index) => {
+          return <CardComponent key={elem.date.id} value={elem} postsImageUrls={postsImageUrls} index={index}/>;
+        })}
+        
+      </div>
+    </>
   );
 }

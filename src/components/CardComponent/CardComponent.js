@@ -36,7 +36,7 @@ const ExpandMore = styled((props) => {
     }),
 }));
 
-export default function RecipeReviewCard({value}) {
+export default function RecipeReviewCard({value, postsImageUrls, index}) {
     const [expanded, setExpanded] = React.useState(false);
     const styles = useStyles()
 
@@ -64,7 +64,7 @@ export default function RecipeReviewCard({value}) {
                 <CardMedia
                     component="img"
                     height="194"
-                    image={testimg}
+                    image={postsImageUrls[index]}
                     alt="Paella dish"
                 />
                 <CardContent>

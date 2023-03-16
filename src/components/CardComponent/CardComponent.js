@@ -21,7 +21,7 @@ import { createUseStyles } from 'react-jss';
 const useStyles = createUseStyles({
     cardFrame:{
         margin:"20px"
-        
+
     }
 })
 
@@ -45,6 +45,7 @@ export default function RecipeReviewCard({value}) {
     };
 
     return (
+
         <div className={styles.cardFrame}>
             <Card sx={{maxWidth: 300}}>
                 <CardHeader
@@ -82,5 +83,6 @@ export default function RecipeReviewCard({value}) {
                 </CardActions>
             </Card>
         </div>
+
     );
 }

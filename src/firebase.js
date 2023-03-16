@@ -1,53 +1,28 @@
-// Import the functions you need from the SDKs you need
+// src/firebase.js
+
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  getAuth,
-} from "firebase/auth";
-import { getDatabase } from "firebase/database";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import {createUserWithEmailAndPassword, signInWithEmailAndPassword, getAuth} from "firebase/auth";
+
+
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyBiEOmjydppc-KE9AVDbPSW-EP7Ah79EPc",
-  authDomain: "acatravel-a98ac.firebaseapp.com",
-  databaseURL: "https://acatravel-a98ac-default-rtdb.firebaseio.com",
-  projectId: "acatravel-a98ac",
-  storageBucket: "acatravel-a98ac.appspot.com",
-  messagingSenderId: "631270502365",
-  appId: "1:631270502365:web:7f1215dcf99bfd04315034",
-  measurementId: "G-DX2FZNZQW8",
+    apiKey: "AIzaSyC4m7VHfM8hy_VUUAlpFCSK3AfrRX4bkQ0",
+    authDomain: "react-firebase-auth-d4e6b.firebaseapp.com",
+    projectId: "react-firebase-auth-d4e6b",
+    storageBucket: "react-firebase-auth-d4e6b.appspot.com",
+    messagingSenderId: "1084832623816",
+    appId: "1:1084832623816:web:a526bb5b9beff5e26e89fd",
+    measurementId: "G-1DXS0RGXPT"
 };
-
 // Initialize Firebase
-export const app = initializeApp(firebaseConfig);
-export const storage = getStorage(app)
-const analytics = getAnalytics(app);
+const app = initializeApp(firebaseConfig);
 
-const database = getDatabase(app);
-
-export { database };
-
-export const db = getFirestore(app);
-
-export const createUser = async (email, username, password, displayName) => {
-  return createUserWithEmailAndPassword(
-    getAuth(app),
-    email,
-    username,
-    password,
-    displayName
-  );
-};
+export const createUser = async (email, password) => {
+    return createUserWithEmailAndPassword(getAuth(app), email, password);
+}
 
 export const signInUser = async (email, password) => {
-  return signInWithEmailAndPassword(getAuth(app), email, password);
-};
-
-
+    return signInWithEmailAndPassword(getAuth(app), email, password);
+}

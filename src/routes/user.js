@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { app, database, db, signInUser, storage } from "../firebase";
-import { ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, getStorage, listAll, ref, uploadBytes } from "firebase/storage";
 import {
   addDoc,
   collection,
@@ -22,10 +22,11 @@ import {
 } from "@mui/material";
 import { async } from "@firebase/util";
 import CardComponent from "../components/CardComponent/CardComponent";
+import { child, get, getDatabase, onValue } from "firebase/database";
+import { CardComponentContext } from "../contexts/context";
 
 export default function User() {
   let navigate = useNavigate();
-  const [userId,setUserId] =useState("")
   const [email, setEmail] = useState("");
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
@@ -33,67 +34,97 @@ export default function User() {
   const [date, setDate] = useState(Timestamp.fromDate(new Date()));
   const [share, setShare] = useState(false);
   const [posts,setPosts] = useState([])
+  const [imageId,setImageId] = useState(v4)
+  const [loading, setloading] = useState(false)
 
-  const postAsync = async ()=>{
-    let loginResponse = getAuth(app);
-    // setUserId(loginResponse.lastNotifiedUid)
-     const data = await getDocs(collection(db, "Post")).then((e)=>{return e.docs.map((doc)=>({...doc.data(),id:doc.id}))}).
-     then((res)=>res.filter((elem)=>elem.userId === loginResponse.lastNotifiedUid ))
-     
-     setPosts(data)
-   }
- 
- 
+  let loginResponse = getAuth(app);
+  const storage = getStorage();
+  // const postAsync = async ()=>{
+  //   const data = await getDocs(collection(db, "Post")).then((e)=>{
+  //    return e.docs.map((doc)=>({...doc.data(),id:doc.id}))})
+  //    .then((arr)=>{
+  //      return arr.filter((elem)=>elem.userId === loginResponse.lastNotifiedUid )
+  //    })
+  //    .then((elem)=>{
+  //      elem.forEach((elm)=>{
+  //        console.log(elm.image_id)
+  //        const starsRef =  ref(storage, `Post_image/${elm.image_id}`);
+  //             getDownloadURL(starsRef).then((url)=>{elm['url']=url})})
+              
+  //             return elem
+  //            }) 
+  //   setPosts(data)
+  // }
+
+  const postAsync =useCallback(async()=>{
+    const data = await getDocs(collection(db, "Post"))
+    const data_1 = data.docs.map((doc)=>({...doc.data(),id:doc.id}))
+    .filter((elem)=>elem.userId === loginResponse.lastNotifiedUid )
+
+    data_1.forEach((elm,index)=>{
+      const starsRef =  ref(storage, `Post_image/${elm.image_id}`);
+           getDownloadURL(starsRef).then((url)=>{elm['url']=url}).then((elem)=>{if(index+1 === data_1.length){setloading(true)}})})
+    console.log(data_1)
+    setPosts(data_1)  
+    //  return e.docs.map((doc)=>({...doc.data(),id:doc.id}))})
+    //  .then((arr)=>{return arr})
+    // //  .then((elem)=>{
+    //    elem.forEach((elm)=>{
+    //      console.log(elm.image_id)
+    //      const starsRef =  ref(storage, `Post_image/${elm.image_id}`);
+    //           getDownloadURL(starsRef).then((url)=>{elm['url']=url})})
+    //           return elem
+    //          }) 
+    // setPosts(data)
+  },[])
+
    useEffect(()=>{
-
-     postAsync()
-     },[])
-
-
+   postAsync()
+   
+    },[])
 
   useEffect(() => {
     if (!isLoggedIn()) {
       navigate("/login");
     }
-
     let session = getSession();
     setEmail(session.email);
   }, [navigate]);
 
   const getPost = useCallback(async () => {
+    let loginResponse = getAuth(app);
     try {
-      let loginResponse = getAuth(app);
-      // setUserId(loginResponse.lastNotifiedUid)
       await addDoc(collection(db, "Post"), {
         userId: loginResponse.lastNotifiedUid,
         title,
         text,
-        image: ImageUpload.name,
+        image_id: imageId,
         date,
         share,
       }).then((res) => {
-        console.log(res);
-        // postID  = res.id
-        uploadImage(res.id);
-      });
+      }).then();
     } catch (err) {
     }
-  }, [title, text, ImageUpload, date, share]);
+  }, [title, text, date, share,imageId]);
+
+
+
+
 
   const onLogout = () => {
     endSession();
     navigate("/login");
   };
 
-  const uploadImage = (id) => {
+  const uploadImage =() => {
     if (uploadImage == null) return;
-
-    const imageRef = ref(storage, `images/${id}/${ImageUpload.name }`);
-    uploadBytes(imageRef, ImageUpload).then(() => alert("post sended"));
+    const imageRef = ref(storage, `Post_image/${imageId}`);
+    uploadBytes(imageRef, ImageUpload).then((as) => console.log(as));
+    setImageId(v4)
   };
 
   const addPost = () => {
-    // uploadImage();
+    uploadImage()
     getPost();
   };
 
@@ -128,6 +159,7 @@ export default function User() {
           onChange={(e) => {
             setImageUpload(e.target.files[0]);
           }}
+          // onClick={uploadImage}
           multiple
           type="file"
         />
@@ -156,14 +188,16 @@ export default function User() {
         Log out
       </Button>
     </Container>
-     <div >
+   
+     <div >   
      {posts.map((elem)=>{
-      console.log(elem)
-      return <CardComponent key={elem.date.id} value={elem} />
-      
+      // const as = imageUrl(elem.id)
+      console.log(posts,"post")
+      return <CardComponent key={elem.id} value={elem} load={loading} />
      })}
-      
+   
   </div>
+  
   </>
   );
 }

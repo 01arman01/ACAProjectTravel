@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import {Container, TextField} from "@mui/material";
 import testimg from '../../imgs/turist.jpg'
 import {styled} from '@mui/material/styles';
@@ -17,6 +17,8 @@ import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { createUseStyles } from 'react-jss';
+import { CardComponentContext } from '../../contexts/context';
+import { useSearchParams } from 'react-router-dom';
 
 const useStyles = createUseStyles({
     cardFrame:{
@@ -36,15 +38,36 @@ const ExpandMore = styled((props) => {
     }),
 }));
 
-export default function RecipeReviewCard({value}) {
+export default function RecipeReviewCard({value,load}) {
     const [expanded, setExpanded] = React.useState(false);
+    const [imagUrl, setImageUrl] = React.useState("https://media.sproutsocial.com/uploads/2017/01/Instagram-Post-Ideas.png");
     const styles = useStyles()
+    const [loading,setLoading] = React.useState(load)
+    
+    console.log(load,'jjjjj')
+    const setInter = setTimeout(() => {
+        setLoading(load)
+        
+        // console.log(value.url)
+    });
+    // if(load===true){
+    //     clearInterval(setInter)
+    // }
+    // useEffect(()=>{
+    //     // clearInterval(iterval)
+    //     if(value.url){
+    //         setImageUrl(value.url)
+          
+    //     }
+
+    // },[value.url])
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
 
     return (
+        
         <div className={styles.cardFrame}>
             <Card sx={{maxWidth: 300}}>
                 <CardHeader
@@ -64,7 +87,7 @@ export default function RecipeReviewCard({value}) {
                 <CardMedia
                     component="img"
                     height="194"
-                    image={testimg}
+                    image={loading?value.url:imagUrl}
                     alt="Paella dish"
                 />
                 <CardContent>

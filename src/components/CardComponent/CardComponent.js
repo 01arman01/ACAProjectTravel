@@ -23,7 +23,7 @@ import { useSearchParams } from 'react-router-dom';
 const useStyles = createUseStyles({
     cardFrame:{
         margin:"20px"
-        
+
     }
 })
 
@@ -67,7 +67,6 @@ export default function RecipeReviewCard({value,load}) {
     };
 
     return (
-        
         <div className={styles.cardFrame}>
             <Card sx={{maxWidth: 300}}>
                 <CardHeader
@@ -105,5 +104,6 @@ export default function RecipeReviewCard({value,load}) {
                 </CardActions>
             </Card>
         </div>
+
     );
 }

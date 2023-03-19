@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { app, database, db, signInUser, storage } from "../firebase";
+import { app, db, storage } from "../firebase";
 import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
 import {
   addDoc,
@@ -12,15 +12,7 @@ import {
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { endSession, getSession, isLoggedIn } from "../storage/session";
-import { v4 } from "uuid";
-import {
-  Button,
-  Checkbox,
-  Container,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { async } from "@firebase/util";
+import { Button } from "@mui/material";
 import CardComponent from "../components/CardComponent/CardComponent";
 import PostAdd from "../components/PostAdd/PostAdd";
 
@@ -83,7 +75,7 @@ export default function User() {
     listAll(postsImageUrlsRef).then((res) => {
       res.items.forEach((item) => {
         getDownloadURL(item).then((url) => {
-          setPostsImageUrls((prev) => [...prev, url]);
+          setPostsImageUrls((prev) => [...prev, [url, item.name]]);
         });
       });
     });

@@ -13,27 +13,28 @@ import Register from "./routes/register";
 import User from "./routes/user";
 import ErrorPage from "./error-page";
 import Homepage from "./routes/homepage";
+import {USER_PAGE,H0ME_PAGE,LOGIN_PAGE,REGISTER_PAGE} from "./RoutePath/RoutePath";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Navigate to="homepage" />,
+    element: <Navigate to={H0ME_PAGE} />,
     errorElement: <ErrorPage />,
   },
   {
-    path:"/homepage",
+    path:H0ME_PAGE,
     element:<Homepage />
   },
   {
-    path: "/login",
+    path: LOGIN_PAGE,
     element: <Login />,
   },
   {
-    path: "/register",
+    path: REGISTER_PAGE,
     element: <Register />,
   },
   {
-    path: "/user",
+    path: USER_PAGE,
     element: <User />,
   },
 ]);

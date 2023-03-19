@@ -8,18 +8,25 @@ import {
   Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { startSession } from "../storage/session";
+import {useEffect, useState} from "react";
+import {isLoggedIn, startSession} from "../storage/session";
 import { signInUser } from "../firebase";
 import { useLoginStyles } from "./login.styles";
+import {USER_PAGE,LOGIN_PAGE,} from '../RoutePath/RoutePath'
 
 export default function Login() {
+
   const navigate = useNavigate();
   const styles = useLoginStyles();
 
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    if (isLoggedIn()){
+      navigate(USER_PAGE);
+    }})
 
   const onSubmit = async (event) => {
     event.preventDefault();
@@ -34,15 +41,14 @@ export default function Login() {
     try {
       let loginResponse = await signInUser(email, password);
       startSession(loginResponse.user);
-      navigate("/user");
+      navigate(USER_PAGE);
     } catch (error) {
       // console.error(error.message);
       setError(error.message);
     }
   };
-
   return (
-    <div className={styles.wrapper}>
+      !isLoggedIn() && <div className={styles.wrapper}>
       <img className={styles.bg_img} />
       <Container maxWidth="xs" className={styles.container}>
         <Typography variant="h5" component="h1" gutterBottom textAlign="center">

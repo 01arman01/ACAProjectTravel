@@ -24,6 +24,7 @@ import { async } from "@firebase/util";
 import CardComponent from "../components/CardComponent/CardComponent";
 import { child, get, getDatabase, onValue } from "firebase/database";
 import { CardComponentContext } from "../contexts/context";
+import Header from "../components/Header/Header";
 
 export default function User() {
   let navigate = useNavigate();
@@ -108,9 +109,6 @@ export default function User() {
   }, [title, text, date, share,imageId]);
 
 
-
-
-
   const onLogout = () => {
     endSession();
     navigate("/login");
@@ -130,6 +128,7 @@ export default function User() {
 
   return (
     <>
+      <Header />
     <Container maxWidth="xs" sx={{ mt: 2 }}>
       <TextField
         label="Title"

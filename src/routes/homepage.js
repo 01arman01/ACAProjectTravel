@@ -1,6 +1,6 @@
 import CardComponent from "../components/CardComponent/CardComponent";
 import {createUseStyles} from "react-jss";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 // import { app, db } from "../firebase";
 import { Podcasts } from "@mui/icons-material";
@@ -10,6 +10,7 @@ import { getAuth } from "firebase/auth";
 import { app, database, db, signInUser, storage } from "../firebase";
 import { getDownloadURL, getStorage, listAll, ref, uploadBytes } from "firebase/storage";
 import Header from "../components/Header/Header";
+import LogoutDialog from "../components/LogoutDialog";
 // import { ref } from "firebase/database";
 
 
@@ -28,6 +29,11 @@ export default function Homepage(props) {
  const [loading, setloading] = useState(false)
 //  let loginResponse = getAuth(app);
  const storage = getStorage();
+
+    const[headerBtnClickChange,setHeaderBtnClickChange] = useState(false)
+    const onClickBtnStatusChange = ()=> {
+        setHeaderBtnClickChange(!headerBtnClickChange)
+    }
 
  const postAsync =useCallback(async()=>{
     try {
@@ -52,8 +58,6 @@ export default function Homepage(props) {
  useEffect(()=>{
     postAsync()
  },[])
-
-
     const styles = useStyles()
     return (
         <>
@@ -63,10 +67,9 @@ export default function Homepage(props) {
            {posts.filter((elem=>elem.share === true)).map((elem)=>{
             
             return <CardComponent key={elem.id} value={elem}  load={loading} />
-            
            })}
-            
         </div>
+
         </>
     );
 }

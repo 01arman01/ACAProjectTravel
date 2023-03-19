@@ -13,13 +13,20 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { createUseStyles } from "react-jss";
+import { getAuth } from "firebase/auth";
+import { app } from "../../firebase";
 
 const useStyles = createUseStyles({
   cardFrame: {
+    maxWidth: "290px",
+    height: "375px",
     margin: "20px",
   },
+  card: {
+    minWidth: "300px",
+    height: "375px",
+  },
 });
-
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -32,7 +39,8 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
-export default function RecipeReviewCard({ post, postsImageUrls }) {
+export default function RecipeReviewCard({ post, postsImageUrls, auth }) {
+  console.log(auth)
   const [expanded, setExpanded] = useState(false);
   const [postImgUrl, setPostImgUrl] = useState("");
   const styles = useStyles();
@@ -55,7 +63,7 @@ export default function RecipeReviewCard({ post, postsImageUrls }) {
 
   return (
     <div className={styles.cardFrame}>
-      <Card sx={{ maxWidth: 300 }}>
+      <Card className={styles.card}>
         <CardHeader
           avatar={
             <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -67,14 +75,16 @@ export default function RecipeReviewCard({ post, postsImageUrls }) {
               <MoreVertIcon />
             </IconButton>
           }
-          title={post.title}
-          subheader={new Date(post.date.seconds).toString()}
+          title={auth.name}
+          subheader={new Date(post.date.seconds).toString().slice(16, 21)}
         />
         <CardMedia
           component="img"
           height="194"
-          image={postImgUrl}
+          // image={postImgUrl}
+          src={postImgUrl}
           alt="Paella dish"
+          className={styles.img}
         />
         <CardContent>
           <Typography variant="body2" color="text.secondary">

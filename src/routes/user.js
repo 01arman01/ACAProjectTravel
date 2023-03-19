@@ -1,23 +1,30 @@
 import { useCallback, useEffect, useState } from "react";
+//Router
 import { useNavigate } from "react-router-dom";
+//firebase
 import { app, db, storage } from "../firebase";
 import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
-import {
-  addDoc,
-  collection,
-  doc,
-  getDocs,
-  setDoc,
-  Timestamp,
-} from "firebase/firestore";
+import { addDoc, collection, getDocs, Timestamp } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+//Session
 import { endSession, getSession, isLoggedIn } from "../storage/session";
+//Mui
 import { Button } from "@mui/material";
+//Styles
+import { useUserStyles } from "./user.styles";
+//Components
 import CardComponent from "../components/CardComponent/CardComponent";
 import PostAdd from "../components/PostAdd/PostAdd";
+import Header from "../components/Header/Header";
 
 export default function User() {
+  //navigate
   let navigate = useNavigate();
+
+  //Styles
+  const styles = useUserStyles();
+
+  //states
   const [email, setEmail] = useState("");
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
@@ -27,39 +34,40 @@ export default function User() {
   const [posts, setPosts] = useState([]);
   const [postsImageUrls, setPostsImageUrls] = useState([]);
 
-  
+  //Auth
+  const auth = getAuth(app);
+  const userId = auth.lastNotifiedUid;
 
-  const postAsync = async () => {
-    let loginResponse = getAuth(app);
+  //Set posts data
+  const SetData = async () => {
     const data = await getDocs(collection(db, "Post"))
       .then((e) => {
         return e.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
       })
       .then((res) =>
-        res.filter((elem) => elem.userId === loginResponse.lastNotifiedUid)
+        res.filter((elem) => elem.userId === auth.lastNotifiedUid)
       );
 
     setPosts(data);
   };
 
   useEffect(() => {
-    postAsync();
+    SetData();
   }, []);
 
-  useEffect(() => {
-    if (!isLoggedIn()) {
-      navigate("/login");
-    }
+  //Upload and send image to storage
+  const uploadImage = () => {
+    if (uploadImage == null) return;
 
-    let session = getSession();
-    setEmail(session.email);
-  }, [navigate]);
+    const imageRef = ref(storage, `Images/${ImageUpload.name}`);
+    uploadBytes(imageRef, ImageUpload).then(() => alert("post sended"));
+  };
 
+  //Send post to database
   const onSendPost = useCallback(async () => {
     try {
-      let loginResponse = getAuth(app);
       await addDoc(collection(db, "Post"), {
-        userId: loginResponse.lastNotifiedUid,
+        userId: userId,
         title,
         text,
         image: ImageUpload.name,
@@ -71,6 +79,7 @@ export default function User() {
     } catch (err) {}
   }, [title, text, ImageUpload, date, share]);
 
+  //Get all storage images in the same array
   useEffect(() => {
     const postsImageUrlsRef = ref(storage, "Images/");
 
@@ -83,20 +92,24 @@ export default function User() {
     });
   }, []);
 
+  useEffect(() => {
+    if (!isLoggedIn()) {
+      navigate("/login");
+    }
+
+    let session = getSession();
+    setEmail(session.email);
+  }, [navigate]);
+
+  //Logout function
   const onLogout = () => {
     endSession();
     navigate("/login");
   };
 
-  const uploadImage = () => {
-    if (uploadImage == null) return;
-
-    const imageRef = ref(storage, `Images/${ImageUpload.name}`);
-    uploadBytes(imageRef, ImageUpload).then(() => alert("post sended"));
-  };
-
   return (
     <>
+      <Header /> 
       <PostAdd
         title={title}
         setTitle={setTitle}
@@ -116,13 +129,14 @@ export default function User() {
       >
         Log out
       </Button>
-      <div>
+      <div className={styles.cardsBlok}>
         {posts.map((post, index) => {
           return (
             <CardComponent
               key={post.id}
               post={post}
               postsImageUrls={postsImageUrls}
+              auth={auth}
             />
           );
         })}

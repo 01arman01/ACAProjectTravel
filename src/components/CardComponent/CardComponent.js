@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import {Container, TextField} from "@mui/material";
+import {Container, Dialog, TextField} from "@mui/material";
 import testimg from '../../imgs/turist.jpg'
 import {styled} from '@mui/material/styles';
 import Card from '@mui/material/Card';
@@ -19,10 +19,13 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { createUseStyles } from 'react-jss';
 import { CardComponentContext } from '../../contexts/context';
 import { useSearchParams } from 'react-router-dom';
+import SimpleDialog from '../SimpleDialog';
+import { collection, doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../../firebase';
 
 const useStyles = createUseStyles({
     cardFrame:{
-        margin:"20px"
+        margin:"14px"
 
     }
 })
@@ -38,17 +41,40 @@ const ExpandMore = styled((props) => {
     }),
 }));
 
-export default function RecipeReviewCard({value,load}) {
+export default function RecipeReviewCard({value,load,del,updatePost}) {
     const [expanded, setExpanded] = React.useState(false);
     const [imagUrl, setImageUrl] = React.useState("https://media.sproutsocial.com/uploads/2017/01/Instagram-Post-Ideas.png");
     const styles = useStyles()
     const [loading,setLoading] = React.useState(load)
-    
-    console.log(load,'jjjjj')
-    const setInter = setTimeout(() => {
+    const [open, setOpen] = React.useState(false);
+    const [selectedValue, setSelectedValue] = React.useState();
+    const [postValue,setPostValue] = React.useState(value);
+    const [updateComponent,setUpdateComponent] = React.useState(false)
+
+  useEffect(()=>{
+    const unsub = onSnapshot(doc(db, "Post", postValue.id), (doc) => {
+        const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
+        if(source === "Local"){
+            setPostValue({...postValue,...doc.data()})
+        }
+      });
+  },[postValue])
+
+//   useEffect(()=>{
+//     const unsubscribe = onSnapshot(collection(db, "Post"), (doc) => {
+//         setUpdateComponent(true)
+//         console.log(updateComponent)
+//       });
+//   },[updateComponent])
+
+    setTimeout(() => {
         setLoading(load)
+        if(postValue.url){
+            setLoading(load)
+        }else{
+            setLoading(false)
+        }
         
-        // console.log(value.url)
     });
     // if(load===true){
     //     clearInterval(setInter)
@@ -65,10 +91,17 @@ export default function RecipeReviewCard({value,load}) {
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
-
+    const handleClickOpen = () => {
+        setOpen(true);
+      };
+    
+      const handleClose = (postValue) => {
+        setOpen(false);
+        setSelectedValue(postValue);
+      };
     return (
         <div className={styles.cardFrame}>
-            <Card sx={{maxWidth: 300}}>
+            <Card sx={{maxWidth: 290}}>
                 <CardHeader
                     avatar={
                         <Avatar sx={{bgcolor: red[500]}} aria-label="recipe">
@@ -77,21 +110,29 @@ export default function RecipeReviewCard({value,load}) {
                     }
                     action={
                         <IconButton aria-label="settings">
-                            <MoreVertIcon/>
+                            <MoreVertIcon onClick={handleClickOpen}/>
+                            <SimpleDialog
+                                selectedValue={postValue}
+                                id={postValue.id}
+                                delete={del}
+                                updatePost={updatePost}
+                                open={open}
+                                onClose={handleClose}
+                            />
                         </IconButton>
                     }
-                    title={value.title}
-                    subheader={new Date(value.date.seconds).toString()}
+                    title={postValue.title}
+                    subheader={new Date(postValue.date.seconds).toString()}
                 />
                 <CardMedia
                     component="img"
                     height="194"
-                    image={loading?value.url:imagUrl}
+                    image={loading?postValue.url:imagUrl}
                     alt="Paella dish"
                 />
                 <CardContent>
                     <Typography variant="body2" color="text.secondary">
-                        {value.text}
+                        {postValue.text}
                     </Typography>
                 </CardContent>
                 <CardActions disableSpacing>

@@ -2,23 +2,22 @@ import CardComponent from "../components/CardComponent/CardComponent";
 import {createUseStyles} from "react-jss";
 import { useCallback, useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
-// import { app, db } from "../firebase";
-import { Podcasts } from "@mui/icons-material";
-import { async } from "@firebase/util";
-import { getAuth } from "firebase/auth";
-// import { getDownloadURL, getStorage } from "firebase/storage";
-import { app, database, db, signInUser, storage } from "../firebase";
-import { getDownloadURL, getStorage, listAll, ref, uploadBytes } from "firebase/storage";
+import {db,} from "../firebase";
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import Header from "../components/Header/Header";
-// import { ref } from "firebase/database";
+import InfiniteScroll from "react-infinite-scroll-component";
+
 
 
 const useStyles = createUseStyles({
     hompageMain: {
-        textAlign: 'center',
-        display: 'flex',
-        flexWrap: 'wrap',
-        width:"100vw"
+        display: "flex",
+        textAlign: "center",
+        flexWrap: "wrap",
+        width: "98vw",
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "space-around",
     }
 })
 
@@ -26,9 +25,10 @@ const useStyles = createUseStyles({
 export default function Homepage(props) {
  const [posts,setPosts] = useState([])
  const [loading, setloading] = useState(false)
+ const [scrollIndex,setScrollIndex] = useState(8)
 //  let loginResponse = getAuth(app);
  const storage = getStorage();
-
+//  const [loading, setLoading] = useState(false);
  const postAsync =useCallback(async()=>{
     try {
         const data = await getDocs(collection(db, "Post"))
@@ -53,20 +53,42 @@ export default function Homepage(props) {
     postAsync()
  },[])
 
+ console.log(window.innerHeight ,document.documentElement.scrollTop,
+    document.documentElement.offsetHeight)
+ const handleScroll = () => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop ===
+      document.documentElement.offsetHeight
+    ) {
+      // Достигнут конец страницы, загрузите следующую страницу
+      setScrollIndex(()=>scrollIndex + 8);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  });
+
 
     const styles = useStyles()
     return (
         <>
-        <Header/>
+        <InfiniteScroll
+      dataLength={posts.length}
+      // next={handleScroll}
+      hasMore={true}
+      // loader={<CircularIndeterminate/>}
+    >
+        
         <div className={styles.hompageMain}>
-            {console.log(posts)}
-           {posts.filter((elem=>elem.share === true)).map((elem)=>{
-            
+            {console.log(posts,scrollIndex)}
+           {posts.filter(((elem,index)=>{return (elem.share === true && index<scrollIndex)})).map((elem)=>{
             return <CardComponent key={elem.id} value={elem}  load={loading} />
-            
            })}
-            
+            {/* {loading && <div>Loading...</div>} */}
         </div>
+        </InfiniteScroll>
         </>
     );
 }

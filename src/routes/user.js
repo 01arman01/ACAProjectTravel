@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { app, database, db, signInUser, storage } from "../firebase";
-import { getDownloadURL, getStorage, listAll, ref, uploadBytes } from "firebase/storage";
+import { deleteObject, getDownloadURL, getStorage, listAll, ref, uploadBytes } from "firebase/storage";
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDocs,
   setDoc,
   Timestamp,
+  updateDoc,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { endSession, getSession, isLoggedIn } from "../storage/session";
@@ -24,6 +26,10 @@ import { async } from "@firebase/util";
 import CardComponent from "../components/CardComponent/CardComponent";
 import { child, get, getDatabase, onValue } from "firebase/database";
 import { CardComponentContext } from "../contexts/context";
+import CircularIndeterminate from "../components/CircularIndeterminate";
+import { onSnapshot } from "firebase/firestore";
+
+
 
 export default function User() {
   let navigate = useNavigate();
@@ -36,52 +42,48 @@ export default function User() {
   const [posts,setPosts] = useState([])
   const [imageId,setImageId] = useState(v4)
   const [loading, setloading] = useState(false)
-
+  const [imageLoadnig,setImageLoadnig] = useState(false)
+  const [updateData,setUpdateData] = useState()
   let loginResponse = getAuth(app);
   const storage = getStorage();
-  // const postAsync = async ()=>{
-  //   const data = await getDocs(collection(db, "Post")).then((e)=>{
-  //    return e.docs.map((doc)=>({...doc.data(),id:doc.id}))})
-  //    .then((arr)=>{
-  //      return arr.filter((elem)=>elem.userId === loginResponse.lastNotifiedUid )
-  //    })
-  //    .then((elem)=>{
-  //      elem.forEach((elm)=>{
-  //        console.log(elm.image_id)
-  //        const starsRef =  ref(storage, `Post_image/${elm.image_id}`);
-  //             getDownloadURL(starsRef).then((url)=>{elm['url']=url})})
-              
-  //             return elem
-  //            }) 
-  //   setPosts(data)
-  // }
-
-  const postAsync =useCallback(async()=>{
-    const data = await getDocs(collection(db, "Post"))
-    const data_1 = data.docs.map((doc)=>({...doc.data(),id:doc.id}))
-    .filter((elem)=>elem.userId === loginResponse.lastNotifiedUid )
-
-    data_1.forEach((elm,index)=>{
-      const starsRef =  ref(storage, `Post_image/${elm.image_id}`);
-           getDownloadURL(starsRef).then((url)=>{elm['url']=url}).then((elem)=>{if(index+1 === data_1.length){setloading(true)}})})
-    console.log(data_1)
-    setPosts(data_1)  
-    //  return e.docs.map((doc)=>({...doc.data(),id:doc.id}))})
-    //  .then((arr)=>{return arr})
-    // //  .then((elem)=>{
-    //    elem.forEach((elm)=>{
-    //      console.log(elm.image_id)
-    //      const starsRef =  ref(storage, `Post_image/${elm.image_id}`);
-    //           getDownloadURL(starsRef).then((url)=>{elm['url']=url})})
-    //           return elem
-    //          }) 
-    // setPosts(data)
+  
+  useEffect(()=>{
+    const unsubscribe = onSnapshot(collection(db, "Post"), (data) => {
+      const data_1 = data.docs.map((doc)=>({...doc.data(),id:doc.id}))
+      .filter((elem)=>elem.userId === loginResponse.lastNotifiedUid )
+      data_1.forEach((elm,index)=>{
+        const starsRef =  ref(storage, `Post_image/${elm.image_id}`);
+             getDownloadURL(starsRef).then((url)=>{elm['url']=url}).then((elem)=>{if(index+1 === data_1.length){setloading(true)}})
+             .then(()=>{setImageLoadnig(false)})})
+      // console.log(data_1)
+      setPosts(data_1)  
+      });
   },[])
 
-   useEffect(()=>{
-   postAsync()
+
+
+  // const unsubscribe = onSnapshot(collection(db, "Post"), (data) => {
+  //   setUpdateData(data.docs.map((doc)=>({...doc.data(),id:doc.id})))
+  //   // setUpdateData(data_1)
+  //   // setPosts(data_1)
+  //   // console.log(data_1)
+  // });
+  // const postAsync =useCallback(async()=>{
+  //   let data = await getDocs(collection(db, "Post"))
+  //   const data_1 = data.docs.map((doc)=>({...doc.data(),id:doc.id}))
+  //   .filter((elem)=>elem.userId === loginResponse.lastNotifiedUid )
+  //   data_1.forEach((elm,index)=>{
+  //     const starsRef =  ref(storage, `Post_image/${elm.image_id}`);
+  //          getDownloadURL(starsRef).then((url)=>{elm['url']=url}).then((elem)=>{if(index+1 === data_1.length){setloading(true)}})
+  //          .then(()=>{setImageLoadnig(false)})})
+  //   // console.log(data_1)
+  //   setPosts(data_1)  
+  // },[])
+
+  //  useEffect(()=>{
+  //  postAsync()
    
-    },[])
+  //   },[])
 
   useEffect(() => {
     if (!isLoggedIn()) {
@@ -102,14 +104,11 @@ export default function User() {
         date,
         share,
       }).then((res) => {
+        // postAsync()
       }).then();
     } catch (err) {
     }
   }, [title, text, date, share,imageId]);
-
-
-
-
 
   const onLogout = () => {
     endSession();
@@ -119,17 +118,38 @@ export default function User() {
   const uploadImage =() => {
     if (uploadImage == null) return;
     const imageRef = ref(storage, `Post_image/${imageId}`);
-    uploadBytes(imageRef, ImageUpload).then((as) => console.log(as));
+    uploadBytes(imageRef, ImageUpload).then((as) =>{getPost() 
+      })
     setImageId(v4)
   };
 
   const addPost = () => {
+    setImageLoadnig(true)
     uploadImage()
-    getPost();
+    console.log(uploadImage(),"image")
   };
+ const deletePost =async(id,img_id)=>{
+  await deleteDoc(doc(db, "Post", id));
+  const desertRef = ref(storage, `Post_image/${img_id}`);
+      deleteObject(desertRef).then(() => {
+      console.log("delete")
+      }).catch((error) => {
+        console.log("delete"+error)
+        // Uh-oh, an error occurred!
+      })
+ }
+
+ const updatePost = async(id,data)=>{
+  const washingtonRef = doc(db, "Post",id);
+    await updateDoc(washingtonRef, data);
+ }
+
+
+
 
   return (
     <>
+    {imageLoadnig && <CircularIndeterminate/>}
     <Container maxWidth="xs" sx={{ mt: 2 }}>
       <TextField
         label="Title"
@@ -189,15 +209,14 @@ export default function User() {
       </Button>
     </Container>
    
-     <div >   
+     <div style={{display: "flex",flexWrap: "wrap"}} >   
      {posts.map((elem)=>{
       // const as = imageUrl(elem.id)
-      console.log(posts,"post")
-      return <CardComponent key={elem.id} value={elem} load={loading} />
+      // console.log(posts,"post")
+      return <CardComponent key={elem.id} value={elem} load={loading} del={deletePost} updatePost={updatePost} />
      })}
-   
-  </div>
   
+  </div>
   </>
   );
 }

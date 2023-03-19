@@ -13,6 +13,7 @@ import Register from "./routes/register";
 import User from "./routes/user";
 import ErrorPage from "./error-page";
 import Homepage from "./routes/homepage";
+import Header from "./components/Header/Header";
 
 const router = createBrowserRouter([
   {
@@ -22,7 +23,8 @@ const router = createBrowserRouter([
   },
   {
     path:"/homepage",
-    element:<Homepage />
+   
+    element:<><Header/><Homepage /></>
   },
   {
     path: "/login",
@@ -34,7 +36,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/user",
-    element: <User />,
+    element:<><Header/> <User /></>,
   },
 ]);
 

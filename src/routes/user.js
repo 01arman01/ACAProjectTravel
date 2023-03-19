@@ -1,14 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { app, database, db, signInUser, storage } from "../firebase";
-import { deleteObject, getDownloadURL, getStorage, listAll, ref, uploadBytes } from "firebase/storage";
+import { app, db } from "../firebase";
+import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import {
   addDoc,
   collection,
   deleteDoc,
   doc,
-  getDocs,
-  setDoc,
   Timestamp,
   updateDoc,
 } from "firebase/firestore";
@@ -20,12 +18,9 @@ import {
   Checkbox,
   Container,
   TextField,
-  Typography,
+  
 } from "@mui/material";
-import { async } from "@firebase/util";
 import CardComponent from "../components/CardComponent/CardComponent";
-import { child, get, getDatabase, onValue } from "firebase/database";
-import { CardComponentContext } from "../contexts/context";
 import CircularIndeterminate from "../components/CircularIndeterminate";
 import { onSnapshot } from "firebase/firestore";
 
@@ -43,47 +38,20 @@ export default function User() {
   const [imageId,setImageId] = useState(v4)
   const [loading, setloading] = useState(false)
   const [imageLoadnig,setImageLoadnig] = useState(false)
-  const [updateData,setUpdateData] = useState()
   let loginResponse = getAuth(app);
   const storage = getStorage();
   
   useEffect(()=>{
-    const unsubscribe = onSnapshot(collection(db, "Post"), (data) => {
+    onSnapshot(collection(db, "Post"), (data) => {
       const data_1 = data.docs.map((doc)=>({...doc.data(),id:doc.id}))
       .filter((elem)=>elem.userId === loginResponse.lastNotifiedUid )
       data_1.forEach((elm,index)=>{
         const starsRef =  ref(storage, `Post_image/${elm.image_id}`);
              getDownloadURL(starsRef).then((url)=>{elm['url']=url}).then((elem)=>{if(index+1 === data_1.length){setloading(true)}})
              .then(()=>{setImageLoadnig(false)})})
-      // console.log(data_1)
       setPosts(data_1)  
       });
-  },[])
-
-
-
-  // const unsubscribe = onSnapshot(collection(db, "Post"), (data) => {
-  //   setUpdateData(data.docs.map((doc)=>({...doc.data(),id:doc.id})))
-  //   // setUpdateData(data_1)
-  //   // setPosts(data_1)
-  //   // console.log(data_1)
-  // });
-  // const postAsync =useCallback(async()=>{
-  //   let data = await getDocs(collection(db, "Post"))
-  //   const data_1 = data.docs.map((doc)=>({...doc.data(),id:doc.id}))
-  //   .filter((elem)=>elem.userId === loginResponse.lastNotifiedUid )
-  //   data_1.forEach((elm,index)=>{
-  //     const starsRef =  ref(storage, `Post_image/${elm.image_id}`);
-  //          getDownloadURL(starsRef).then((url)=>{elm['url']=url}).then((elem)=>{if(index+1 === data_1.length){setloading(true)}})
-  //          .then(()=>{setImageLoadnig(false)})})
-  //   // console.log(data_1)
-  //   setPosts(data_1)  
-  // },[])
-
-  //  useEffect(()=>{
-  //  postAsync()
-   
-  //   },[])
+  },[loginResponse.lastNotifiedUid,storage])
 
   useEffect(() => {
     if (!isLoggedIn()) {
@@ -104,11 +72,25 @@ export default function User() {
         date,
         share,
       }).then((res) => {
-        // postAsync()
-      }).then();
+console.log(res,"hellllooo")      }).then();
     } catch (err) {
     }
   }, [title, text, date, share,imageId]);
+
+  const like = useCallback(async (id) => {
+    let loginResponse = getAuth(app);
+    try {
+      await addDoc(collection(db, "Like"), {
+        userId: loginResponse.lastNotifiedUid,
+        postId:id,
+      }).then((res) => {
+        console.log(res,"Helllo")
+      }).then();
+    } catch (err) {
+    }
+  }, []);
+
+
 
   const onLogout = () => {
     endSession();
@@ -118,16 +100,16 @@ export default function User() {
   const uploadImage =() => {
     if (uploadImage == null) return;
     const imageRef = ref(storage, `Post_image/${imageId}`);
-    uploadBytes(imageRef, ImageUpload).then((as) =>{getPost() 
-      })
-    setImageId(v4)
+    uploadBytes(imageRef, ImageUpload).then((as) =>{getPost()
+      setImageId(v4)})
+    
   };
 
   const addPost = () => {
     setImageLoadnig(true)
     uploadImage()
-    console.log(uploadImage(),"image")
   };
+
  const deletePost =async(id,img_id)=>{
   await deleteDoc(doc(db, "Post", id));
   const desertRef = ref(storage, `Post_image/${img_id}`);
@@ -135,15 +117,14 @@ export default function User() {
       console.log("delete")
       }).catch((error) => {
         console.log("delete"+error)
-        // Uh-oh, an error occurred!
       })
  }
 
  const updatePost = async(id,data)=>{
   const washingtonRef = doc(db, "Post",id);
     await updateDoc(washingtonRef, data);
- }
 
+ }
 
 
 
@@ -173,9 +154,7 @@ export default function User() {
       />
       <Button variant="contained" component="label">
         Upload Image
-        <input
-          hidden
-          accept="image/*"
+        <input hidden accept="image/*"
           onChange={(e) => {
             setImageUpload(e.target.files[0]);
           }}
@@ -184,27 +163,11 @@ export default function User() {
           type="file"
         />
       </Button>
-      <Button
-        variant="contained"
-        onClick={addPost}
-        type="submit"
-        sx={{ mt: 3 }}
-        fullWidth
-      >
+      <Button variant="contained" onClick={addPost} type="submit" sx={{ mt: 3 }} fullWidth >
         add Post
       </Button>
-      <Checkbox
-        checked={share}
-        onChange={() => setShare(!share)}
-        inputProps={{ "aria-label": "controlled" }}
-      />
-      <Button
-        variant="contained"
-        color="error"
-        onClick={onLogout}
-        sx={{ mt: 3 }}
-        fullWidth
-      >
+      <Checkbox checked={share} onChange={() => setShare(!share)} inputProps={{ "aria-label": "controlled" }} />
+      <Button variant="contained" color="error" onClick={onLogout} sx={{ mt: 3 }} fullWidth >
         Log out
       </Button>
     </Container>
@@ -213,7 +176,7 @@ export default function User() {
      {posts.map((elem)=>{
       // const as = imageUrl(elem.id)
       // console.log(posts,"post")
-      return <CardComponent key={elem.id} value={elem} load={loading} del={deletePost} updatePost={updatePost} />
+      return <CardComponent key={elem.id} value={elem} like={like} load={loading} del={deletePost} updatePost={updatePost} />
      })}
   
   </div>

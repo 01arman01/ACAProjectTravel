@@ -7,8 +7,6 @@ import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import Header from "../components/Header/Header";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-
-
 const useStyles = createUseStyles({
     hompageMain: {
         display: "flex",
@@ -21,14 +19,13 @@ const useStyles = createUseStyles({
     }
 })
 
-
 export default function Homepage(props) {
  const [posts,setPosts] = useState([])
  const [loading, setloading] = useState(false)
- const [scrollIndex,setScrollIndex] = useState(8)
-//  let loginResponse = getAuth(app);
+ const [scrollIndex,setScrollIndex] = useState(10)
+
  const storage = getStorage();
-//  const [loading, setLoading] = useState(false);
+
  const postAsync =useCallback(async()=>{
     try {
         const data = await getDocs(collection(db, "Post"))
@@ -40,8 +37,6 @@ export default function Homepage(props) {
              })}
           }
          )
-         console.log(a,'ssssss',data_1)
-         
          setPosts(data_1)
     }catch(error) {
         console.log(error);
@@ -83,7 +78,7 @@ export default function Homepage(props) {
         
         <div className={styles.hompageMain}>
             {console.log(posts,scrollIndex)}
-           {posts.filter(((elem,index)=>{return (elem.share === true && index<scrollIndex)})).map((elem)=>{
+           {posts.filter(((elem,index)=>{return (elem.share === true && index<=scrollIndex)})).map((elem)=>{
             return <CardComponent key={elem.id} value={elem}  load={loading} />
            })}
             {/* {loading && <div>Loading...</div>} */}

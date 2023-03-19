@@ -15,8 +15,12 @@ import Typography from '@mui/material/Typography';
 import { blue } from '@mui/material/colors';
 import { Checkbox, DialogActions, DialogContent, DialogContentText, TextField } from '@mui/material';
 import { Container } from '@mui/system';
+import { getStorage, updateMetadata } from 'firebase/storage';
+import { ref } from 'firebase/database';
+import { getAuth } from 'firebase/auth';
+import { app } from '../firebase';
+// import { storage } from '../firebase';
 
-const emails = ['username@gmail.com', 'user02@gmail.com'];
 
 export default function SimpleDialog(props) {
   const { onClose, selectedValue, open } = props;
@@ -25,6 +29,10 @@ export default function SimpleDialog(props) {
   const [text,setText] =  React.useState(props.selectedValue.text)
   const [share,setShare] = React.useState(props.selectedValue.share)
   const [imageUrl,setImageUrl] = React.useState(props.selectedValue.url)
+
+
+  let loginResponse = getAuth(app);
+  const storage = getStorage();
 
 
   const handleClose = () => {
@@ -48,8 +56,32 @@ export default function SimpleDialog(props) {
       text,
       share,
     })
+    updateImage()
     hendleCloseUpdatePage()
+    
   }
+
+const updateImage=async()=>{
+  console.log( `Post_image/${props.selectedValue.image_id}`,"ddddddddd")
+  const imageRef =await ref(storage, `Post_image/${props.selectedValue.image_id}`);
+  // Update metadata properties
+  console.log(imageRef,"PPPPPPPPPPPPPPP")
+  updateMetadata(imageRef, imageUrl )
+    .then((metadata) => {
+      hendleCloseUpdatePage()
+      console.log(metadata)
+      // Updated metadata for 'images/forest.jpg' is returned in the Promise
+    }).catch((error) => {
+      // Uh-oh, an error occurred!
+    });
+
+}
+
+
+
+
+
+
 
   return (
     <>
@@ -104,7 +136,7 @@ export default function SimpleDialog(props) {
         <input
           hidden
           accept="image/*"
-          onChange={(e) => {setImageUrl(e.target.files[0]);}}
+          onChange={(e) => {setImageUrl(e.target.files[0])}}
           // onClick={uploadImage}
           multiple
           type="file"

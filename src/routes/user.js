@@ -27,7 +27,7 @@ export default function User() {
   const [posts, setPosts] = useState([]);
   const [postsImageUrls, setPostsImageUrls] = useState([]);
 
-  const postsImageUrlsRef = ref(storage, "Images/");
+  
 
   const postAsync = async () => {
     let loginResponse = getAuth(app);
@@ -72,6 +72,8 @@ export default function User() {
   }, [title, text, ImageUpload, date, share]);
 
   useEffect(() => {
+    const postsImageUrlsRef = ref(storage, "Images/");
+
     listAll(postsImageUrlsRef).then((res) => {
       res.items.forEach((item) => {
         getDownloadURL(item).then((url) => {

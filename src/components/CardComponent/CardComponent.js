@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import {Container, TextField} from "@mui/material";
 import testimg from '../../imgs/turist.jpg'
 import {styled} from '@mui/material/styles';
@@ -36,13 +36,26 @@ const ExpandMore = styled((props) => {
     }),
 }));
 
-export default function RecipeReviewCard({value, postsImageUrls, index}) {
-    const [expanded, setExpanded] = React.useState(false);
+export default function RecipeReviewCard({post, postsImageUrls}) {
+    const [expanded, setExpanded] = useState(false);
+    const [postImgUrl, setPostImgUrl] = useState("");
     const styles = useStyles()
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
+
+    const getPostUrl = () => {
+        postsImageUrls.forEach((el) => {
+          if (el[1] == post.image) {
+            setPostImgUrl(el[0]);
+          }
+        });
+      };
+    
+      useEffect(() => {
+        getPostUrl();
+      }, [postsImageUrls]);
 
     return (
         <div className={styles.cardFrame}>
@@ -58,18 +71,18 @@ export default function RecipeReviewCard({value, postsImageUrls, index}) {
                             <MoreVertIcon/>
                         </IconButton>
                     }
-                    title={value.title}
-                    subheader={new Date(value.date.seconds).toString()}
+                    title={post.title}
+                    subheader={new Date(post.date.seconds).toString()}
                 />
                 <CardMedia
                     component="img"
                     height="194"
-                    image={postsImageUrls[index]}
+                    image={postImgUrl}
                     alt="Paella dish"
                 />
                 <CardContent>
                     <Typography variant="body2" color="text.secondary">
-                        {value.text}
+                        {post.text}
                     </Typography>
                 </CardContent>
                 <CardActions disableSpacing>

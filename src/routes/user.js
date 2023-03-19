@@ -33,9 +33,9 @@ export default function User() {
   const [date, setDate] = useState(Timestamp.fromDate(new Date()));
   const [share, setShare] = useState(false);
   const [posts, setPosts] = useState([]);
-  const [postsImageUrls, setPostsImageUrls] = useState([])
+  const [postsImageUrls, setPostsImageUrls] = useState([]);
 
-  const postsImageUrlsRef = ref(storage, "Images/")
+  const postsImageUrlsRef = ref(storage, "Images/");
 
   const postAsync = async () => {
     let loginResponse = getAuth(app);
@@ -73,22 +73,21 @@ export default function User() {
         image: ImageUpload.name,
         date,
         share,
-      })
-      .then((res) => {
+      }).then((res) => {
         uploadImage();
       });
     } catch (err) {}
   }, [title, text, ImageUpload, date, share]);
 
-  useEffect(() =>{
-    listAll(postsImageUrlsRef).then((res) =>{
-      res.items.forEach((item) =>{
-        getDownloadURL(item).then((url) =>{
-          setPostsImageUrls((prev) => [...prev, url])
-        })
-      })
-    })
-  },[])
+  useEffect(() => {
+    listAll(postsImageUrlsRef).then((res) => {
+      res.items.forEach((item) => {
+        getDownloadURL(item).then((url) => {
+          setPostsImageUrls((prev) => [...prev, url]);
+        });
+      });
+    });
+  }, []);
 
   const onLogout = () => {
     endSession();
@@ -124,10 +123,15 @@ export default function User() {
         Log out
       </Button>
       <div>
-        {posts.map((elem, index) => {
-          return <CardComponent key={elem.date.id} value={elem} postsImageUrls={postsImageUrls} index={index}/>;
+        {posts.map((post, index) => {
+          return (
+            <CardComponent
+              key={post.id}
+              post={post}
+              postsImageUrls={postsImageUrls}
+            />
+          );
         })}
-        
       </div>
     </>
   );

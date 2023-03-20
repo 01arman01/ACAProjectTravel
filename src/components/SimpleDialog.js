@@ -71,6 +71,7 @@ export default function SimpleDialog({
   };
 
   const onUpdateImage = async () => {
+
     const imageRef = await ref(storage, `Images/${ImageUpload.name}`);
     uploadBytes(imageRef, ImageUpload).then(() => alert("post sended"));
     // updateMetadata(imageRef, ImageUpload)

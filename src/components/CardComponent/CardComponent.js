@@ -107,7 +107,7 @@ export default function RecipeReviewCard({ post, postsImageUrls }) {
         setPostValue({ ...postValue, ...doc.data() });
       }
     });
-  }, [postValue]);
+  }, []);
 
   //Like effect
   useEffect(() => {

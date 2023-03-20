@@ -78,7 +78,7 @@ export default function User() {
     if (ImageUpload == null) return;
 
     const imageRef = ref(storage, `Images/${ImageUpload.name}`);
-    uploadBytes(imageRef, ImageUpload).then(() => alert("post sended"));
+    uploadBytes(imageRef, ImageUpload).then((res) => res);
   };
 
   //Send post to database

@@ -20,7 +20,7 @@ import {
   TextField,
 } from "@mui/material";
 import { Container } from "@mui/system";
-import { getStorage, updateMetadata,ref, uploadBytes } from "firebase/storage";
+import { getStorage, updateMetadata,ref, uploadBytes, deleteObject } from "firebase/storage";
 // import { ref } from "firebase/database";
 import { getAuth } from "firebase/auth";
 import { app, storage } from "../firebase";
@@ -64,22 +64,24 @@ export default function SimpleDialog({
       text,
       share
     });
-    // onUpdateImage();
+    onUpdateImage()
     hendleCloseUpdatePage();
   };
 
-  // const onUpdateImage=async()=>{
-  //   const imageRef =await ref(storage, `Images/${selectedValue.imageId}`);
-
-  //   updateMetadata(imageRef, imageUrl )
-  //     .then((metadata) => {
-  //       hendleCloseUpdatePage()
-  //       console.log(metadata)
-  //       // Updated metadata for 'images/forest.jpg' is returned in the Promise
-  //     }).catch((error) => {
-  //       // Uh-oh, an error occurred!
-  //     });
-  // }
+  const onUpdateImage=async()=>{
+    const desertRef = ref(storage, `Images/${selectedValue.imageId}`);
+    deleteObject(desertRef)
+      .then(() => {
+        console.log("delete");
+ 
+      })
+      .catch((error) => {
+        console.log("err" + error);
+      });
+      if (ImageUpload == null) return;
+      const imageRef = ref(storage, `Images/${selectedValue.imageId}`);
+      uploadBytes(imageRef, ImageUpload)
+  }
   return (
     <>
       <Dialog onClose={handleClose} open={open}>
@@ -103,12 +105,12 @@ export default function SimpleDialog({
             Subscribe
           </DialogTitle>
           <DialogContent>
-            {/* <img
-              src={postImgUrl}
+            <img
+              src={selectedValue.url}
               style={{ width: "100%" }}
               aria-hidden
               alt="Picture of me taking a photo of an image"
-            /> */}
+            />
           </DialogContent>
           <DialogActions>
             <Container maxWidth="xs" sx={{ mt: 2 }}>

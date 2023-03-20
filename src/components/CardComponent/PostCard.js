@@ -73,7 +73,8 @@ export default function PostCard({ post, load,page,imageLoadnig}) {
   useEffect(() => {
     onSnapshot(doc(db, "Posts", postValue.id), (doc) => {
       const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
-      if (source === "Local") {
+      // console.log(postValue)
+      if (!!postValue.url) {
         setPostValue({ ...postValue, ...doc.data() });
       }
     });
@@ -178,7 +179,8 @@ export default function PostCard({ post, load,page,imageLoadnig}) {
   //Update post
   const onUpdatePost = async (id, data) => {
     const PostRef = doc(db, "Posts", id);
-    await updateDoc(PostRef, data);
+    updateDoc(PostRef, data)
+    // onUpdateImage().then((elem)=>elem?:"")
   };
 
   return (

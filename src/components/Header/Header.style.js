@@ -3,11 +3,17 @@ import {createUseStyles} from "react-jss";
 
 
 const usStyle = createUseStyles({
+    container:{
+        position:"relative",
+        // marginBottom:'30px'
+    },
     classHeader:{
         position:"relative",
+        width:'100vw',
         padding:'0 2rem',
         background:'rgba(223,216,216,0.8)',
         backdropFilter:'blur(15px)',
+        // marginBottom:'100px',
     },
     navbar:{
        width:"100%",
@@ -71,6 +77,26 @@ const usStyle = createUseStyles({
             display:'none'
         }
     },
+    actionBtnLogout:{
+        padding:'0.5rem 1rem',
+        background:"rgb(218,6,6)",
+        color:'white',
+        border:'none',
+        outline:'none',
+        borderRadius:'20px',
+        fontSize:'0.8rem',
+        fontWeight:'bold',
+        cursor:'pointer',
+        transition:'scale 0.2 ease',
+        '&:hover':{
+            color:"white",
+            backgroundColor:'#5f0606',
+            // scale:'1.05'
+        },
+        '@media (max-width: 620px)': {
+            display:'none'
+        }
+    },
     dropdownMenu:{
         zIndex:4,
         position:'absolute',
@@ -112,6 +138,24 @@ const usStyle = createUseStyles({
         display:'flex',
         width:'100%',
         justifyContent:'center',
+    },
+    actionBtnLogoutClose:{
+        padding:'0.5rem 1rem',
+        background:"rgb(218,6,6)",
+        color:'white',
+        border:'none',
+        outline:'none',
+        borderRadius:'20px',
+        fontSize:'0.8rem',
+        fontWeight:'bold',
+        cursor:'pointer',
+        transition:'scale 0.2 ease',
+        '&:hover':{
+            color:"white",
+            backgroundColor:'#5f0606',
+            // scale:'1.05'
+        },
     }
 })
+
 export default  usStyle

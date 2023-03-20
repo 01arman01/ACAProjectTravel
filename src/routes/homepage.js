@@ -8,6 +8,7 @@ import { ref, uploadBytes, listAll, getDownloadURL} from "firebase/storage";
 import Header from "../components/Header/Header";
 import InfiniteScroll from "react-infinite-scroll-component";
 import CardComponent from "../components/CardComponent/CardComponent";
+import LogoutDialog from "../components/LogoutDialog";
 //Styles
 import { createUseStyles } from "react-jss";
 
@@ -29,6 +30,7 @@ export default function Homepage(props) {
   const [postsImageUrls, setPostsImageUrls] = useState([]);
   const [loading, setloading] = useState(false)
  const [scrollIndex,setScrollIndex] = useState(10)
+ const[headerBtnClickChange,setHeaderBtnClickChange] = useState(false)
 
   // Set posts data
   const onSetPosts = async () => {
@@ -66,6 +68,10 @@ export default function Homepage(props) {
       setScrollIndex(()=>scrollIndex + 8);
     }
   };
+  //login status
+  const onClickBtnStatusChange = ()=> {
+    setHeaderBtnClickChange(!headerBtnClickChange)
+}
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
@@ -74,6 +80,7 @@ export default function Homepage(props) {
 
   return (
     <>
+    <Header/>
       <InfiniteScroll dataLength={posts.length} hasMore={true}>
         <div className={styles.hompageMain}>
             {posts.filter(((post,index)=> index<=scrollIndex)).map((post)=>{

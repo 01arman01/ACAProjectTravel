@@ -11,12 +11,13 @@ import {
   Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { startSession } from "../storage/session";
+import {useEffect, useState} from "react";
+import {isLoggedIn, startSession} from "../storage/session";
 import { createUser, db } from "../firebase";
 import { doc, setDoc } from "firebase/firestore";
 
 import { useRegisterStyles } from "./register.styles";
+import {USER_PAGE} from "../RoutePath/RoutePath";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -33,6 +34,12 @@ export default function Register() {
   const [repeatPassword, setRepeatPassword] = useState("");
 
   // Add a new document in collection "cities"
+  useEffect(() => {
+    if (isLoggedIn()){
+      navigate(USER_PAGE);
+    }})
+
+
 
   const onSubmit = async (event) => {
     event.preventDefault();
@@ -60,15 +67,14 @@ export default function Register() {
         gender,
         image,
       });
-      navigate("/user");
+      navigate(USER_PAGE);
     } catch (error) {
       // console.error(error.message);
       setError(error.message);
     }
   };
 
-  return (
-    <div className={styles.wrapper}>
+  return ( !isLoggedIn() && <div className={styles.wrapper}>
       <img className={styles.bg_img} />
       <Container maxWidth="xs" sx={{ mt: 2 }} className={styles.container}>
         <Typography variant="h5" component="h1" gutterBottom textAlign="center">

@@ -21,6 +21,7 @@ import {
   updateDoc,
   onSnapshot,
 } from "firebase/firestore";
+import { child, get, getDatabase, onValue } from "firebase/database";
 import { getAuth } from "firebase/auth";
 //Session
 import { endSession, getSession, isLoggedIn } from "../storage/session";
@@ -30,6 +31,7 @@ import { Button, Checkbox, Container, TextField } from "@mui/material";
 import { useUserStyles } from "./user.styles";
 //Components
 import CardComponent from "../components/CardComponent/CardComponent";
+import { CardComponentContext } from "../contexts/context";
 import PostAdd from "../components/PostAdd/PostAdd";
 import Header from "../components/Header/Header";
 
@@ -125,6 +127,7 @@ export default function User() {
 
   return (
     <>
+      <Header />
       <PostAdd
         title={title}
         setTitle={setTitle}
@@ -135,7 +138,7 @@ export default function User() {
         share={share}
         setShare={setShare}
       />
-      <Button
+      {/* <Button
         variant="contained"
         color="error"
         onClick={onLogout}
@@ -143,7 +146,7 @@ export default function User() {
         fullWidth
       >
         Log out
-      </Button>
+      </Button> */}
       <div className={styles.cardsBlok}>
         {posts.map((post, index) => {
           return (

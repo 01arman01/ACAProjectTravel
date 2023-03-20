@@ -12,6 +12,7 @@ import User from "./routes/user";
 import ErrorPage from "./error-page";
 import Homepage from "./routes/homepage";
 import {USER_PAGE,H0ME_PAGE,LOGIN_PAGE,REGISTER_PAGE} from "./RoutePath/RoutePath";
+import Header from "./components/Header/Header";
 
 const router = createBrowserRouter([
   {
@@ -21,7 +22,7 @@ const router = createBrowserRouter([
   },
   {
     path:H0ME_PAGE,
-    element:<Homepage />
+    element:<><Header /> <Homepage /></>
   },
   {
     path: LOGIN_PAGE,
@@ -33,7 +34,7 @@ const router = createBrowserRouter([
   },
   {
     path: USER_PAGE,
-    element: <User />,
+    element: <><Header /> <User /></>,
   },
 ]);
 

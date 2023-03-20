@@ -33,8 +33,7 @@ export default function SimpleDialog({
   onDeletePost,
   onUpdatePost,
   open,
-  onClose,
-  postImgUrl
+  onClose
 }) {
   const [openUpdatePage, setOpenUpdatePage] = useState(false);
   const [title, setTitle] = useState(selectedValue.title);
@@ -52,7 +51,7 @@ export default function SimpleDialog({
     handleClose();
   };
   const hendleDelete = () => {
-    onDeletePost(postId, selectedValue.image);
+    onDeletePost(postId, selectedValue.imageId);
     handleClose();
   };
   const openUpdate = () => {
@@ -63,25 +62,24 @@ export default function SimpleDialog({
     onUpdatePost(postId, {
       title,
       text,
-      share,
-      image:ImageUpload.name
+      share
     });
-    onUpdateImage();
+    // onUpdateImage();
     hendleCloseUpdatePage();
   };
 
-  const onUpdateImage = async () => {
+  // const onUpdateImage=async()=>{
+  //   const imageRef =await ref(storage, `Images/${selectedValue.imageId}`);
 
-    const imageRef = await ref(storage, `Images/${ImageUpload.name}`);
-    uploadBytes(imageRef, ImageUpload).then(() => alert("post sended"));
-    // updateMetadata(imageRef, ImageUpload)
-    //   .then((metadata) => {
-    //     hendleCloseUpdatePage();
-    //   })
-    //   .catch((error) => {
-    //     console.log("err", error);
-    //   });
-  };
+  //   updateMetadata(imageRef, imageUrl )
+  //     .then((metadata) => {
+  //       hendleCloseUpdatePage()
+  //       console.log(metadata)
+  //       // Updated metadata for 'images/forest.jpg' is returned in the Promise
+  //     }).catch((error) => {
+  //       // Uh-oh, an error occurred!
+  //     });
+  // }
   return (
     <>
       <Dialog onClose={handleClose} open={open}>
@@ -105,12 +103,12 @@ export default function SimpleDialog({
             Subscribe
           </DialogTitle>
           <DialogContent>
-            <img
+            {/* <img
               src={postImgUrl}
               style={{ width: "100%" }}
               aria-hidden
               alt="Picture of me taking a photo of an image"
-            />
+            /> */}
           </DialogContent>
           <DialogActions>
             <Container maxWidth="xs" sx={{ mt: 2 }}>

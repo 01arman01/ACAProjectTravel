@@ -7,7 +7,7 @@ export default function PostAdd({
   text,
   setText,
   setImageUpload,
-  onSendPost,
+  onAddPost,
   share,
   setShare,
 }) {
@@ -57,7 +57,7 @@ export default function PostAdd({
 
         <Button
           variant="contained"
-          onClick={onSendPost}
+          onClick={onAddPost}
           type="submit"
           sx={{ mt: 3 }}
           fullWidth

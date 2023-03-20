@@ -7,10 +7,10 @@ import { ref, uploadBytes, listAll, getDownloadURL} from "firebase/storage";
 //Components
 import Header from "../components/Header/Header";
 import InfiniteScroll from "react-infinite-scroll-component";
-import CardComponent from "../components/CardComponent/CardComponent";
 import LogoutDialog from "../components/LogoutDialog";
 //Styles
 import { createUseStyles } from "react-jss";
+import PostCard from "../components/CardComponent/PostCard";
 
 const useStyles = createUseStyles({
   hompageMain: {
@@ -30,11 +30,10 @@ export default function Homepage(props) {
   const [postsImageUrls, setPostsImageUrls] = useState([]);
   const [loading, setloading] = useState(false)
  const [scrollIndex,setScrollIndex] = useState(10)
- const[headerBtnClickChange,setHeaderBtnClickChange] = useState(false)
 
   // Set posts data
   const onSetPosts = async () => {
-    const data = await getDocs(collection(db, "Post"))
+    const data = await getDocs(collection(db, "Posts"))
       .then((e) => {
         return e.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
       })
@@ -48,16 +47,16 @@ export default function Homepage(props) {
   }, []);
 
   //Get all storage images in the same array
-  useEffect(() => {
-    const postsImageUrlsRef = ref(storage, "Images/");
-    listAll(postsImageUrlsRef).then((res) => {
-      res.items.forEach((item) => {
-        getDownloadURL(item).then((url) => {
-          setPostsImageUrls((prev) => [...prev, [url, item.name]]);
-        });
-      });
-    });
-  }, []);
+  // useEffect(() => {
+  //   const postsImageUrlsRef = ref(storage, "Images/");
+  //   listAll(postsImageUrlsRef).then((res) => {
+  //     res.items.forEach((item) => {
+  //       getDownloadURL(item).then((url) => {
+  //         setPostsImageUrls((prev) => [...prev, [url, item.name]]);
+  //       });
+  //     });
+  //   });
+  // }, []);
 
   //Scrolling function
   const handleScroll = () => {
@@ -68,10 +67,6 @@ export default function Homepage(props) {
       setScrollIndex(()=>scrollIndex + 8);
     }
   };
-  //login status
-  const onClickBtnStatusChange = ()=> {
-    setHeaderBtnClickChange(!headerBtnClickChange)
-}
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
@@ -80,11 +75,10 @@ export default function Homepage(props) {
 
   return (
     <>
-    <Header/>
       <InfiniteScroll dataLength={posts.length} hasMore={true}>
         <div className={styles.hompageMain}>
             {posts.filter(((post,index)=> index<=scrollIndex)).map((post)=>{
-              return <CardComponent key={post.id} post={post} postsImageUrls={postsImageUrls}/>
+              return <PostCard key={post.id} post={post} postsImageUrls={postsImageUrls}/>
             })}
         </div>
       </InfiniteScroll>

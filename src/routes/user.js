@@ -29,11 +29,13 @@ import { endSession, getSession, isLoggedIn } from "../storage/session";
 import { Button, Checkbox, Container, TextField } from "@mui/material";
 //Styles
 import { useUserStyles } from "./user.styles";
+//Uuid
+import { v4 } from "uuid";
 //Components
-import CardComponent from "../components/CardComponent/CardComponent";
-import { CardComponentContext } from "../contexts/context";
+import CircularIndeterminate from "../components/CircularIndeterminate";
 import PostAdd from "../components/PostAdd/PostAdd";
 import Header from "../components/Header/Header";
+import PostCard from "../components/CardComponent/PostCard";
 
 export default function User() {
   //navigate
@@ -50,65 +52,82 @@ export default function User() {
   const [date, setDate] = useState(Timestamp.fromDate(new Date()));
   const [share, setShare] = useState(false);
   const [posts, setPosts] = useState([]);
-  const [postsImageUrls, setPostsImageUrls] = useState([]);
+  // const [postsImageUrls, setPostsImageUrls] = useState([]);
+
+  const [imageId, setImageId] = useState(v4);
+  const [loading, setloading] = useState(false);
+  const [imageLoadnig, setImageLoadnig] = useState(false);
 
   //Auth
   const auth = getAuth(app);
   const userId = auth.lastNotifiedUid;
 
   //Set posts data
-  const onSetPosts = async () => {
-    const data = await getDocs(collection(db, "Post"))
-      .then((e) => {
-        return e.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-      })
-      .then((res) =>
-        res.filter((elem) => elem.userId === auth.lastNotifiedUid)
-      );
-
-    setPosts(data);
-  };
-
   useEffect(() => {
-    onSetPosts();
-  }, []);
+    onSnapshot(collection(db, "Posts"), (data) => {
+      const newData = data.docs
+        .map((doc) => ({ ...doc.data(), id: doc.id }))
+        .filter((elem) => elem.userId === userId);
+      newData.forEach((elm, index) => {
+        const starsRef = ref(storage, `Images/${elm.imageId}`);
+        getDownloadURL(starsRef)
+          .then((url) => {
+            elm["url"] = url;
+          })
+          .then((elem) => {
+            if (index + 1 === newData.length) {
+              setloading(true);
+            }
+          })
+          .then(() => {
+            setImageLoadnig(false);
+          });
+      });
+      setPosts(newData);
+    });
+  }, [userId, storage]);
 
   //Upload and send image to storage
-  const uploadImage = () => {
+  const onUploadImage = () => {
     if (ImageUpload == null) return;
+    const imageRef = ref(storage, `Images/${imageId}`);
+    uploadBytes(imageRef, ImageUpload).then((res) => {
+      onSendPost();
+      setImageId(v4);
+    });
+  };
 
-    const imageRef = ref(storage, `Images/${ImageUpload.name}`);
-    uploadBytes(imageRef, ImageUpload).then((res) => res);
+  const onAddPost = () => {
+    setImageLoadnig(true);
+    onUploadImage();
   };
 
   //Send post to database
   const onSendPost = useCallback(async () => {
     try {
-      await addDoc(collection(db, "Post"), {
+      await addDoc(collection(db, "Posts"), {
         userId: userId,
         title,
         text,
-        image: ImageUpload.name,
+        imageId: imageId,
         date,
         share,
-      }).then((res) => {
-        uploadImage();
-      });
+      }).then((res) => {});
     } catch (err) {}
   }, [title, text, ImageUpload, date, share]);
 
   //Get all storage images in the same array
-  useEffect(() => {
-    const postsImageUrlsRef = ref(storage, "Images/");
+  // useEffect(() => {
+  //   const postsImageUrlsRef = ref(storage, "Images/");
 
-    listAll(postsImageUrlsRef).then((res) => {
-      res.items.forEach((item) => {
-        getDownloadURL(item).then((url) => {
-          setPostsImageUrls((prev) => [...prev, [url, item.name]]);
-        });
-      });
-    });
-  }, []);
+  //   listAll(postsImageUrlsRef).then((res) => {
+  //     res.items.forEach((item) => {
+  //       getDownloadURL(item).then((url) => {
+  //         setPostsImageUrls((prev) => [...prev, [url, item.name]]);
+  //       });
+  //     });
+  //   });
+  // }, []);
 
   //Login status
   useEffect(() => {
@@ -126,38 +145,37 @@ export default function User() {
   };
 
   return (
-    <>
-      <Header />
+    <div style={{ display: "flex", justifyContent: "space-between" }}>
+      {imageLoadnig && <CircularIndeterminate />}
       <PostAdd
         title={title}
         setTitle={setTitle}
         text={text}
         setText={setText}
-        onSendPost={onSendPost}
+        onAddPost={onAddPost}
         setImageUpload={setImageUpload}
         share={share}
         setShare={setShare}
       />
-      {/* <Button
-        variant="contained"
-        color="error"
-        onClick={onLogout}
-        sx={{ mt: 3 }}
-        fullWidth
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "space-around",
+          alignItems: "flex-end",
+          flexDirection: "column",
+          alignContent: " space-around",
+          width: "72%",
+        }}
       >
-        Log out
-      </Button> */}
-      <div className={styles.cardsBlok}>
-        {posts.map((post, index) => {
-          return (
-            <CardComponent
-              key={post.id}
-              post={post}
-              postsImageUrls={postsImageUrls}
-            />
-          );
-        })}
+        {posts.length !== 0 &&
+          posts.map((post) => {
+            // const as = imageUrl(post.id)
+            // console.log(posts,"post")
+            return <PostCard key={post.id} post={post} load={loading} />;
+            // return <CardComponent key={elem.id} value={elem} like={like} load={loading} del={deletePost} updatePost={updatePost} />
+          })}
       </div>
-    </>
+    </div>
   );
 }

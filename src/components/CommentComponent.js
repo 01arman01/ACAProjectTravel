@@ -44,7 +44,7 @@ export default function CopmentComponent({ selectedValue }) {
                 <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
               </ListItemAvatar>
               <ListItemText
-                primary={user.name}
+                primary={user?user.name:""}
                 secondary={
                   <React.Fragment>
                     <Typography

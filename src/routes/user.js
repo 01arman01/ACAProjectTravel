@@ -32,7 +32,6 @@ import { useUserStyles } from "./user.styles";
 //Uuid
 import { v4 } from "uuid";
 //Components
-import CircularIndeterminate from "../components/CircularIndeterminate";
 import PostAdd from "../components/PostAdd/PostAdd";
 import Header from "../components/Header/Header";
 import PostCard from "../components/CardComponent/PostCard";
@@ -85,7 +84,7 @@ export default function User() {
       });
       setPosts(newData);
     });
-  }, [userId, storage]);
+  }, [userId]);
 
   //Upload and send image to storage
   const onUploadImage = () => {
@@ -146,7 +145,7 @@ export default function User() {
 
   return (
     <div style={{ display: "flex", justifyContent: "space-between" }}>
-      {imageLoadnig && <CircularIndeterminate />}
+     
       <PostAdd
         title={title}
         setTitle={setTitle}
@@ -172,7 +171,7 @@ export default function User() {
           posts.map((post) => {
             // const as = imageUrl(post.id)
             // console.log(posts,"post")
-            return <PostCard key={post.id} post={post} load={loading} />;
+            return <PostCard key={post.id} post={post} load={loading} page={"user"} imageLoadnig={imageLoadnig} />;
             // return <CardComponent key={elem.id} value={elem} like={like} load={loading} del={deletePost} updatePost={updatePost} />
           })}
       </div>

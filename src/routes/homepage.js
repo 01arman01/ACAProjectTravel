@@ -1,7 +1,7 @@
 //React
 import { useCallback, useEffect, useState } from "react";
 //Firebase
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, onSnapshot } from "firebase/firestore";
 import { app, db, storage } from "../firebase";
 import { ref, uploadBytes, listAll, getDownloadURL} from "firebase/storage";
 //Components
@@ -32,18 +32,35 @@ export default function Homepage(props) {
  const [scrollIndex,setScrollIndex] = useState(10)
 
   // Set posts data
-  const onSetPosts = async () => {
-    const data = await getDocs(collection(db, "Posts"))
-      .then((e) => {
-        return e.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-      })
-      .then((res) => res.filter((elem) => elem.share === true));
+  // const onSetPosts = async () => {
+  //   const data = await getDocs(collection(db, "Posts"))
+  //     .then((e) => {
+  //       return e.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+  //     })
+  //     .then((res) => res.filter((elem) => elem.share === true));
 
-    setPosts(data);
-  };
+  //   setPosts(data);
+  // };
 
   useEffect(() => {
-    onSetPosts();
+    onSnapshot(collection(db, "Posts"), (data) => {
+      const newData = data.docs
+        .map((doc) => ({ ...doc.data(), id: doc.id }))
+        .filter((elem) => elem.share === true);
+      newData.forEach((elm, index) => {
+        const starsRef = ref(storage, `Images/${elm.imageId}`);
+        getDownloadURL(starsRef)
+          .then((url) => {
+            elm["url"] = url;
+          })
+          .then((elem) => {
+            if (index + 1 === newData.length) {
+              setloading(true);
+            }
+          })
+      });
+      setPosts(newData);
+    });
   }, []);
 
   //Get all storage images in the same array
@@ -78,7 +95,7 @@ export default function Homepage(props) {
       <InfiniteScroll dataLength={posts.length} hasMore={true}>
         <div className={styles.hompageMain}>
             {posts.filter(((post,index)=> index<=scrollIndex)).map((post)=>{
-              return <PostCard key={post.id} post={post} postsImageUrls={postsImageUrls}/>
+              return <PostCard key={post.id} post={post} page={"homePage"}/>
             })}
         </div>
       </InfiniteScroll>

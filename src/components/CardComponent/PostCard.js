@@ -44,8 +44,9 @@ import { Button } from "@mui/joy";
 import CommentDialog from "../CommentDialog";
 import { deleteObject, ref } from "@firebase/storage";
 import { storage } from "../../firebase";
+import CircularIndeterminate from "../CircularIndeterminate";
 
-export default function PostCard({ post, load }) {
+export default function PostCard({ post, load,page,imageLoadnig}) {
   const [expanded, setExpanded] = React.useState(false);
   const [imagUrl, setImageUrl] = React.useState(
     "https://media.sproutsocial.com/uploads/2017/01/Instagram-Post-Ideas.png"
@@ -65,7 +66,6 @@ export default function PostCard({ post, load }) {
   const [comment, setComment] = React.useState("");
   const [lastComment, setLastComment] = React.useState([]);
   const [openCommentPag, setOpenCommentPage] = React.useState(false);
-
   //Auth
   const auth = getAuth(app);
   const userId = auth.lastNotifiedUid;
@@ -216,7 +216,7 @@ export default function PostCard({ post, load }) {
           />
         </Box>
         <Typography fontWeight="lg">{postValue.title}</Typography>
-        <IconButton
+        {page === "user" &&  <IconButton
           variant="plain"
           color="neutral"
           size="sm"
@@ -231,11 +231,13 @@ export default function PostCard({ post, load }) {
             open={open}
             onClose={handleClose}
           />
-        </IconButton>
+        </IconButton>}
+        
       </Box>
       <CardOverflow>
         <AspectRatio>
-          <img src={postValue.url} alt="" loading="lazy" />
+        {imageLoadnig ?<CircularIndeterminate />: <img src={postValue.url} alt="" loading="lazy" />}
+         
           {/* <img src={postValue.url} alt="" loading="lazy" /> */}
         </AspectRatio>
       </CardOverflow>
@@ -260,7 +262,7 @@ export default function PostCard({ post, load }) {
             />
             {/* openCommentPag */}
           </IconButton>
-          <IconButton variant="plain" color="neutral" size="sm">
+          {page === "user" && <IconButton variant="plain" color="neutral" size="sm">
             <SendOutlined onClick={handleClickOpenShare} />
             <Share
               postId={postValue.id}
@@ -268,7 +270,8 @@ export default function PostCard({ post, load }) {
               shareOpen={openShare}
               onShareClose={handleClickCloseShare}
             />
-          </IconButton>
+          </IconButton> }
+          
         </Box>
         <Box
           sx={{ display: "flex", alignItems: "center", gap: 0.5, mx: "auto" }}

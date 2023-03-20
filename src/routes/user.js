@@ -3,13 +3,29 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 //firebase
 import { app, db, storage } from "../firebase";
-import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
-import { addDoc, collection, getDocs, Timestamp } from "firebase/firestore";
+import {
+  ref,
+  uploadBytes,
+  listAll,
+  getDownloadURL,
+  getStorage,
+  deleteObject,
+} from "firebase/storage";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  Timestamp,
+  deleteDoc,
+  doc,
+  updateDoc,
+  onSnapshot,
+} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 //Session
 import { endSession, getSession, isLoggedIn } from "../storage/session";
 //Mui
-import { Button } from "@mui/material";
+import { Button, Checkbox, Container, TextField } from "@mui/material";
 //Styles
 import { useUserStyles } from "./user.styles";
 //Components
@@ -39,7 +55,7 @@ export default function User() {
   const userId = auth.lastNotifiedUid;
 
   //Set posts data
-  const SetData = async () => {
+  const onSetPosts = async () => {
     const data = await getDocs(collection(db, "Post"))
       .then((e) => {
         return e.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
@@ -52,12 +68,12 @@ export default function User() {
   };
 
   useEffect(() => {
-    SetData();
+    onSetPosts();
   }, []);
 
   //Upload and send image to storage
   const uploadImage = () => {
-    if (uploadImage == null) return;
+    if (ImageUpload == null) return;
 
     const imageRef = ref(storage, `Images/${ImageUpload.name}`);
     uploadBytes(imageRef, ImageUpload).then(() => alert("post sended"));
@@ -92,11 +108,11 @@ export default function User() {
     });
   }, []);
 
+  //Login status
   useEffect(() => {
     if (!isLoggedIn()) {
       navigate("/login");
     }
-
     let session = getSession();
     setEmail(session.email);
   }, [navigate]);
@@ -109,7 +125,6 @@ export default function User() {
 
   return (
     <>
-      <Header /> 
       <PostAdd
         title={title}
         setTitle={setTitle}
@@ -136,7 +151,6 @@ export default function User() {
               key={post.id}
               post={post}
               postsImageUrls={postsImageUrls}
-              auth={auth}
             />
           );
         })}

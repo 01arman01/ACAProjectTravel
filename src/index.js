@@ -1,8 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
 import {
   createBrowserRouter,
   Navigate,
@@ -13,6 +11,7 @@ import Register from "./routes/register";
 import User from "./routes/user";
 import ErrorPage from "./error-page";
 import Homepage from "./routes/homepage";
+import Header from "./components/Header/Header";
 
 const router = createBrowserRouter([
   {
@@ -22,7 +21,8 @@ const router = createBrowserRouter([
   },
   {
     path:"/homepage",
-    element:<Homepage />
+   
+    element:<><Header/><Homepage /></>
   },
   {
     path: "/login",
@@ -34,7 +34,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/user",
-    element: <User />,
+    element:<><Header/> <User /></>,
   },
 ]);
 

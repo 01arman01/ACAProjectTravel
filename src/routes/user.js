@@ -23,6 +23,7 @@ import {
 import CardComponent from "../components/CardComponent/CardComponent";
 import CircularIndeterminate from "../components/CircularIndeterminate";
 import { onSnapshot } from "firebase/firestore";
+import PostCard from "../components/CardComponent/PostCard";
 
 
 
@@ -129,9 +130,10 @@ console.log(res,"hellllooo")      }).then();
 
 
   return (
-    <>
+    <div style={{display: "flex",
+      justifyContent: "space-between"}}>
     {imageLoadnig && <CircularIndeterminate/>}
-    <Container maxWidth="xs" sx={{ mt: 2 }}>
+    <Container maxWidth="sm" sx={{ mt: 0 ,width:"40%"}}>
       <TextField
         label="Title"
         variant="outlined"
@@ -172,14 +174,20 @@ console.log(res,"hellllooo")      }).then();
       </Button>
     </Container>
    
-     <div style={{display: "flex",flexWrap: "wrap"}} >   
+     <div style={{display: "flex",flexWrap: "wrap",justifyContent: "space-around",
+    alignItems: "flex-end",
+    flexDirection: "column",
+    alignContent:" space-around",
+    width: "72%",
+    }} >   
      {posts.map((elem)=>{
       // const as = imageUrl(elem.id)
       // console.log(posts,"post")
-      return <CardComponent key={elem.id} value={elem} like={like} load={loading} del={deletePost} updatePost={updatePost} />
+     return <PostCard key={elem.id} value={elem} like={like} load={loading} del={deletePost} updatePost={updatePost}/>
+      // return <CardComponent key={elem.id} value={elem} like={like} load={loading} del={deletePost} updatePost={updatePost} />
      })}
   
   </div>
-  </>
+  </div>
   );
 }

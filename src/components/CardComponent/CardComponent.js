@@ -17,10 +17,13 @@ import { collection, doc, onSnapshot } from 'firebase/firestore';
 import { app, db } from '../../firebase';
 import Share from '../Share';
 import { getAuth } from 'firebase/auth';
+import { CardOverflow, Link } from '@mui/joy';
+import { Face } from '@mui/icons-material';
+import { Input } from '@mui/material';
 
 const useStyles = createUseStyles({
     cardFrame:{
-        margin:"14px"
+        margin:"100px"
 
     }
 })
@@ -49,13 +52,11 @@ export default function RecipeReviewCard({value,load,del,updatePost,like}) {
 
   useEffect(()=>{
     onSnapshot(collection(db, "Like"), (data) => {
-        const data_1 = data.docs.filter((doc)=>doc.data().postId===postValue.id)
         const da =data.docs.map((doc)=>({...doc.data()})).filter((doc)=>doc.postId === postValue.id)
         const as = da.find(elem => elem.userId === loginResponse.lastNotifiedUid)
         console.log(as,'ddddd')
         setLikeValue(da)
         setLik(!!as)
-       console.log(data_1,"ssssssssssss")
        console.log(da,"val")
       });
   },[])
@@ -96,8 +97,8 @@ export default function RecipeReviewCard({value,load,del,updatePost,like}) {
             
       }
     return (
-        <div className={styles.cardFrame}>
-            <Card sx={{maxWidth: 290}}>
+        // <div className={styles.cardFrame}>
+            <Card sx={{maxWidth: 500 ,width:"50%"}}>
                 <CardHeader
                     avatar={
                         <Avatar sx={{bgcolor: red[500]}} aria-label="recipe">
@@ -143,15 +144,18 @@ export default function RecipeReviewCard({value,load,del,updatePost,like}) {
                         <FavoriteIcon 
                             onClick={hendleLike}
                                 />
-                        {likeValue.length}
+                        
                     </IconButton>
+                    {likeValue.length}
                     <IconButton aria-label="share">
                         <ShareIcon onClick={handleClickOpenShar}/>
                         <Share  id={postValue.id} updatePost={updatePost} open={openShare} onClose={handleClickCloseShar}/>
                     </IconButton>
+                     
                 </CardActions>
+                
             </Card>
-        </div>
+        // </div>
 
     );
 }

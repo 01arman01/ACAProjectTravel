@@ -113,20 +113,7 @@ export default function User() {
         share,
       }).then((res) => {});
     } catch (err) {}
-  }, [title, text, ImageUpload, date, share]);
-
-  //Get all storage images in the same array
-  // useEffect(() => {
-  //   const postsImageUrlsRef = ref(storage, "Images/");
-
-  //   listAll(postsImageUrlsRef).then((res) => {
-  //     res.items.forEach((item) => {
-  //       getDownloadURL(item).then((url) => {
-  //         setPostsImageUrls((prev) => [...prev, [url, item.name]]);
-  //       });
-  //     });
-  //   });
-  // }, []);
+  }, [title, text, date, share, imageId, userId]);
 
   //Login status
   useEffect(() => {
@@ -145,7 +132,6 @@ export default function User() {
 
   return (
     <div style={{ display: "flex", justifyContent: "space-between" }}>
-     
       <PostAdd
         title={title}
         setTitle={setTitle}
@@ -171,7 +157,15 @@ export default function User() {
           posts.map((post) => {
             // const as = imageUrl(post.id)
             // console.log(posts,"post")
-            return <PostCard key={post.id} post={post} load={loading} page={"user"} imageLoadnig={imageLoadnig} />;
+            return (
+              <PostCard
+                key={post.id}
+                post={post}
+                load={loading}
+                page={"user"}
+                imageLoadnig={imageLoadnig}
+              />
+            );
             // return <CardComponent key={elem.id} value={elem} like={like} load={loading} del={deletePost} updatePost={updatePost} />
           })}
       </div>

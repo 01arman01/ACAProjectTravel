@@ -35,7 +35,7 @@ export default function CopmentComponent({ selectedValue }) {
     <List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
       {comments.map((element) => {
         // console.log(users,"users")
-        const user = users.find((ele) => ele.id === element.userId);
+        const user = users.find((el) => el.id === element.userId);
         // console.log(user,"Us")
         return (
           <>

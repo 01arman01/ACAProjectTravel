@@ -247,7 +247,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
             sx={{ p: 0.5, border: "2px solid", borderColor: "background.body" }}
           />
         </Box>
-        <Typography fontWeight="lg">{user.name}</Typography>
+        <Typography fontWeight="lg">{user}</Typography>
         {page === "user" && (
           <IconButton
             variant="plain"

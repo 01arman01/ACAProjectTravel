@@ -33,6 +33,7 @@ import {
   addDoc,
   collection,
   deleteDoc,
+  deleteField,
   doc,
   onSnapshot,
   updateDoc,
@@ -52,6 +53,8 @@ export default function PostCard({ post, load,page,imageLoadnig}) {
   const [imagUrl, setImageUrl] = useState(
     "https://media.sproutsocial.com/uploads/2017/01/Instagram-Post-Ideas.png"
   );
+  const auth = getAuth(app);
+  const userId = auth.lastNotifiedUid
   const styles = usePostCardStyles()
   const [loading, setLoading] = useState(load);
 
@@ -68,8 +71,8 @@ export default function PostCard({ post, load,page,imageLoadnig}) {
   const [lastComment, setLastComment] = useState([]);
   const [openCommentPag, setOpenCommentPage] = useState(false);
   //Auth
-  const auth = getAuth(app);
-  const userId = auth.lastNotifiedUid;
+
+
 
   useEffect(() => {
     onSnapshot(doc(db, "Posts", postValue.id), (doc) => {
@@ -86,8 +89,9 @@ export default function PostCard({ post, load,page,imageLoadnig}) {
       const da = data.docs
         .map((doc) => ({ ...doc.data() }))
         .filter((doc) => doc.postId === postValue.id);
-      const as = da.find((elem) => elem.userId === userId);
+      const as = da.find((elem) => elem.userId === auth.lastNotifiedUid);
       setLikeValue(da);
+      console.log(as)
       setLike(!!as);
     });
   }, []);
@@ -104,7 +108,7 @@ export default function PostCard({ post, load,page,imageLoadnig}) {
   const onAddComment = useCallback(async (commentText) => {
     try {
       await addDoc(collection(db, "Comments"), {
-        userId: userId,
+        userId: auth.lastNotifiedUid,
         postId: postValue.id,
         comment: commentText,
       });
@@ -137,6 +141,7 @@ export default function PostCard({ post, load,page,imageLoadnig}) {
 
   const hendleLike = () => {
     if (!like) {
+      console.log(like,postValue.id)
       onLike(postValue.id);
     }
   };
@@ -157,16 +162,31 @@ export default function PostCard({ post, load,page,imageLoadnig}) {
       try {
         await addDoc(collection(db, "Likes"), {
           postId: id,
-          userId: userId,
+          userId: auth.lastNotifiedUid,
         }).then((res) => res);
-      } catch (err) {}
+      } catch (err) {
+        console.log(err,"like",id,
+     userId,)
+      }
     },
-    [userId]
+    []
   );
 
   //delete posts function
   const onDeletePost = async (id, image_id) => {
     await deleteDoc(doc(db, "Posts", id));
+    onSnapshot(collection(db, "Likes"), (data) => {
+      const da = data.docs.filter((doc) => doc.data().postId === postValue.id);
+      da.forEach((elem)=>{
+        deleteDoc(doc(db, "Likes", elem.id))
+      })
+    })
+    onSnapshot(collection(db, "Comments"), (data) => {
+      const da = data.docs.filter((doc) => doc.data().postId === postValue.id);
+      da.forEach((elem)=>{
+        deleteDoc(doc(db, "Comments", elem.id))
+      })
+    })
     const desertRef = ref(storage, `Images/${image_id}`);
     deleteObject(desertRef)
       .then(() => {

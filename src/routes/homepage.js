@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 //Firebase
 import { collection, getDocs, onSnapshot } from "firebase/firestore";
 import { app, db, storage } from "../firebase";
-import { ref, uploadBytes, listAll, getDownloadURL} from "firebase/storage";
+import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
 //Components
 import Header from "../components/Header/Header";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -11,6 +11,7 @@ import LogoutDialog from "../components/LogoutDialog";
 //Styles
 import { createUseStyles } from "react-jss";
 import PostCard from "../components/CardComponent/PostCard";
+import Main from "../components/Main/Main";
 
 const useStyles = createUseStyles({
   hompageMain: {
@@ -28,8 +29,8 @@ export default function Homepage(props) {
   //states
   const [posts, setPosts] = useState([]);
   const [postsImageUrls, setPostsImageUrls] = useState([]);
-  const [loading, setloading] = useState(false)
- const [scrollIndex,setScrollIndex] = useState(10)
+  const [loading, setloading] = useState(false);
+  const [scrollIndex, setScrollIndex] = useState(10);
 
   // Set posts data
   // const onSetPosts = async () => {
@@ -57,7 +58,7 @@ export default function Homepage(props) {
             if (index + 1 === newData.length) {
               setloading(true);
             }
-          })
+          });
       });
       setPosts(newData);
     });
@@ -81,21 +82,24 @@ export default function Homepage(props) {
       window.innerHeight + document.documentElement.scrollTop ===
       document.documentElement.offsetHeight
     ) {
-      setScrollIndex(()=>scrollIndex + 8);
+      setScrollIndex(() => scrollIndex + 8);
     }
   };
 
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  },[]);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <>
-      <InfiniteScroll dataLength={posts.length} hasMore={true}>
+      <Main />
+      <InfiniteScroll dataLength={posts.length} hasMore={true} style={{overflowX:"hidden"}}>
         <div className={styles.hompageMain}>
-            {posts.filter(((post,index)=> index<=scrollIndex)).map((post)=>{
-              return <PostCard key={post.id} post={post} page={"homePage"}/>
+          {posts
+            .filter((post, index) => index <= scrollIndex)
+            .map((post) => {
+              return <PostCard key={post.id} post={post} page={"homePage"} />;
             })}
         </div>
       </InfiniteScroll>

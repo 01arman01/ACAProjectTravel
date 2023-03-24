@@ -19,7 +19,6 @@ function Header(props) {
   const refresh = () => window.location.reload(true);
 
   const location = useLocation();
-  console.log(location);
 
   let navigate = useNavigate();
   const onLogout = () => {
@@ -54,11 +53,13 @@ function Header(props) {
                 </li>
                 <li>
                   <Link to="/" className={styles.navLink}>
+
                   People
                   </Link>
                 </li>
                 <li>
                   <Link to="/" className={styles.navLink}>
+
                     About
                   </Link>
                 </li>

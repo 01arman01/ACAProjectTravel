@@ -57,10 +57,28 @@ export default function User() {
   const [imageId, setImageId] = useState(v4);
   const [loading, setloading] = useState(false);
   const [imageLoadnig, setImageLoadnig] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [user, setUser] = useState(null);
 
   //Auth
   const auth = getAuth(app);
   const userId = auth.lastNotifiedUid;
+
+  useEffect(() => {
+    onSnapshot(collection(db, "User"), (data) => {
+      const user = data.docs
+        .map((doc) => ({ ...doc.data(), id: doc.id }))
+        .find((el) => el.id === userId);
+      // const user = usersData.find((el) => el.id === userId);
+      setUser(user);
+      // setUsers(usersData);
+    });
+  }, [userId]);
+
+  // useEffect(() => {
+  //   const user = users.find((el) => el.id === userId);
+  //   setUser(user);
+  // }, [users]);
 
   //Set posts data
   useEffect(() => {
@@ -132,6 +150,7 @@ export default function User() {
   };
 
   return (
+
   isLoggedIn() && <div style={{display: "flex", justifyContent: "space-between"}}>
 
 
@@ -151,12 +170,9 @@ export default function User() {
 
         style={{
           display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "space-around",
-          alignItems: "flex-end",
-          flexDirection: "column",
-          alignContent: " space-around",
-          width: "72%",
+          justifyContent: "space-between",
+          position: "absolute",
+          top: "50px",
         }}
     >
       {posts.length !== 0 &&

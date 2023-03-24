@@ -48,14 +48,17 @@ import { storage } from "../../firebase";
 import CircularIndeterminate from "../CircularIndeterminate";
 import { usePostCardStyles } from "./PostCard.styles";
 
-export default function PostCard({ post, load,page,imageLoadnig}) {
+export default function PostCard({ post, load, page, imageLoadnig, user }) {
+
   const [expanded, setExpanded] = useState(false);
   const [imagUrl, setImageUrl] = useState(
     "https://media.sproutsocial.com/uploads/2017/01/Instagram-Post-Ideas.png"
   );
+
   const auth = getAuth(app);
   const userId = auth.lastNotifiedUid
   const styles = usePostCardStyles()
+
   const [loading, setLoading] = useState(load);
 
   //states
@@ -71,6 +74,12 @@ export default function PostCard({ post, load,page,imageLoadnig}) {
   const [lastComment, setLastComment] = useState([]);
   const [openCommentPag, setOpenCommentPage] = useState(false);
   //Auth
+
+
+
+  // console.log(user)
+
+  
 
 
 
@@ -200,7 +209,7 @@ export default function PostCard({ post, load,page,imageLoadnig}) {
   //Update post
   const onUpdatePost = async (id, data) => {
     const PostRef = doc(db, "Posts", id);
-    updateDoc(PostRef, data)
+    updateDoc(PostRef, data);
     // onUpdateImage().then((elem)=>elem?:"")
   };
 
@@ -238,31 +247,37 @@ export default function PostCard({ post, load,page,imageLoadnig}) {
             sx={{ p: 0.5, border: "2px solid", borderColor: "background.body" }}
           />
         </Box>
-        <Typography fontWeight="lg">{postValue.title}</Typography>
-        {page === "user" &&  <IconButton
-          variant="plain"
-          color="neutral"
-          size="sm"
-          sx={{ ml: "auto" }}
-        >
-          <MoreHoriz onClick={handleClickOpen} />
-          <SimpleDialog
-            selectedValue={postValue}
-            postId={postValue.id}
-            onDeletePost={onDeletePost}
-            onUpdatePost={onUpdatePost}
-            open={open}
-            onClose={handleClose}
-          />
-        </IconButton>}
-        
+        <Typography fontWeight="lg">{user.name}</Typography>
+        {page === "user" && (
+          <IconButton
+            variant="plain"
+            color="neutral"
+            size="sm"
+            sx={{ ml: "auto" }}
+          >
+            <MoreHoriz onClick={handleClickOpen} />
+            <SimpleDialog
+              selectedValue={postValue}
+              postId={postValue.id}
+              onDeletePost={onDeletePost}
+              onUpdatePost={onUpdatePost}
+              open={open}
+              onClose={handleClose}
+            />
+          </IconButton>
+        )}
       </Box>
+
       <div style={{textAlign:"left"}} >{postValue.title}</div>
 
       <CardOverflow>
         <AspectRatio>
-        {imageLoadnig ?<CircularIndeterminate />: <img src={postValue.url} alt="" loading="lazy" />}
-         
+          {imageLoadnig ? (
+            <CircularIndeterminate />
+          ) : (
+            <img src={postValue.url} alt="" loading="lazy" />
+          )}
+
           {/* <img src={postValue.url} alt="" loading="lazy" /> */}
         </AspectRatio>
       </CardOverflow>
@@ -287,16 +302,17 @@ export default function PostCard({ post, load,page,imageLoadnig}) {
             />
             {/* openCommentPag */}
           </IconButton>
-          {page === "user" && <IconButton variant="plain" color="neutral" size="sm">
-            <SendOutlined onClick={handleClickOpenShare} />
-            <Share
-              postId={postValue.id}
-              onUpdatePost={onUpdatePost}
-              shareOpen={openShare}
-              onShareClose={handleClickCloseShare}
-            />
-          </IconButton> }
-          
+          {page === "user" && (
+            <IconButton variant="plain" color="neutral" size="sm">
+              <SendOutlined onClick={handleClickOpenShare} />
+              <Share
+                postId={postValue.id}
+                onUpdatePost={onUpdatePost}
+                shareOpen={openShare}
+                onShareClose={handleClickCloseShare}
+              />
+            </IconButton>
+          )}
         </Box>
         <Box
           sx={{ display: "flex", alignItems: "center", gap: 0.5, mx: "auto" }}
@@ -337,7 +353,7 @@ export default function PostCard({ post, load,page,imageLoadnig}) {
         >
           {postValue.title}
         </Link>{" "}
-        {openFullText ? postValue.text : postValue.text.slice(0, 15)} 
+        {openFullText ? postValue.text : postValue.text.slice(0, 15)}
       </Typography>
       <Link
         component="button"
@@ -357,7 +373,7 @@ export default function PostCard({ post, load,page,imageLoadnig}) {
         fontSize="10px"
         sx={{ color: "text.tertiary", my: 0.5 }}
       >
-        {new Date(postValue.date.seconds).toString()}{" "}
+        {new Date(postValue.date.seconds).toString().slice(16, 21)}{" "}
       </Link>
       {lastComment}
       <CardOverflow sx={{ p: "var(--Card-padding)", display: "flex" }}>

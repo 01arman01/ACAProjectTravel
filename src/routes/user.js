@@ -57,10 +57,28 @@ export default function User() {
   const [imageId, setImageId] = useState(v4);
   const [loading, setloading] = useState(false);
   const [imageLoadnig, setImageLoadnig] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [user, setUser] = useState(null);
 
   //Auth
   const auth = getAuth(app);
   const userId = auth.lastNotifiedUid;
+
+  useEffect(() => {
+    onSnapshot(collection(db, "User"), (data) => {
+      const user = data.docs
+        .map((doc) => ({ ...doc.data(), id: doc.id }))
+        .find((el) => el.id === userId);
+      // const user = usersData.find((el) => el.id === userId);
+      setUser(user);
+      // setUsers(usersData);
+    });
+  }, [userId]);
+
+  // useEffect(() => {
+  //   const user = users.find((el) => el.id === userId);
+  //   setUser(user);
+  // }, [users]);
 
   //Set posts data
   useEffect(() => {
@@ -132,20 +150,27 @@ export default function User() {
   };
 
   return (
-  isLoggedIn() && <div style={{display: "flex", justifyContent: "space-between", position:"absolute", top:"50px"}}>
+    isLoggedIn() && (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          position: "absolute",
+          top: "50px",
+        }}
+      >
+        {/*<PostAdd*/}
+        {/*  title={title}*/}
+        {/*  setTitle={setTitle}*/}
+        {/*  text={text}*/}
+        {/*  setText={setText}*/}
+        {/*  onAddPost={onAddPost}*/}
+        {/*  setImageUpload={setImageUpload}*/}
+        {/*  share={share}*/}
+        {/*  setShare={setShare}*/}
+        {/*/>*/}
 
-    {/*<PostAdd*/}
-    {/*  title={title}*/}
-    {/*  setTitle={setTitle}*/}
-    {/*  text={text}*/}
-    {/*  setText={setText}*/}
-    {/*  onAddPost={onAddPost}*/}
-    {/*  setImageUpload={setImageUpload}*/}
-    {/*  share={share}*/}
-    {/*  setShare={setShare}*/}
-    {/*/>*/}
-
-    <Navbar
+        <Navbar
           title={title}
           setTitle={setTitle}
           text={text}
@@ -154,28 +179,37 @@ export default function User() {
           setImageUpload={setImageUpload}
           share={share}
           setShare={setShare}
+        />
 
-    />
-
-    <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "space-around",
-          alignItems: "flex-end",
-          flexDirection: "column",
-          alignContent: " space-around",
-          width: "72%",
-        }}
-    >
-      {posts.length !== 0 &&
-          posts.map((post) => {
-            // const as = imageUrl(post.id)
-            // console.log(posts,"post")
-            return <PostCard key={post.id} post={post} load={loading} page={"user"} imageLoadnig={imageLoadnig}/>;
-            // return <CardComponent key={elem.id} value={elem} like={like} load={loading} del={deletePost} updatePost={updatePost} />
-          })}
-    </div>
-  </div>
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "space-around",
+            alignItems: "flex-end",
+            flexDirection: "column",
+            alignContent: " space-around",
+            width: "72%",
+          }}
+        >
+          {posts.length !== 0 &&
+            posts.map((post) => {
+              // const as = imageUrl(post.id)
+              // console.log(posts,"post")
+              return (
+                <PostCard
+                  key={post.id}
+                  post={post}
+                  load={loading}
+                  page={"user"}
+                  imageLoadnig={imageLoadnig}
+                  user={user}
+                />
+              );
+              // return <CardComponent key={elem.id} value={elem} like={like} load={loading} del={deletePost} updatePost={updatePost} />
+            })}
+        </div>
+      </div>
+    )
   );
 }

@@ -19,7 +19,6 @@ function Header(props) {
   const refresh = () => window.location.reload(true);
 
   const location = useLocation();
-  console.log(location);
 
   let navigate = useNavigate();
   const onLogout = () => {

@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useEffect, useState, Fragment } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Divider from "@mui/material/Divider";
@@ -11,10 +11,10 @@ import { app, db } from "../firebase";
 import { addDoc, collection, onSnapshot } from "firebase/firestore";
 
 export default function CopmentComponent({ selectedValue }) {
-  const [comments, setComments] = React.useState([]);
-  const [users, setUsers] = React.useState([]);
+  const [comments, setComments] = useState([]);
+  const [users, setUsers] = useState([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     onSnapshot(collection(db, "Comments"), (data) => {
       const newData = data.docs
         .map((doc) => ({ ...doc.data() }))
@@ -24,7 +24,7 @@ export default function CopmentComponent({ selectedValue }) {
     });
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     onSnapshot(collection(db, "User"), (data) => {
       const newData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
       setUsers(newData);
@@ -46,7 +46,7 @@ export default function CopmentComponent({ selectedValue }) {
               <ListItemText
                 primary={user?user.name:""}
                 secondary={
-                  <React.Fragment>
+                  <Fragment>
                     <Typography
                       sx={{ display: "inline" }}
                       component="span"
@@ -56,7 +56,7 @@ export default function CopmentComponent({ selectedValue }) {
                       Ali Connors
                     </Typography>
                     {"---" + element.comment}
-                  </React.Fragment>
+                  </Fragment>
                 }
               />
             </ListItem>

@@ -35,6 +35,7 @@ import { v4 } from "uuid";
 import PostAdd from "../components/PostAdd/PostAdd";
 import Header from "../components/Header/Header";
 import PostCard from "../components/CardComponent/PostCard";
+import Navbar from "../components/Navbar/Navbar";
 
 export default function User() {
   //navigate
@@ -131,18 +132,23 @@ export default function User() {
   };
 
   return (
-    <div style={{ display: "flex", justifyContent: "space-between" }}>
-      <PostAdd
-        title={title}
-        setTitle={setTitle}
-        text={text}
-        setText={setText}
-        onAddPost={onAddPost}
-        setImageUpload={setImageUpload}
-        share={share}
-        setShare={setShare}
-      />
-      <div
+  isLoggedIn() && <div style={{display: "flex", justifyContent: "space-between"}}>
+
+
+    <Navbar
+          title={title}
+          setTitle={setTitle}
+          text={text}
+          setText={setText}
+          onAddPost={onAddPost}
+          setImageUpload={setImageUpload}
+          share={share}
+          setShare={setShare}
+
+    />
+
+    <div
+
         style={{
           display: "flex",
           flexWrap: "wrap",
@@ -152,23 +158,15 @@ export default function User() {
           alignContent: " space-around",
           width: "72%",
         }}
-      >
-        {posts.length !== 0 &&
+    >
+      {posts.length !== 0 &&
           posts.map((post) => {
             // const as = imageUrl(post.id)
             // console.log(posts,"post")
-            return (
-              <PostCard
-                key={post.id}
-                post={post}
-                load={loading}
-                page={"user"}
-                imageLoadnig={imageLoadnig}
-              />
-            );
+            return <PostCard key={post.id} post={post} load={loading} page={"user"} imageLoadnig={imageLoadnig}/>;
             // return <CardComponent key={elem.id} value={elem} like={like} load={loading} del={deletePost} updatePost={updatePost} />
           })}
-      </div>
     </div>
+  </div>
   );
 }

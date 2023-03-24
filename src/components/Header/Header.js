@@ -53,6 +53,11 @@ function Header(props) {
                 </li>
                 <li>
                   <Link to="/" className={styles.navLink}>
+                  People
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/" className={styles.navLink}>
                     About
                   </Link>
                 </li>

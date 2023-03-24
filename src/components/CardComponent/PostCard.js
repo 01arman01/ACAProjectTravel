@@ -337,7 +337,7 @@ export default function PostCard({ post, load,page,imageLoadnig}) {
         fontSize="10px"
         sx={{ color: "text.tertiary", my: 0.5 }}
       >
-        {new Date(postValue.date.seconds).toString()}{" "}
+        {new Date(postValue.date.seconds).toString().slice(16, 21)}{" "}
       </Link>
       {lastComment}
       <CardOverflow sx={{ p: "var(--Card-padding)", display: "flex" }}>

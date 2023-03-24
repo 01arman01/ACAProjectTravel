@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useCallback, useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import AspectRatio from "@mui/joy/AspectRatio";
 import Avatar from "@mui/joy/Avatar";
 import Box from "@mui/joy/Box";
@@ -45,27 +45,28 @@ import CommentDialog from "../CommentDialog";
 import { deleteObject, ref } from "@firebase/storage";
 import { storage } from "../../firebase";
 import CircularIndeterminate from "../CircularIndeterminate";
+import { usePostCardStyles } from "./PostCard.styles";
 
 export default function PostCard({ post, load,page,imageLoadnig}) {
-  const [expanded, setExpanded] = React.useState(false);
-  const [imagUrl, setImageUrl] = React.useState(
+  const [expanded, setExpanded] = useState(false);
+  const [imagUrl, setImageUrl] = useState(
     "https://media.sproutsocial.com/uploads/2017/01/Instagram-Post-Ideas.png"
   );
-  // const styles = useStyles()
-  const [loading, setLoading] = React.useState(load);
+  const styles = usePostCardStyles()
+  const [loading, setLoading] = useState(load);
 
   //states
-  const [open, setOpen] = React.useState(false);
-  const [openShare, setOpenShare] = React.useState(false);
-  const [selectedValue, setSelectedValue] = React.useState();
-  const [postValue, setPostValue] = React.useState(post);
-  const [likeValue, setLikeValue] = React.useState(0);
-  const [like, setLike] = React.useState(false);
-  const [openFullText, setOpenFullText] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [openShare, setOpenShare] = useState(false);
+  const [selectedValue, setSelectedValue] = useState();
+  const [postValue, setPostValue] = useState(post);
+  const [likeValue, setLikeValue] = useState(0);
+  const [like, setLike] = useState(false);
+  const [openFullText, setOpenFullText] = useState(false);
 
-  const [comment, setComment] = React.useState("");
-  const [lastComment, setLastComment] = React.useState([]);
-  const [openCommentPag, setOpenCommentPage] = React.useState(false);
+  const [comment, setComment] = useState("");
+  const [lastComment, setLastComment] = useState([]);
+  const [openCommentPag, setOpenCommentPage] = useState(false);
   //Auth
   const auth = getAuth(app);
   const userId = auth.lastNotifiedUid;
@@ -236,6 +237,8 @@ export default function PostCard({ post, load,page,imageLoadnig}) {
         </IconButton>}
         
       </Box>
+      <div style={{textAlign:"left"}} >{postValue.title}</div>
+
       <CardOverflow>
         <AspectRatio>
         {imageLoadnig ?<CircularIndeterminate />: <img src={postValue.url} alt="" loading="lazy" />}
@@ -351,9 +354,12 @@ export default function PostCard({ post, load,page,imageLoadnig}) {
             setComment(e.target.value);
           }}
         />
-        <Button role="button" onClick={hendleComment}>
+        {/* <Button role="button" onClick={hendleComment}>
           Post
-        </Button>
+        </Button> */}
+        <button className={styles.commentButton} onClick={hendleComment}>
+          Send
+        </button>
       </CardOverflow>
     </Card>
   );

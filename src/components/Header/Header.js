@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useHeaderStyles } from "./Header.styles";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { CiUser } from "react-icons/ci";
 import {
   H0ME_PAGE,
@@ -16,12 +16,17 @@ import logo from "../../imgs/logo.png";
 
 function Header(props) {
   const [logoutDialogStatus, setLogoutDialogStatus] = useState(false);
+  const refresh = () => window.location.reload(true);
+
+  const location = useLocation();
+  console.log(location);
 
   let navigate = useNavigate();
   const onLogout = () => {
     endSession();
     setLogoutDialogStatus(false);
     navigate(H0ME_PAGE);
+    refresh();
   };
   const openLogoutDialog = () => {
     setLogoutDialogStatus(true);
@@ -71,21 +76,23 @@ function Header(props) {
                   Login
                 </Link>
               ) : (
-                <a
-                  onClick={openLogoutDialog}
-                  className={`${styles.logoutButton} ${styles.aLink}`}
-                >
-                  Logout
-                </a>
+                <>
+                  <a
+                    onClick={openLogoutDialog}
+                    className={`${styles.logoutButton} ${styles.aLink}`}
+                  >
+                    Logout
+                  </a>
+                  <Link className={styles.userBlock} to={USER_PAGE}>
+                    <CiUser className={styles.userIcon} />
+                  </Link>
+                </>
               )}
               <LogoutDialog
                 onLogout={onLogout}
                 logoutDialogStatus={logoutDialogStatus}
                 closeLogoutDialog={closeLogoutDialog}
               />
-              <Link className={styles.userBlock} to={USER_PAGE}>
-                <CiUser className={styles.userIcon} />
-              </Link>
             </div>
           </div>
         </div>

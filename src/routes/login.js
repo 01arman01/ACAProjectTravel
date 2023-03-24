@@ -8,14 +8,14 @@ import {
   Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import {useEffect, useState} from "react";
-import {isLoggedIn, startSession} from "../storage/session";
+import { useEffect, useState } from "react";
+import { isLoggedIn, startSession } from "../storage/session";
 import { signInUser } from "../firebase";
 import { useLoginStyles } from "./login.styles";
-import {USER_PAGE,LOGIN_PAGE,} from '../RoutePath/RoutePath'
+import { USER_PAGE, LOGIN_PAGE, H0ME_PAGE } from "../RoutePath/RoutePath";
+import logo from "../imgs/logo.png";
 
 export default function Login() {
-
   const navigate = useNavigate();
   const styles = useLoginStyles();
 
@@ -24,9 +24,14 @@ export default function Login() {
   const [password, setPassword] = useState("");
 
   useEffect(() => {
-    if (isLoggedIn()){
+    if (isLoggedIn()) {
       navigate(USER_PAGE);
-    }})
+    }
+  });
+
+  const onNavigateHome = () =>{
+    navigate(H0ME_PAGE)
+  }
 
   const onSubmit = async (event) => {
     event.preventDefault();
@@ -48,49 +53,76 @@ export default function Login() {
     }
   };
   return (
-      !isLoggedIn() && <div className={styles.wrapper}>
-      <img className={styles.bg_img} />
-      <Container maxWidth="xs" className={styles.container}>
-        <Typography variant="h5" component="h1" gutterBottom textAlign="center">
-          Login
-        </Typography>
-        {error && (
-          <Alert severity="error" sx={{ my: 2 }}>
-            {error}
-          </Alert>
-        )}
-        <Box component="form" onSubmit={onSubmit}>
-          <TextField
-            label="Email"
-            variant="outlined"
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            sx={{ mt: 1 }}
-            fullWidth
-            className={styles.inputBox}
-          />
-          <TextField
-            label="Password"
-            variant="outlined"
-            type="password"
-            autoComplete="new-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            sx={{ mt: 3 }}
-            fullWidth
-            className={styles.inputBox}
-          />
-          <div className={styles.loginBlock}>
-            <Box sx={{ mt: 2 }}>
-              Don't have an account yet? <Link href="/register">Register</Link>
-            </Box>
-            <Button variant="contained" type="submit" className={styles.loginButton}>
+    <>
+        <img
+          src={logo}
+          style={{
+            width: "76px",
+            height: "auto",
+            position: "absolute",
+            zIndex: "10",
+            top: "20px",
+            left: "30px",
+            cursor: "pointer",
+          }}
+          onClick={onNavigateHome}
+        />
+      {!isLoggedIn() && (
+        <div className={styles.wrapper}>
+          <img className={styles.bg_img} />
+          <Container maxWidth="xs" className={styles.container}>
+            <Typography
+              variant="h5"
+              component="h1"
+              gutterBottom
+              textAlign="center"
+            >
               Login
-            </Button>
-          </div>
-        </Box>
-      </Container>
-    </div>
+            </Typography>
+            {error && (
+              <Alert severity="error" sx={{ my: 2 }}>
+                {error}
+              </Alert>
+            )}
+            <Box component="form" onSubmit={onSubmit}>
+              <TextField
+                label="Email"
+                variant="outlined"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                sx={{ mt: 1 }}
+                fullWidth
+                className={styles.inputBox}
+              />
+              <TextField
+                label="Password"
+                variant="outlined"
+                type="password"
+                autoComplete="new-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                sx={{ mt: 3 }}
+                fullWidth
+                className={styles.inputBox}
+              />
+              <div className={styles.loginBlock}>
+                <Box sx={{ mt: 2 }}>
+                  Don't have an account yet?{" "}
+                  <Link href="/register">Register</Link>
+                </Box>
+                <Button
+                  variant="contained"
+                  type="submit"
+                  className={styles.loginButton}
+                >
+                  Login
+                </Button>
+              </div>
+            </Box>
+          </Container>
+        </div>
+      )}
+    </>
   );
 }

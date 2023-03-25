@@ -151,38 +151,56 @@ export default function User() {
 
   return (
 
-  isLoggedIn() && <div style={{display: "flex", justifyContent: "space-between"}}>
+    isLoggedIn() && (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            position: "absolute",
+            top: "50px",
+          }}
+        >
+          <Navbar
+            title={title}
+            setTitle={setTitle}
+            text={text}
+            setText={setText}
+            onAddPost={onAddPost}
+            setImageUpload={setImageUpload}
+            share={share}
+            setShare={setShare}
+          />
 
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "space-around",
+              alignItems: "flex-end",
+              flexDirection: "column",
+              alignContent: " space-around",
+              width: "72%",
+            }}
+          >
+            {posts.length !== 0 &&
+              posts.map((post) => {
+                // const as = imageUrl(post.id)
+                // console.log(posts,"post")
+                return (
+                  <PostCard
+                    key={post.id}
+                    post={post}
+                    load={loading}
+                    page={"user"}
+                    imageLoadnig={imageLoadnig}
+                    user={user}
+                  />
+                );
+                // return <CardComponent key={elem.id} value={elem} like={like} load={loading} del={deletePost} updatePost={updatePost} />
+              })}
+          </div>
+        </div>
+    )
 
-    <Navbar
-          title={title}
-          setTitle={setTitle}
-          text={text}
-          setText={setText}
-          onAddPost={onAddPost}
-          setImageUpload={setImageUpload}
-          share={share}
-          setShare={setShare}
-
-    />
-
-    <div
-
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          position: "absolute",
-          top: "50px",
-        }}
-    >
-      {posts.length !== 0 &&
-          posts.map((post) => {
-            // const as = imageUrl(post.id)
-            // console.log(posts,"post")
-            return <PostCard key={post.id} post={post} load={loading} page={"user"} imageLoadnig={imageLoadnig}/>;
-            // return <CardComponent key={elem.id} value={elem} like={like} load={loading} del={deletePost} updatePost={updatePost} />
-          })}
-    </div>
-  </div>
   );
 }

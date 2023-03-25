@@ -31,7 +31,6 @@ export default function Homepage(props) {
   const [postsImageUrls, setPostsImageUrls] = useState([]);
   const [loading, setloading] = useState(false);
   const [scrollIndex, setScrollIndex] = useState(10);
-
   const [users, setUsers] = useState([]);
   const [user, setUser] = useState(null);
 
@@ -91,7 +90,6 @@ export default function Homepage(props) {
   };
 
   useEffect(() => {
-
     onSnapshot(collection(db, "User"), (data) => {
       const usersData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
       setUsers(usersData);
@@ -99,6 +97,7 @@ export default function Homepage(props) {
   }, []);
 
   useEffect(() => {
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -106,13 +105,11 @@ export default function Homepage(props) {
   return (
     <>
       <Main />
-
       <InfiniteScroll
         dataLength={posts.length}
         hasMore={true}
         style={{ overflowX: "hidden" }}
       >
-
         <div className={styles.hompageMain}>
           {posts
             .filter((post, index) => index <= scrollIndex)

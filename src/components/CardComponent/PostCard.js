@@ -268,7 +268,8 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
         )}
       </Box>
 
-      <div style={{textAlign:"left"}} >{postValue.title}</div>
+
+      <div style={{ textAlign: "left" }}>{postValue.title}</div>
 
       <CardOverflow>
         <AspectRatio>

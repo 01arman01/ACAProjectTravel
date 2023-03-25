@@ -53,7 +53,9 @@ function Header(props) {
                   </Link>
                 </li>
                 <li>
+
                   <Link to={PEOPLE_PAGE} className={styles.navLink}>
+
                   People
                   </Link>
                 </li>

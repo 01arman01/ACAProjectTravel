@@ -12,6 +12,8 @@ import LogoutDialog from "../components/LogoutDialog";
 import { createUseStyles } from "react-jss";
 import PostCard from "../components/CardComponent/PostCard";
 import Main from "../components/Main/Main";
+import { useDownloadURL } from 'react-firebase-hooks/storage';
+
 
 const useStyles = createUseStyles({
   hompageMain: {
@@ -34,6 +36,8 @@ export default function Homepage(props) {
   const [users, setUsers] = useState([]);
   const [user, setUser] = useState(null);
 
+
+  
 
   // Set posts data
   // const onSetPosts = async () => {
@@ -93,6 +97,7 @@ export default function Homepage(props) {
     onSnapshot(collection(db, "User"), (data) => {
       const usersData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
       setUsers(usersData);
+      
     });
   }, []);
 
@@ -116,6 +121,7 @@ export default function Homepage(props) {
             .map((post) => {
 
               const user = users.find((el) => el.id === post.userId);
+           
               return <PostCard key={post.id} post={post} page={"homePage"} user={user}/>;
 
             })}

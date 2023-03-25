@@ -19,7 +19,9 @@ import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import { collection, onSnapshot } from '@firebase/firestore';
-import { db } from '../../firebase';
+import { db, storage } from '../../firebase';
+import { getDownloadURL, listAll, ref } from 'firebase/storage';
+import { useDownloadURL } from 'react-firebase-hooks/storage';
 
 
 
@@ -84,17 +86,32 @@ const StyledFab = styled(Fab)({
 
 export default function PeopleComponent() {
     const [users, setUsers] = React.useState([]);
+    // const storageRef = ref(storage,`user_image/${props.user?.id}/${props.user?.image}`);
+    // const [url, loading] = useDownloadURL(storageRef)
+
 
 React.useEffect(() => {
     onSnapshot(collection(db, "User"), (data) => {
-      const newData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-      setUsers(newData);
-    });
-  }, []);
+      const newData = data.docs.map((doc) => {
+        
+          const storageRef = ref(storage,`user_image/${doc?.id}/${doc?.image}`)
+        return getDownloadURL(storageRef).then((url,err) => {
+          console.log(err,'error')
+          return { ...doc.data(), id: doc.id,url:url};
+        });
+      
+       
+    })
+    Promise.all(newData)
+        .then((downloadUrls,elem) => setUsers(downloadUrls))
+        .catch((error) => console.log(error,"asdfasdf"));
+    // setUsers(newData)
+      });
+  },[])
 
 
   
-  console.log(users)
+  console.log(users,"sssss")
   return (
     <React.Fragment>
       <CssBaseline />
@@ -103,7 +120,7 @@ React.useEffect(() => {
           Inbox
         </Typography>
         <List sx={{ mb: 2 }}>
-          {users.map(({ id, name, gender, age }) => (
+          {users.map(({ id, name, gender, age ,url}) => (
             <React.Fragment key={id}>
               {id === 1 && (
                 <ListSubheader sx={{ bgcolor: 'background.paper' }}>
@@ -119,7 +136,7 @@ React.useEffect(() => {
 
               <ListItem button>
                 <ListItemAvatar>
-                  <Avatar alt="Profile Picture" src={age} />
+                  <Avatar alt="Profile Picture" src={url} />
                 </ListItemAvatar>
                 <ListItemText primary={name} secondary={gender} />
               </ListItem>

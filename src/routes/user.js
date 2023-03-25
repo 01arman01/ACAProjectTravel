@@ -37,6 +37,7 @@ import Header from "../components/Header/Header";
 import PostCard from "../components/CardComponent/PostCard";
 import Navbar from "../components/Navbar/Navbar";
 
+
 export default function User() {
   //navigate
   let navigate = useNavigate();
@@ -64,17 +65,15 @@ export default function User() {
   const auth = getAuth(app);
   const userId = auth.lastNotifiedUid;
 
+
+
   useEffect(() => {
     onSnapshot(collection(db, "User"), (data) => {
       const user = data.docs
-        .map((doc) => ({ ...doc.data(), id: doc.id }))
-        .find((el) => el.id === userId);
-      // const user = usersData.find((el) => el.id === userId);
-      setUser(user);
-      // setUsers(usersData);
+        .map((doc) => ({ ...doc.data(), id: doc.id })).filter((elm)=>elm.id === auth.lastNotifiedUid)
+        setUser(user[0])
     });
-  }, [userId]);
-
+  },[]);
   // useEffect(() => {
   //   const user = users.find((el) => el.id === userId);
   //   setUser(user);
@@ -169,6 +168,7 @@ export default function User() {
             setImageUpload={setImageUpload}
             share={share}
             setShare={setShare}
+            user={user}
           />
 
           <div
@@ -194,6 +194,7 @@ export default function User() {
                     page={"user"}
                     imageLoadnig={imageLoadnig}
                     user={user}
+                  
                   />
                 );
                 // return <CardComponent key={elem.id} value={elem} like={like} load={loading} del={deletePost} updatePost={updatePost} />

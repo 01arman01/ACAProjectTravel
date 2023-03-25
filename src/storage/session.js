@@ -17,3 +17,5 @@ export const endSession = () => {
 export const isLoggedIn = () => {
   return getSession().accessToken;
 };
+
+

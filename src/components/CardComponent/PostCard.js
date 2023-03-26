@@ -47,15 +47,18 @@ import { deleteObject, ref } from "@firebase/storage";
 import { storage } from "../../firebase";
 import CircularIndeterminate from "../CircularIndeterminate";
 import { usePostCardStyles } from "./PostCard.styles";
+import { useDownloadURL } from "react-firebase-hooks/storage";
 
 export default function PostCard({ post, load, page, imageLoadnig, user }) {
   const [expanded, setExpanded] = useState(false);
   const [imagUrl, setImageUrl] = useState(
     "https://media.sproutsocial.com/uploads/2017/01/Instagram-Post-Ideas.png"
   );
+
   const auth = getAuth(app);
   const userId = auth.lastNotifiedUid;
   const styles = usePostCardStyles();
+
   const [loading, setLoading] = useState(load);
 
   //states
@@ -73,6 +76,8 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
   //Auth
 
   // console.log(user)
+  const storageRef = ref(storage, `user_image/${user?.id}/${user?.image}`);
+  const [url, loadProces] = useDownloadURL(storageRef);
 
   useEffect(() => {
     onSnapshot(doc(db, "Posts", postValue.id), (doc) => {
@@ -101,9 +106,11 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
       const newData = data.docs
         .map((doc) => ({ ...doc.data() }))
         .filter((doc) => doc.postId === postValue.id);
-      setLastComment(newData[0].comment);
+      if (newData[0]) {
+        setLastComment(newData[0].comment);
+      }
     });
-  }, []);
+  }, [postValue.id]);
 
   const onAddComment = useCallback(async (commentText) => {
     try {
@@ -228,11 +235,11 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
         >
           <Avatar
             size="sm"
-            src="/static/logo.png"
-            sx={{ p: 0.5, border: "2px solid", borderColor: "background.body" }}
+            src={url}
+            sx={{ p: 0.0, border: "2px solid", borderColor: "background.body" }}
           />
         </Box>
-        <Typography fontWeight="lg">{user.name}</Typography>
+        <Typography fontWeight="lg"></Typography>
         {page === "user" && (
           <IconButton
             variant="plain"
@@ -333,7 +340,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
           color="neutral"
           fontWeight="lg"
           textColor="text.primary"
-          sx={{fontSize:"12px"}}
+          sx={{ fontSize: "12px" }}
         >
           {user.name}
         </Link>{" "}

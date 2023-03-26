@@ -14,6 +14,7 @@ import PostCard from "../components/CardComponent/PostCard";
 import Main from "../components/Main/Main";
 import bgPosts from "../imgs/posts-section.jpg";
 import { borderBottom } from "@mui/system";
+import { useDownloadURL } from "react-firebase-hooks/storage";
 
 const useStyles = createUseStyles({
   postsSection: {
@@ -21,7 +22,7 @@ const useStyles = createUseStyles({
     height: "auto",
     background: `url(${bgPosts})`,
     backgroundSize: "cover",
-    paddingTop:"20px"
+    paddingTop: "20px",
   },
   postsInner: {
     display: "flex",
@@ -40,8 +41,8 @@ const useStyles = createUseStyles({
     justifyContent: "center",
     alignItems: "center",
     letterSpacing: "0.5em",
-    borderTop:"2px solid orange",
-    borderBottom:"2px solid blue"
+    borderTop: "2px solid orange",
+    borderBottom: "2px solid blue",
   },
 });
 

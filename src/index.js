@@ -11,14 +11,19 @@ import Register from "./routes/register";
 import User from "./routes/user";
 import ErrorPage from "./error-page";
 import Homepage from "./routes/homepage";
-import {USER_PAGE,H0ME_PAGE,LOGIN_PAGE,REGISTER_PAGE} from "./RoutePath/RoutePath";
+import {USER_PAGE,H0ME_PAGE,LOGIN_PAGE,REGISTER_PAGE, PEOPLE_PAGE} from "./RoutePath/RoutePath";
 import Header from "./components/Header/Header";
+import PeopleComponent from "./components/People/PeopleComponent";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Navigate to={H0ME_PAGE} />,
     errorElement: <ErrorPage />,
+  },
+  {
+    path:PEOPLE_PAGE,
+    element:<><Header /> <PeopleComponent /></>
   },
   {
     path:H0ME_PAGE,

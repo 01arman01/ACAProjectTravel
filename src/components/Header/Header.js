@@ -9,6 +9,7 @@ import {
   REGISTER_PAGE,
   ABOUT_PAGE,
   CONTACT_PAGE,
+  PEOPLE_PAGE,
 } from "../../RoutePath/RoutePath";
 import { endSession, getSession, isLoggedIn } from "../../storage/session";
 import LogoutDialog from "../LogoutDialog";
@@ -52,7 +53,7 @@ function Header(props) {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/" className={styles.navLink}>
+                  <Link to={PEOPLE_PAGE} className={styles.navLink}>
                     People
                   </Link>
                 </li>

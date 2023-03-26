@@ -7,7 +7,7 @@ import { isLoggedIn } from "../../storage/session";
 export default function Main() {
   //styles
   const styles = useMainStyles();
-  const refresh = () => window.location.reload(true)
+  
   return (
     <div className={styles.intro}>
       <div className={styles.container}>

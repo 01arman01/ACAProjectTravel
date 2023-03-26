@@ -155,8 +155,9 @@ export default function User() {
           style={{
             display: "flex",
             justifyContent: "space-between",
-            position: "absolute",
-            top: "50px",
+            // position: "absolute",
+            // top: "50px",
+            paddingTop:"50px"
           }}
         >
           <Navbar

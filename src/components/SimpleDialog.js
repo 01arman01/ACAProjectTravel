@@ -20,12 +20,36 @@ import {
   TextField,
 } from "@mui/material";
 import { Container } from "@mui/system";
-import { getStorage, updateMetadata,ref, uploadBytes, deleteObject } from "firebase/storage";
+import {
+  getStorage,
+  updateMetadata,
+  ref,
+  uploadBytes,
+  deleteObject,
+} from "firebase/storage";
 // import { ref } from "firebase/database";
 import { getAuth } from "firebase/auth";
 import { app, storage } from "../firebase";
 import { useState } from "react";
 // import { storage } from '../firebase';
+import { createUseStyles } from "react-jss";
+
+const useStyles = createUseStyles({
+  action: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  button:{
+    textTransform:"none",
+    fontSize:"16px",
+    color:"black",
+    "&:hover":{
+      backgroundColor:"#EDF1F4"
+    }
+  }
+});
 
 export default function SimpleDialog({
   selectedValue,
@@ -33,8 +57,13 @@ export default function SimpleDialog({
   onDeletePost,
   onUpdatePost,
   open,
-  onClose
+  onClose,
 }) {
+  //refresh
+  const refresh = () => window.location.reload(true)
+  //styles
+  const styles = useStyles();
+
   const [openUpdatePage, setOpenUpdatePage] = useState(false);
   const [title, setTitle] = useState(selectedValue.title);
   const [text, setText] = useState(selectedValue.text);
@@ -62,35 +91,35 @@ export default function SimpleDialog({
     onUpdatePost(postId, {
       title,
       text,
-      share
+      share,
     });
-    onUpdateImage()
+    onUpdateImage();
     hendleCloseUpdatePage();
+    refresh()
   };
 
-  const onUpdateImage=async()=>{
+  const onUpdateImage = async () => {
+    if (ImageUpload == null) return;
     const desertRef = ref(storage, `Images/${selectedValue.imageId}`);
     deleteObject(desertRef)
       .then(() => {
         console.log("delete");
- 
       })
       .catch((error) => {
         console.log("err" + error);
       });
-      if (ImageUpload == null) return;
-      const imageRef = ref(storage, `Images/${selectedValue.imageId}`);
-      uploadBytes(imageRef, ImageUpload)
-  }
+    const imageRef = ref(storage, `Images/${selectedValue.imageId}`);
+    uploadBytes(imageRef, ImageUpload);
+  };
   return (
     <>
       <Dialog onClose={handleClose} open={open}>
-        <DialogTitle>edit post</DialogTitle>
-        <DialogActions>
-          <Button onClick={openUpdate}>Update</Button>
-          <Button onClick={hendleDelete}>delete</Button>
-          <Button onClick={handleClose} autoFocus>
-            close
+        {/* <DialogTitle>edit post</DialogTitle> */}
+        <DialogActions className={styles.action}>
+          <Button onClick={openUpdate} className={styles.button}>Edit</Button>
+          <Button onClick={hendleDelete} className={styles.button}>Delete</Button>
+          <Button onClick={handleClose} className={styles.button} autoFocus>
+            Cancel
           </Button>
         </DialogActions>
       </Dialog>

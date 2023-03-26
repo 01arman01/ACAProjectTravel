@@ -54,8 +54,8 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
     "https://media.sproutsocial.com/uploads/2017/01/Instagram-Post-Ideas.png"
   );
   const auth = getAuth(app);
-  const userId = auth.lastNotifiedUid
-  const styles = usePostCardStyles()
+  const userId = auth.lastNotifiedUid;
+  const styles = usePostCardStyles();
   const [loading, setLoading] = useState(load);
 
   //states
@@ -72,13 +72,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
   const [openCommentPag, setOpenCommentPage] = useState(false);
   //Auth
 
-
-
   // console.log(user)
-
-  
-
-
 
   useEffect(() => {
     onSnapshot(doc(db, "Posts", postValue.id), (doc) => {
@@ -97,7 +91,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
         .filter((doc) => doc.postId === postValue.id);
       const as = da.find((elem) => elem.userId === auth.lastNotifiedUid);
       setLikeValue(da);
-      console.log(as)
+      console.log(as);
       setLike(!!as);
     });
   }, []);
@@ -147,7 +141,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
 
   const hendleLike = () => {
     if (!like) {
-      console.log(like,postValue.id)
+      console.log(like, postValue.id);
       onLike(postValue.id);
     }
   };
@@ -163,36 +157,32 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
   };
 
   //posts like function
-  const onLike = useCallback(
-    async (id) => {
-      try {
-        await addDoc(collection(db, "Likes"), {
-          postId: id,
-          userId: auth.lastNotifiedUid,
-        }).then((res) => res);
-      } catch (err) {
-        console.log(err,"like",id,
-     userId,)
-      }
-    },
-    []
-  );
+  const onLike = useCallback(async (id) => {
+    try {
+      await addDoc(collection(db, "Likes"), {
+        postId: id,
+        userId: auth.lastNotifiedUid,
+      }).then((res) => res);
+    } catch (err) {
+      console.log(err, "like", id, userId);
+    }
+  }, []);
 
   //delete posts function
   const onDeletePost = async (id, image_id) => {
     await deleteDoc(doc(db, "Posts", id));
     onSnapshot(collection(db, "Likes"), (data) => {
       const da = data.docs.filter((doc) => doc.data().postId === postValue.id);
-      da.forEach((elem)=>{
-        deleteDoc(doc(db, "Likes", elem.id))
-      })
-    })
+      da.forEach((elem) => {
+        deleteDoc(doc(db, "Likes", elem.id));
+      });
+    });
     onSnapshot(collection(db, "Comments"), (data) => {
       const da = data.docs.filter((doc) => doc.data().postId === postValue.id);
-      da.forEach((elem)=>{
-        deleteDoc(doc(db, "Comments", elem.id))
-      })
-    })
+      da.forEach((elem) => {
+        deleteDoc(doc(db, "Comments", elem.id));
+      });
+    });
     const desertRef = ref(storage, `Images/${image_id}`);
     deleteObject(desertRef)
       .then(() => {
@@ -213,10 +203,8 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
   return (
     <Card
       variant="outlined"
+      className={styles.card}
       sx={{
-        maxWidth: 400,
-        margin: "10px",
-        // width: "70%",
         "--Card-radius": (theme) => theme.vars.radius.xs,
       }}
     >
@@ -345,8 +333,9 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
           color="neutral"
           fontWeight="lg"
           textColor="text.primary"
+          sx={{fontSize:"12px"}}
         >
-          {postValue.title}
+          {user.name}
         </Link>{" "}
         {openFullText ? postValue.text : postValue.text.slice(0, 15)}
       </Typography>

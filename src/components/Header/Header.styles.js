@@ -22,7 +22,7 @@ export const useHeaderStyles = createUseStyles({
     justifyContent: "space-between",
   },
   nav: {
-    width: "250px",
+    width: "325px",
   },
   links: {
     display: "flex",
@@ -42,6 +42,8 @@ export const useHeaderStyles = createUseStyles({
     width: "76px",
     height: "auto",
     marginTop: "10px",
+    position:"absolute",
+    right:"47%"
   },
   rightBlock: {
     width: "120px",

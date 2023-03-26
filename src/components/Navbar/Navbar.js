@@ -86,7 +86,7 @@ const onUploadImage = () => {
   const styles = useStyles();
   return (
     <div className={styles.listUl}>
-      <div>
+      <div className={styles.avatarBlock}>
         {loading ? (
           <div>Loading...</div>
         ) : (
@@ -97,8 +97,9 @@ const onUploadImage = () => {
             sx={{ width: 150, height: 150 }}
           />
         )}
-        <h1 className={styles.avatarName}> Name Surname</h1>
+        <button className={styles.plusButton}>+</button>
       </div>
+      <h1 className={styles.avatarName}> Name Surname</h1>
       <ul>
         <li onClick={changeNavbarAddPost} className={styles.listLi}>
           {/*<h2 className={styles.liHeader} onClick={changeNavbarAddPost}>Add Post</h2>*/}

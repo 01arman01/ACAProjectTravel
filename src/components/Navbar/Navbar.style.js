@@ -6,7 +6,7 @@ const useStyles = createUseStyles({
   listUl: {
     display: "flex",
     flexDirection: "column",
-    gap: "20px",
+    gap: "10px",
     listStyle: "none",
     // border: '0.5px solid ' +
     //     'rgba(193,183,183,0.72)',
@@ -15,12 +15,12 @@ const useStyles = createUseStyles({
     background: "#EDF1F4",
     backdropFilter: "blur(15px)",
     position: "fixed",
-    overflow:"scroll",
-    paddingBottom:"27px"
+    overflow: "scroll",
+    paddingBottom: "27px",
     // borderRadius: '5px',
   },
   listLi: {
-    width:"100%",
+    width: "100%",
     fontWeight: "bold",
     border: "0.5px solid " + "rgba(193,183,183,0.72)",
   },
@@ -61,6 +61,23 @@ const useStyles = createUseStyles({
   avatarName: {
     marginRight: "10px",
     textAlign: "center",
+  },
+  avatarBlock: {
+    position: "relative",
+  },
+  plusButton: {
+    position: "absolute",
+    top: "75%",
+    left: "60%",
+    width: "30px",
+    height: "30px",
+    borderRadius: "50%",
+    color: "blue",
+    cursor: "pointer",
+    transition: "background .2s linear",
+    "&:hover": {
+      backgroundColor: "gray",
+    },
   },
 });
 

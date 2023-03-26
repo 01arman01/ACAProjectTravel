@@ -20,7 +20,8 @@ const useStyles = createUseStyles({
   postsSection: {
     width: "100vw",
     height: "auto",
-    background: `url(${bgPosts})`,
+    // background: `url(${bgPosts})`,
+    backgroundColor:"#DFE5EA",
     backgroundSize: "cover",
     paddingTop: "20px",
   },

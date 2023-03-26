@@ -50,11 +50,7 @@ import { usePostCardStyles } from "./PostCard.styles";
 import { useDownloadURL } from "react-firebase-hooks/storage";
 
 export default function PostCard({ post, load, page, imageLoadnig, user }) {
-  const [expanded, setExpanded] = useState(false);
-  const [imagUrl, setImageUrl] = useState(
-    "https://media.sproutsocial.com/uploads/2017/01/Instagram-Post-Ideas.png"
-  );
-
+  //Auth
   const auth = getAuth(app);
   const userId = auth.lastNotifiedUid;
   const styles = usePostCardStyles();
@@ -69,15 +65,22 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
   const [likeValue, setLikeValue] = useState(0);
   const [like, setLike] = useState(false);
   const [openFullText, setOpenFullText] = useState(false);
+  const [users, setUsers] = useState([]);
 
   const [comment, setComment] = useState("");
   const [lastComment, setLastComment] = useState([]);
   const [openCommentPag, setOpenCommentPage] = useState(false);
-  //Auth
 
   // console.log(user)
   const storageRef = ref(storage, `user_image/${user?.id}/${user?.image}`);
   const [url, loadProces] = useDownloadURL(storageRef);
+
+  useEffect(() => {
+    onSnapshot(collection(db, "User"), (data) => {
+      const newData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      setUsers(newData);
+    });
+  }, []);
 
   useEffect(() => {
     onSnapshot(doc(db, "Posts", postValue.id), (doc) => {
@@ -239,7 +242,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
             sx={{ p: 0.0, border: "2px solid", borderColor: "background.body" }}
           />
         </Box>
-        <Typography fontWeight="lg"></Typography>
+        <Typography fontWeight="lg">{user.name}</Typography>
         {page === "user" && (
           <IconButton
             variant="plain"

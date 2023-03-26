@@ -14,6 +14,7 @@ import Homepage from "./routes/homepage";
 import {USER_PAGE,H0ME_PAGE,LOGIN_PAGE,REGISTER_PAGE, PEOPLE_PAGE} from "./RoutePath/RoutePath";
 import Header from "./components/Header/Header";
 import PeopleComponent from "./components/People/PeopleComponent";
+import Footer from "./components/Footer/Footer";
 
 const router = createBrowserRouter([
   {
@@ -27,19 +28,19 @@ const router = createBrowserRouter([
   },
   {
     path:H0ME_PAGE,
-    element:<><Header /> <Homepage /></>
+    element:<><Header /> <Homepage /><Footer/></>
   },
   {
     path: LOGIN_PAGE,
-    element: <Login />,
+    element: <><Login /></>,
   },
   {
     path: REGISTER_PAGE,
-    element: <Register />,
+    element: <><Register />></>,
   },
   {
     path: USER_PAGE,
-    element: <><Header /> <User /></>,
+    element: <><Header/><User/><Footer/> </>,
   },
 ]);
 

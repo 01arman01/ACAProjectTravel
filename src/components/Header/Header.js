@@ -49,19 +49,16 @@ function Header(props) {
               <ul className={styles.links}>
                 <li>
                   <Link to={H0ME_PAGE} className={styles.navLink}>
-                    Posts
+                    Home
                   </Link>
                 </li>
                 <li>
-
                   <Link to={PEOPLE_PAGE} className={styles.navLink}>
-
-                  People
+                    People
                   </Link>
                 </li>
                 <li>
                   <Link to="/" className={styles.navLink}>
-
                     About
                   </Link>
                 </li>

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 //Router
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 //firebase
 import { app, db, storage } from "../firebase";
 import {
@@ -36,12 +36,14 @@ import PostAdd from "../components/PostAdd/PostAdd";
 import Header from "../components/Header/Header";
 import PostCard from "../components/CardComponent/PostCard";
 import Navbar from "../components/Navbar/Navbar";
+import { LOGIN_PAGE } from "../RoutePath/RoutePath";
 import dayjs from 'dayjs';
 
 
 export default function User() {
   //navigate
   let navigate = useNavigate();
+
 
   //Styles
   const styles = useUserStyles();
@@ -59,7 +61,6 @@ export default function User() {
   const [imageId, setImageId] = useState(v4);
   const [loading, setloading] = useState(false);
   const [imageLoadnig, setImageLoadnig] = useState(false);
-  const [users, setUsers] = useState([]);
   const [user, setUser] = useState(null);
   const [timeDate,setTimeDate] = useState(dayjs(new Date()))
 
@@ -67,29 +68,29 @@ export default function User() {
   const auth = getAuth(app);
   const userId = auth.lastNotifiedUid;
 
-console.log(auth.lastNotifiedUid)
-
   useEffect(() => {
     onSnapshot(collection(db, "User"), (data) => {
+      console.log(data, "data");
       const user = data.docs
-        .map((doc) => ({ ...doc.data(), id: doc.id })).filter((elm)=>elm.id === auth.lastNotifiedUid)
-        setUser(user[0])
+        .map((doc) => ({ ...doc.data(), id: doc.id }))
+        .filter((elm) => elm.id === userId);
+      setUser(user[0]);
     });
-  },[]);
+  }, [userId]);
 
 
   useEffect(() => {
     // setTimeDate(dayjs(new Date()).format('MM/DD/YYYY hh:mm'))
 
-    console.log(timeDate.toDate(),auth.lastNotifiedUid)
-    if(auth?.lastNotifiedUid){
-      updateDoc(doc(db, "User",  auth.lastNotifiedUid), {time:timeDate.toDate()});
-
+    // console.log(timeDate.toDate(),userId)
+    if(userId){
+      updateDoc(doc(db, "User",  userId), {time:timeDate.toDate()});
     }
-  }, [auth.lastNotifiedUid,timeDate]);
+  }, [userId,timeDate]);
 
   //Set posts data
   useEffect(() => {
+    console.log("b")
     onSnapshot(collection(db, "Posts"), (data) => {
       const newData = data.docs
         .map((doc) => ({ ...doc.data(), id: doc.id }))
@@ -154,63 +155,39 @@ console.log(auth.lastNotifiedUid)
   //Logout function
   const onLogout = () => {
     endSession();
-    navigate("/login");
+    navigate(LOGIN_PAGE);
   };
 
   return (
+    isLoggedIn() && user != null && (
+      <div className={styles.userWrapper}>
+        <Navbar
+          title={title}
+          setTitle={setTitle}
+          text={text}
+          setText={setText}
+          onAddPost={onAddPost}
+          setImageUpload={setImageUpload}
+          share={share}
+          setShare={setShare}
+          user={user}
+        />
 
-    isLoggedIn() && (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            position: "absolute",
-            top: "50px",
-          }}
-        >
-          <Navbar
-            title={title}
-            setTitle={setTitle}
-            text={text}
-            setText={setText}
-            onAddPost={onAddPost}
-            setImageUpload={setImageUpload}
-            share={share}
-            setShare={setShare}
-            user={user}
-          />
-
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              justifyContent: "space-around",
-              alignItems: "flex-end",
-              flexDirection: "column",
-              alignContent: " space-around",
-              width: "72%",
-            }}
-          >
-            {posts.length !== 0 &&
-              posts.map((post) => {
-                // const as = imageUrl(post.id)
-                // console.log(posts,"post")
-                return (
-                  <PostCard
-                    key={post.id}
-                    post={post}
-                    load={loading}
-                    page={"user"}
-                    imageLoadnig={imageLoadnig}
-                    user={user}
-                  
-                  />
-                );
-                // return <CardComponent key={elem.id} value={elem} like={like} load={loading} del={deletePost} updatePost={updatePost} />
-              })}
-          </div>
+        <div className={styles.postsSection}>
+          {posts.length !== 0 &&
+            posts.map((post) => {
+              return (
+                <PostCard
+                  key={post.id}
+                  post={post}
+                  load={loading}
+                  imageLoadnig={imageLoadnig}
+                  user={user}
+                />
+              );
+            })}
         </div>
+      </div>
     )
-
   );
 }

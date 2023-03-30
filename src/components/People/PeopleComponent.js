@@ -1,3 +1,4 @@
+
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
@@ -30,16 +31,16 @@ import MessageDialog from '../Message/MessageDialog';
 import { getAuth } from 'firebase/auth';
 import { Unstable_Grid } from '@mui/system';
 
+
 const auth = getAuth(app);
 
-
 const StyledFab = styled(Fab)({
-  position: 'absolute',
+  position: "absolute",
   zIndex: 1,
   top: -30,
   left: 0,
   right: 0,
-  margin: '0 auto',
+  margin: "0 auto",
 });
 
 export default function PeopleComponent() {
@@ -53,25 +54,40 @@ export default function PeopleComponent() {
     // .format('MM/DD/YYYY hh:mm')
 
 
-React.useEffect(() => {
+  React.useEffect(() => {
     onSnapshot(collection(db, "User"), (data) => {
       const newData = data.docs.map((doc) => {
-          const storageRef = ref(storage,`user_image/${doc?.id}/${doc.data()?.image}`)
-        return getDownloadURL(storageRef).then((url) => {
-          return { ...doc.data(), id: doc.id,url:url,online:!(timeDate/1000-doc.data().time?.seconds < 600)};
-        }).catch((err)=>{
-          return { ...doc.data(), id: doc.id,url:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlHBoELHG9IPFDyVp_5_lRfL-9zTYR-YG1nEC8N9c&s"
-          ,online:!(timeDate/1000-doc.data().time?.seconds < 600)}
-        })
-    })
-    Promise.all(newData)
-        .then((downloadUrls) =>{ setUsers(downloadUrls)
+        const storageRef = ref(
+          storage,
+          `user_image/${doc?.id}/${doc.data()?.image}`
+        );
+        return getDownloadURL(storageRef)
+          .then((url) => {
+            return {
+              ...doc.data(),
+              id: doc.id,
+              url: url,
+              online: !(timeDate / 1000 - doc.data().time?.seconds < 600),
+            };
           })
-        .catch((error) => console.log(error,"asdfasdf"));
-    
-
+          .catch((err) => {
+            return {
+              ...doc.data(),
+              id: doc.id,
+              url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlHBoELHG9IPFDyVp_5_lRfL-9zTYR-YG1nEC8N9c&s",
+              online: !(timeDate / 1000 - doc.data().time?.seconds < 600),
+            };
+          });
       });
-  },[])
+      Promise.all(newData)
+      .then((downloadUrls) => {
+        setUsers(downloadUrls);
+      })
+      .catch((error) => console.log(error, "asdfasdf"));
+  });
+}, []);
+
+
   React.useEffect(() => {
     onSnapshot(collection(db, "Friends"), (data) => {
       const fri = data.docs.map((doc) => ({ ...doc.data(), id: doc.id })).filter((elem)=>elem.userId === userId || elem.friendId === userId)
@@ -94,25 +110,36 @@ const acceptFriendRequest= async(id)=>{
   }).then((res) => {});
          }
 
+
+
+
   return (
     <React.Fragment>
       <CssBaseline />
-      <Paper square sx={{ pb: '50px' }}>
-        <Typography variant="h5" gutterBottom component="div" sx={{ p: 2, pb: 0 }}>
+      <Paper square sx={{ pb: "50px" }}>
+        <Typography
+          variant="h5"
+          gutterBottom
+          component="div"
+          sx={{ p: 2, pb: 0 }}
+        >
           Inbox
         </Typography>
         <List sx={{ mb: 2 }}>
+
           {users.map(({ id, name, gender, age ,url,online}) => {
             console.log(friends,"friend")
             if(id !== userId){
               return(
+
                 <React.Fragment key={id}>
                   <ListItem button>
                     <ListItemAvatar>
-                    <Badge color="secondary" variant="dot" invisible={online}>
-                      <Avatar alt="Profile Picture" src={url} />
+                      <Badge color="secondary" variant="dot" invisible={online}>
+                        <Avatar alt="Profile Picture" src={url} />
                       </Badge>
                     </ListItemAvatar>
+
                     <ListItemText primary={name} secondary={gender+" "+age} />
                     {friends.find((elem)=>elem.friendId===id)?<Button variant="contained" startIcon={<PersonAddAlt1Icon  />} onClick={()=>sendFriendRequest(id)}>
                             send
@@ -134,15 +161,20 @@ const acceptFriendRequest= async(id)=>{
                     }
                     
                           {/* <Badge color="secondary" badgeContent={1} showZero>
+
                         <MailIcon />
                       </Badge> */}
-                      <MessageDialog id={id} url={url} name={name} users={users}/>
-    
+                    <MessageDialog
+                      id={id}
+                      url={url}
+                      name={name}
+                      users={users}
+                    />
                   </ListItem>
                 </React.Fragment>
-              )
+              );
             }
-            })}
+          })}
         </List>
       </Paper>
     </React.Fragment>

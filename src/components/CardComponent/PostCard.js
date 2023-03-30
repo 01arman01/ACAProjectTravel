@@ -47,21 +47,18 @@ import { deleteObject, ref } from "@firebase/storage";
 import { storage } from "../../firebase";
 import CircularIndeterminate from "../CircularIndeterminate";
 import { usePostCardStyles } from "./PostCard.styles";
-import { useDownloadURL } from 'react-firebase-hooks/storage';
+import { useDownloadURL } from "react-firebase-hooks/storage";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { OTHERUSER_PAGE, USER_PAGE } from "../../RoutePath/RoutePath";
 
-
-export default function PostCard({ post,load, page, imageLoadnig, user }) {
-
-  const [expanded, setExpanded] = useState(false);
-  const [imagUrl, setImageUrl] = useState(
-    "https://media.sproutsocial.com/uploads/2017/01/Instagram-Post-Ideas.png"
-  );
-
+export default function PostCard({ post, load, page, imageLoadnig, user }) {
+  //Auth
   const auth = getAuth(app);
-  const userId = auth.lastNotifiedUid
-  const styles = usePostCardStyles()
+  const userId = auth.lastNotifiedUid;
+  const styles = usePostCardStyles();
 
   const [loading, setLoading] = useState(load);
+  const location = useLocation();
 
   //states
   const [open, setOpen] = useState(false);
@@ -71,25 +68,26 @@ export default function PostCard({ post,load, page, imageLoadnig, user }) {
   const [likeValue, setLikeValue] = useState(0);
   const [like, setLike] = useState(false);
   const [openFullText, setOpenFullText] = useState(false);
+  const [users, setUsers] = useState([]);
 
   const [comment, setComment] = useState("");
-  const [lastComment, setLastComment] = useState([]);
+  const [lastComment, setLastComment] = useState("");
   const [openCommentPag, setOpenCommentPage] = useState(false);
-  //Auth
+  const navigate = useNavigate();
 
-
-
-  // console.log(user)
-
-  const storageRef = ref(storage,`user_image/${user?.id}/${user?.image}`);
+  const storageRef = ref(storage, `user_image/${user?.id}/${user?.image}`);
   const [url, loadProces] = useDownloadURL(storageRef);
 
-
+  useEffect(() => {
+    onSnapshot(collection(db, "User"), (data) => {
+      const newData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      setUsers(newData);
+    });
+  }, []);
 
   useEffect(() => {
     onSnapshot(doc(db, "Posts", postValue.id), (doc) => {
       const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
-      // console.log(postValue)
       if (!!postValue.url) {
         setPostValue({ ...postValue, ...doc.data() });
       }
@@ -103,7 +101,6 @@ export default function PostCard({ post,load, page, imageLoadnig, user }) {
         .filter((doc) => doc.postId === postValue.id);
       const as = da.find((elem) => elem.userId === auth.lastNotifiedUid);
       setLikeValue(da);
-      console.log(as)
       setLike(!!as);
     });
   }, []);
@@ -113,10 +110,9 @@ export default function PostCard({ post,load, page, imageLoadnig, user }) {
       const newData = data.docs
         .map((doc) => ({ ...doc.data() }))
         .filter((doc) => doc.postId === postValue.id);
-        if(newData[0]){
-          setLastComment(newData[0].comment);
-        }
-      
+      if (newData[0]) {
+        setLastComment(newData[0].comment);
+      }
     });
   }, [postValue.id]);
 
@@ -139,6 +135,14 @@ export default function PostCard({ post,load, page, imageLoadnig, user }) {
     }
   });
 
+  const onNavigatePage = () => {
+    if (user.id === userId) {
+      navigate(USER_PAGE, { state: user });
+    } else {
+      navigate(OTHERUSER_PAGE, { state: user });
+    }
+  };
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -156,7 +160,7 @@ export default function PostCard({ post,load, page, imageLoadnig, user }) {
 
   const hendleLike = () => {
     if (!like) {
-      console.log(like,postValue.id)
+      console.log(like, postValue.id);
       onLike(postValue.id);
     }
   };
@@ -172,36 +176,32 @@ export default function PostCard({ post,load, page, imageLoadnig, user }) {
   };
 
   //posts like function
-  const onLike = useCallback(
-    async (id) => {
-      try {
-        await addDoc(collection(db, "Likes"), {
-          postId: id,
-          userId: auth.lastNotifiedUid,
-        }).then((res) => res);
-      } catch (err) {
-        console.log(err,"like",id,
-     userId,)
-      }
-    },
-    []
-  );
+  const onLike = useCallback(async (id) => {
+    try {
+      await addDoc(collection(db, "Likes"), {
+        postId: id,
+        userId: auth.lastNotifiedUid,
+      }).then((res) => res);
+    } catch (err) {
+      console.log(err, "like", id, userId);
+    }
+  }, []);
 
   //delete posts function
   const onDeletePost = async (id, image_id) => {
     await deleteDoc(doc(db, "Posts", id));
     onSnapshot(collection(db, "Likes"), (data) => {
       const da = data.docs.filter((doc) => doc.data().postId === postValue.id);
-      da.forEach((elem)=>{
-        deleteDoc(doc(db, "Likes", elem.id))
-      })
-    })
+      da.forEach((elem) => {
+        deleteDoc(doc(db, "Likes", elem.id));
+      });
+    });
     onSnapshot(collection(db, "Comments"), (data) => {
       const da = data.docs.filter((doc) => doc.data().postId === postValue.id);
-      da.forEach((elem)=>{
-        deleteDoc(doc(db, "Comments", elem.id))
-      })
-    })
+      da.forEach((elem) => {
+        deleteDoc(doc(db, "Comments", elem.id));
+      });
+    });
     const desertRef = ref(storage, `Images/${image_id}`);
     deleteObject(desertRef)
       .then(() => {
@@ -216,16 +216,13 @@ export default function PostCard({ post,load, page, imageLoadnig, user }) {
   const onUpdatePost = async (id, data) => {
     const PostRef = doc(db, "Posts", id);
     updateDoc(PostRef, data);
-    // onUpdateImage().then((elem)=>elem?:"")
   };
 
   return (
     <Card
       variant="outlined"
+      className={styles.card}
       sx={{
-        maxWidth: 400,
-        margin: "10px",
-        // width: "70%",
         "--Card-radius": (theme) => theme.vars.radius.xs,
       }}
     >
@@ -253,8 +250,16 @@ export default function PostCard({ post,load, page, imageLoadnig, user }) {
             sx={{ p: 0.0, border: "2px solid", borderColor: "background.body" }}
           />
         </Box>
-        <Typography fontWeight="lg"></Typography>
-        {page === "user" && (
+        <Typography fontWeight="lg">
+          {location.pathname === "/homepage" ? (
+            <span onClick={onNavigatePage} className={styles.userName}>
+              {user.name}
+            </span>
+          ) : (
+            <span>{user.name}</span>
+          )}
+        </Typography>
+        {location.pathname === "/user" && (
           <IconButton
             variant="plain"
             color="neutral"
@@ -273,7 +278,6 @@ export default function PostCard({ post,load, page, imageLoadnig, user }) {
           </IconButton>
         )}
       </Box>
-      <div style={{ textAlign: "left" }}>{postValue.title}</div>
       <CardOverflow>
         <AspectRatio>
           {imageLoadnig ? (
@@ -306,7 +310,7 @@ export default function PostCard({ post,load, page, imageLoadnig, user }) {
             />
             {/* openCommentPag */}
           </IconButton>
-          {page === "user" && (
+          {location.pathname === "/user" && (
             <IconButton variant="plain" color="neutral" size="sm">
               <SendOutlined onClick={handleClickOpenShare} />
               <Share
@@ -354,8 +358,11 @@ export default function PostCard({ post,load, page, imageLoadnig, user }) {
           color="neutral"
           fontWeight="lg"
           textColor="text.primary"
+          sx={{ fontSize: "12px" }}
         >
-          {postValue.title}
+          <span onClick={onNavigatePage} className={styles.userName}>
+            {user.name}
+          </span>
         </Link>{" "}
         {openFullText ? postValue.text : postValue.text.slice(0, 15)}
       </Typography>
@@ -379,8 +386,18 @@ export default function PostCard({ post,load, page, imageLoadnig, user }) {
       >
         {new Date(postValue.date.seconds).toString().slice(16, 21)}{" "}
       </Link>
-      {lastComment}
-      <CardOverflow sx={{ p: "var(--Card-padding)", display: "flex" }}>
+      {lastComment ? (<span>{lastComment}</span>) : (<div style={{
+        fontSize:"12px",
+        textAlign:"center",
+        color:"#A5C4C5"
+      }}>no comments</div>)}
+      <CardOverflow
+        sx={{
+          p: "var(--Card-padding)",
+          display: "flex",
+          marginTop: lastComment ? "" : "4px",
+        }}
+      >
         <IconButton size="sm" variant="plain" color="neutral" sx={{ ml: -1 }}>
           <Face />
         </IconButton>
@@ -394,9 +411,6 @@ export default function PostCard({ post,load, page, imageLoadnig, user }) {
             setComment(e.target.value);
           }}
         />
-        {/* <Button role="button" onClick={hendleComment}>
-          Post
-        </Button> */}
         <button className={styles.commentButton} onClick={hendleComment}>
           Send
         </button>

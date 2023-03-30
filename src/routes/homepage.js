@@ -12,15 +12,38 @@ import LogoutDialog from "../components/LogoutDialog";
 import { createUseStyles } from "react-jss";
 import PostCard from "../components/CardComponent/PostCard";
 import Main from "../components/Main/Main";
-import { useDownloadURL } from 'react-firebase-hooks/storage';
-
+import bgPosts from "../imgs/posts-section.jpg";
+import { borderBottom } from "@mui/system";
+import { useDownloadURL } from "react-firebase-hooks/storage";
 
 const useStyles = createUseStyles({
-  hompageMain: {
-    textAlign: "center",
+  postsSection: {
+    width: "100vw",
+    height: "auto",
+    // background: `url(${bgPosts})`,
+    backgroundColor:"#DFE5EA",
+    backgroundSize: "cover",
+    paddingTop: "20px",
+  },
+  postsInner: {
     display: "flex",
     flexWrap: "wrap",
+    gap: "20px",
+  },
+  container: {
+    maxWidth: "1000px",
+    margin: "0 auto",
+  },
+  postsTitle: {
+    fontWeight: "600",
     width: "100vw",
+    height: "50px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    letterSpacing: "0.5em",
+    borderTop: "2px solid #5CC2C7",
+    borderBottom: "2px solid #5CC2C7",
   },
 });
 
@@ -35,20 +58,6 @@ export default function Homepage(props) {
   const [scrollIndex, setScrollIndex] = useState(10);
   const [users, setUsers] = useState([]);
   const [user, setUser] = useState(null);
-
-
-  
-
-  // Set posts data
-  // const onSetPosts = async () => {
-  //   const data = await getDocs(collection(db, "Posts"))
-  //     .then((e) => {
-  //       return e.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-  //     })
-  //     .then((res) => res.filter((elem) => elem.share === true));
-
-  //   setPosts(data);
-  // };
 
   useEffect(() => {
     onSnapshot(collection(db, "Posts"), (data) => {
@@ -71,18 +80,6 @@ export default function Homepage(props) {
     });
   }, []);
 
-  //Get all storage images in the same array
-  // useEffect(() => {
-  //   const postsImageUrlsRef = ref(storage, "Images/");
-  //   listAll(postsImageUrlsRef).then((res) => {
-  //     res.items.forEach((item) => {
-  //       getDownloadURL(item).then((url) => {
-  //         setPostsImageUrls((prev) => [...prev, [url, item.name]]);
-  //       });
-  //     });
-  //   });
-  // }, []);
-
   //Scrolling function
   const handleScroll = () => {
     if (
@@ -97,12 +94,10 @@ export default function Homepage(props) {
     onSnapshot(collection(db, "User"), (data) => {
       const usersData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
       setUsers(usersData);
-      
     });
   }, []);
 
   useEffect(() => {
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -110,23 +105,34 @@ export default function Homepage(props) {
   return (
     <>
       <Main />
-      <InfiniteScroll
-        dataLength={posts.length}
-        hasMore={true}
-        style={{ overflowX: "hidden" }}
-      >
-        <div className={styles.hompageMain}>
-          {posts
-            .filter((post, index) => index <= scrollIndex)
-            .map((post) => {
-
-              const user = users.find((el) => el.id === post.userId);
-           
-              return <PostCard key={post.id} post={post} page={"homePage"} user={user}/>;
-
-            })}
+      <div className={styles.postsTitle}>
+        -- -- -- -- -- POSTS -- -- -- -- --
+      </div>
+      <div className={styles.postsSection}>
+        <div className={styles.container}>
+          <InfiniteScroll
+            dataLength={posts.length}
+            hasMore={true}
+            style={{ overflowX: "hidden" }}
+          >
+            <div className={styles.postsInner}>
+              {posts
+                .filter((post, index) => index <= scrollIndex)
+                .map((post) => {
+                  const user = users.find((el) => el.id === post.userId);
+                  return (
+                    <PostCard
+                      key={post.id}
+                      post={post}
+                      page={"homePage"}
+                      user={user}
+                    />
+                  );
+                })}
+            </div>
+          </InfiniteScroll>
         </div>
-      </InfiniteScroll>
+      </div>
     </>
   );
 }

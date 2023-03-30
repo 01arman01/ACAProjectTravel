@@ -1,4 +1,3 @@
-import * as React from 'react';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import { Dialog, IconButton, ImageListItemBar } from '@mui/material';
@@ -7,6 +6,7 @@ import { db, storage } from '../../firebase';
 import { useDownloadURL } from 'react-firebase-hooks/storage';
 import { doc, updateDoc } from 'firebase/firestore';
 import StarBorderIcon from '@mui/icons-material/StarBorder'
+import { useEffect, useState } from 'react';
 
 function srcset(image, size, rows = 1, cols = 1) {
   return {
@@ -18,9 +18,9 @@ function srcset(image, size, rows = 1, cols = 1) {
 }
 
 export default function ImageListComponent({open,handleClose,user}) {
-  const [urls, setUrls] = React.useState([]);
+  const [urls, setUrls] = useState([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const storageRef = ref(storage, `user_image/${user?.id}`);
     listAll(storageRef).then((elem) => {
       const promises = elem.items.map((item) => {
@@ -34,7 +34,6 @@ export default function ImageListComponent({open,handleClose,user}) {
         .catch((error) => console.log(error));
     });
   }, [user]);
-  console.log(urls)
 
   const changeImage = (name) =>{
     updateDoc(doc(db, "User", user?.id), {image:name});
@@ -47,7 +46,6 @@ export default function ImageListComponent({open,handleClose,user}) {
       sx={{
         width: 500,
         height: 450,
-        // Promote the list into its own layer in Chrome. This costs memory, but helps keeping high FPS.
         transform: 'translateZ(0)',
       }}
       rowHeight={200}

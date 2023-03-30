@@ -11,7 +11,8 @@ import Register from "./routes/register";
 import User from "./routes/user";
 import ErrorPage from "./error-page";
 import Homepage from "./routes/homepage";
-import {USER_PAGE,H0ME_PAGE,LOGIN_PAGE,REGISTER_PAGE, PEOPLE_PAGE} from "./RoutePath/RoutePath";
+import OtherUser from "./routes/OtherUser";
+import {USER_PAGE,H0ME_PAGE,LOGIN_PAGE,REGISTER_PAGE, PEOPLE_PAGE,OTHERUSER_PAGE} from "./RoutePath/RoutePath";
 import Header from "./components/Header/Header";
 import PeopleComponent from "./components/People/PeopleComponent";
 
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
   {
     path: USER_PAGE,
     element: <><Header /> <User /></>,
+  },
+  {
+    path:OTHERUSER_PAGE,
+    element:<><Header /> <OtherUser/></>
   },
 ]);
 

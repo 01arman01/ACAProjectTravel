@@ -19,7 +19,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import MoreIcon from '@mui/icons-material/MoreVert';
-import { addDoc, collection, onSnapshot, setDoc, updateDoc } from '@firebase/firestore';
+import { addDoc, collection, doc, onSnapshot, setDoc, updateDoc } from '@firebase/firestore';
 import { app, db, storage } from '../../firebase';
 import { getDownloadURL, listAll, ref } from 'firebase/storage';
 import { useDownloadURL } from 'react-firebase-hooks/storage';
@@ -93,7 +93,7 @@ export default function PeopleComponent() {
       const fri = data.docs.map((doc) => ({ ...doc.data(), id: doc.id })).filter((elem)=>elem.userId === userId || elem.friendId === userId)
         setFriends(fri)
     });
-  },[]);
+  },[userId]);
 
 
  const sendFriendRequest = async(id)=>{
@@ -104,13 +104,12 @@ export default function PeopleComponent() {
   }).then((res) => {});
          }
   
-const acceptFriendRequest= async(id)=>{
-  await updateDoc(collection(db, "Friends",id), {
+const acceptFriendRequest= (id)=>{
+  console.log(id)
+   updateDoc(doc(db, "Friends",id), {
     request:true,
-  }).then((res) => {});
+  }).then((res) => {console.log(res,'dddd')}).catch((err)=>{console.log(err,'eeee')});
          }
-
-
 
 
   return (
@@ -141,23 +140,25 @@ const acceptFriendRequest= async(id)=>{
                     </ListItemAvatar>
 
                     <ListItemText primary={name} secondary={gender+" "+age} />
-                    {friends.find((elem)=>elem.friendId===id)?<Button variant="contained" startIcon={<PersonAddAlt1Icon  />} onClick={()=>sendFriendRequest(id)}>
+                    {friends.find((elem)=>elem.friendId===id && (elem.request===false))?<Button variant="contained" startIcon={<PersonAddAlt1Icon  />} onClick={()=>sendFriendRequest(id)}>
                             send
                           </Button>:""
                     }
-                    {friends.find((elem)=>elem.friendId===userId)?<Button variant="contained" startIcon={<PersonAddAlt1Icon  />} onClick={()=>sendFriendRequest(id)}>
+                    {friends.find((elem)=>(elem.userId===id) && (elem.request===false))?<Button variant="contained" startIcon={<PersonAddAlt1Icon  />} 
+                    onClick={()=>acceptFriendRequest(friends.find((elem)=>(elem.userId===id) && (elem.request===false)).id)}>
                               accept
                           </Button>: ""
                     }
+                    
                     {friends.find((elem)=>(elem.friendId===id || elem.userId===id) && (elem.request===true))?
-                    <Button variant="contained" startIcon={<PersonAddAlt1Icon  />} onClick={()=>sendFriendRequest(id)}>
+                    <Button variant="contained" disabled startIcon={<PersonAddAlt1Icon  />} onClick={()=>sendFriendRequest(id)}>
                               friend
                           </Button>:""
                     }
-                      {friends.find((elem)=>(elem.friendId !==id || elem.userId !==id))?
-                    <Button variant="contained" startIcon={<PersonAddAlt1Icon  />} onClick={()=>sendFriendRequest(id)}>
-                              add Friend
-                          </Button>:""
+                    {friends.find((elem)=>(elem.friendId === id || elem.userId === id))?
+                   "": <Button variant="contained" startIcon={<PersonAddAlt1Icon  />} onClick={()=>sendFriendRequest(id)}>
+                   add Friend
+               </Button>
                     }
                     
                           {/* <Badge color="secondary" badgeContent={1} showZero>

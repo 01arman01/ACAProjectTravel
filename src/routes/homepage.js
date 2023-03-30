@@ -42,8 +42,8 @@ const useStyles = createUseStyles({
     justifyContent: "center",
     alignItems: "center",
     letterSpacing: "0.5em",
-    borderTop: "2px solid orange",
-    borderBottom: "2px solid blue",
+    borderTop: "2px solid #5CC2C7",
+    borderBottom: "2px solid #5CC2C7",
   },
 });
 

@@ -8,16 +8,13 @@ const useStyles = createUseStyles({
     flexDirection: "column",
     gap: "10px",
     listStyle: "none",
-    // border: '0.5px solid ' +
-    //     'rgba(193,183,183,0.72)',
-    width: "21vw",
+    width: "270px",
     height: "100vh",
     background: "#EDF1F4",
     backdropFilter: "blur(15px)",
     position: "fixed",
     overflow: "scroll",
     paddingBottom: "27px",
-    // borderRadius: '5px',
   },
   listLi: {
     width: "100%",
@@ -29,7 +26,6 @@ const useStyles = createUseStyles({
     cursor: "pointer",
     width: "100%",
     color: "black",
-    // border: '0.5px solid rgb(8,180,206)',
     "&:hover": {
       color: "rgb(8,180,206)",
     },
@@ -52,7 +48,7 @@ const useStyles = createUseStyles({
     width: "100%",
     textAlign: "right",
   },
-  //    User info styles
+  //User info styles
   avatarContainer: {
     margin: "10px auto",
     padding: "0 0 0 10px",

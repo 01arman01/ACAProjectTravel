@@ -15,7 +15,6 @@ export const useHeaderStyles = createUseStyles({
     margin: "0 auto",
   },
   header__inner: {
-    // width:"100vw",
     height: "50px",
     display: "flex",
     alignItems: "center",
@@ -66,7 +65,6 @@ export const useHeaderStyles = createUseStyles({
     "&:hover": {
       color: "white",
       backgroundColor: "#1e5aaf",
-      // scale:'1.05'
     },
     "@media (max-width: 620px)": {
       display: "none",
@@ -87,7 +85,6 @@ export const useHeaderStyles = createUseStyles({
     "&:hover": {
       color: "white",
       backgroundColor: "#9D0A35",
-      // scale:'1.05'
     },
     "@media (max-width: 620px)": {
       display: "none",

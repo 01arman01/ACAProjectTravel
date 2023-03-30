@@ -48,6 +48,8 @@ import { storage } from "../../firebase";
 import CircularIndeterminate from "../CircularIndeterminate";
 import { usePostCardStyles } from "./PostCard.styles";
 import { useDownloadURL } from "react-firebase-hooks/storage";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { OTHERUSER_PAGE, USER_PAGE } from "../../RoutePath/RoutePath";
 
 export default function PostCard({ post, load, page, imageLoadnig, user }) {
   //Auth
@@ -56,6 +58,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
   const styles = usePostCardStyles();
 
   const [loading, setLoading] = useState(load);
+  const location = useLocation();
 
   //states
   const [open, setOpen] = useState(false);
@@ -68,10 +71,10 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
   const [users, setUsers] = useState([]);
 
   const [comment, setComment] = useState("");
-  const [lastComment, setLastComment] = useState([]);
+  const [lastComment, setLastComment] = useState("");
   const [openCommentPag, setOpenCommentPage] = useState(false);
+  const navigate = useNavigate();
 
-  // console.log(user)
   const storageRef = ref(storage, `user_image/${user?.id}/${user?.image}`);
   const [url, loadProces] = useDownloadURL(storageRef);
 
@@ -85,7 +88,6 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
   useEffect(() => {
     onSnapshot(doc(db, "Posts", postValue.id), (doc) => {
       const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
-      // console.log(postValue)
       if (!!postValue.url) {
         setPostValue({ ...postValue, ...doc.data() });
       }
@@ -99,7 +101,6 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
         .filter((doc) => doc.postId === postValue.id);
       const as = da.find((elem) => elem.userId === auth.lastNotifiedUid);
       setLikeValue(da);
-      console.log(as);
       setLike(!!as);
     });
   }, []);
@@ -133,6 +134,14 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
       setLoading(false);
     }
   });
+
+  const onNavigatePage = () => {
+    if (user.id === userId) {
+      navigate(USER_PAGE, { state: user });
+    } else {
+      navigate(OTHERUSER_PAGE, { state: user });
+    }
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -207,7 +216,6 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
   const onUpdatePost = async (id, data) => {
     const PostRef = doc(db, "Posts", id);
     updateDoc(PostRef, data);
-    // onUpdateImage().then((elem)=>elem?:"")
   };
 
   return (
@@ -242,8 +250,16 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
             sx={{ p: 0.0, border: "2px solid", borderColor: "background.body" }}
           />
         </Box>
-        <Typography fontWeight="lg">{user.name}</Typography>
-        {page === "user" && (
+        <Typography fontWeight="lg">
+          {location.pathname === "/homepage" ? (
+            <span onClick={onNavigatePage} className={styles.userName}>
+              {user.name}
+            </span>
+          ) : (
+            <span>{user.name}</span>
+          )}
+        </Typography>
+        {location.pathname === "/user" && (
           <IconButton
             variant="plain"
             color="neutral"
@@ -262,7 +278,6 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
           </IconButton>
         )}
       </Box>
-      <div style={{ textAlign: "left" }}>{postValue.title}</div>
       <CardOverflow>
         <AspectRatio>
           {imageLoadnig ? (
@@ -295,7 +310,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
             />
             {/* openCommentPag */}
           </IconButton>
-          {page === "user" && (
+          {location.pathname === "/user" && (
             <IconButton variant="plain" color="neutral" size="sm">
               <SendOutlined onClick={handleClickOpenShare} />
               <Share
@@ -345,7 +360,9 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
           textColor="text.primary"
           sx={{ fontSize: "12px" }}
         >
-          {user.name}
+          <span onClick={onNavigatePage} className={styles.userName}>
+            {user.name}
+          </span>
         </Link>{" "}
         {openFullText ? postValue.text : postValue.text.slice(0, 15)}
       </Typography>
@@ -369,8 +386,18 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
       >
         {new Date(postValue.date.seconds).toString().slice(16, 21)}{" "}
       </Link>
-      {lastComment}
-      <CardOverflow sx={{ p: "var(--Card-padding)", display: "flex" }}>
+      {lastComment ? (<span>{lastComment}</span>) : (<div style={{
+        fontSize:"12px",
+        textAlign:"center",
+        color:"#A5C4C5"
+      }}>no comments</div>)}
+      <CardOverflow
+        sx={{
+          p: "var(--Card-padding)",
+          display: "flex",
+          marginTop: lastComment ? "" : "18px",
+        }}
+      >
         <IconButton size="sm" variant="plain" color="neutral" sx={{ ml: -1 }}>
           <Face />
         </IconButton>
@@ -384,9 +411,6 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
             setComment(e.target.value);
           }}
         />
-        {/* <Button role="button" onClick={hendleComment}>
-          Post
-        </Button> */}
         <button className={styles.commentButton} onClick={hendleComment}>
           Send
         </button>

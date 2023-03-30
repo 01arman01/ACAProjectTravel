@@ -18,6 +18,7 @@ import { doc, setDoc } from "firebase/firestore";
 
 import { useRegisterStyles } from "./register.styles";
 import {USER_PAGE} from "../RoutePath/RoutePath";
+import dayjs from 'dayjs';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -32,6 +33,7 @@ export default function Register() {
 
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
+  const [timeDate,setTimeDate] = useState(dayjs(new Date()))
 
   // Add a new document in collection "cities"
   useEffect(() => {
@@ -56,17 +58,21 @@ export default function Register() {
 
     // clear the errors
     setError("");
-
+    
     try {
       let registerResponse = await createUser(email, password);
       startSession(registerResponse.user);
+      console.log( registerResponse.user.uid,"LLLLL",timeDate)
       // console.log(registerResponse);
+      // await setDoc(doc(db, "Message", registerResponse.user.uid))
       await setDoc(doc(db, "User", registerResponse.user.uid), {
         name: username,
         age,
         gender,
         image,
-      });
+        time:timeDate.toDate(),
+      })
+
       navigate(USER_PAGE);
     } catch (error) {
       // console.error(error.message);

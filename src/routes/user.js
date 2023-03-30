@@ -36,6 +36,7 @@ import PostAdd from "../components/PostAdd/PostAdd";
 import Header from "../components/Header/Header";
 import PostCard from "../components/CardComponent/PostCard";
 import Navbar from "../components/Navbar/Navbar";
+import dayjs from 'dayjs';
 
 
 export default function User() {
@@ -60,12 +61,13 @@ export default function User() {
   const [imageLoadnig, setImageLoadnig] = useState(false);
   const [users, setUsers] = useState([]);
   const [user, setUser] = useState(null);
+  const [timeDate,setTimeDate] = useState(dayjs(new Date()))
 
   //Auth
   const auth = getAuth(app);
   const userId = auth.lastNotifiedUid;
 
-
+console.log(auth.lastNotifiedUid)
 
   useEffect(() => {
     onSnapshot(collection(db, "User"), (data) => {
@@ -74,10 +76,17 @@ export default function User() {
         setUser(user[0])
     });
   },[]);
-  // useEffect(() => {
-  //   const user = users.find((el) => el.id === userId);
-  //   setUser(user);
-  // }, [users]);
+
+
+  useEffect(() => {
+    // setTimeDate(dayjs(new Date()).format('MM/DD/YYYY hh:mm'))
+
+    console.log(timeDate.toDate(),auth.lastNotifiedUid)
+    if(auth?.lastNotifiedUid){
+      updateDoc(doc(db, "User",  auth.lastNotifiedUid), {time:timeDate.toDate()});
+
+    }
+  }, [auth.lastNotifiedUid,timeDate]);
 
   //Set posts data
   useEffect(() => {

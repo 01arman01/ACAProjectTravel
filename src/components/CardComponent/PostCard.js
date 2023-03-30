@@ -395,7 +395,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
         sx={{
           p: "var(--Card-padding)",
           display: "flex",
-          marginTop: lastComment ? "" : "18px",
+          marginTop: lastComment ? "" : "4px",
         }}
       >
         <IconButton size="sm" variant="plain" color="neutral" sx={{ ml: -1 }}>

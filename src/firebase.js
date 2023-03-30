@@ -49,13 +49,11 @@ export { database };
 
 export const db = getFirestore(app);
 
-export const createUser = async (email, username, password, displayName) => {
+export const createUser = async (email, password) => {
   return createUserWithEmailAndPassword(
     getAuth(app),
     email,
-    username,
     password,
-    displayName
   );
 };
 

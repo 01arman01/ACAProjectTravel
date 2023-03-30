@@ -37,6 +37,8 @@ import Header from "../components/Header/Header";
 import PostCard from "../components/CardComponent/PostCard";
 import Navbar from "../components/Navbar/Navbar";
 import { LOGIN_PAGE } from "../RoutePath/RoutePath";
+import dayjs from 'dayjs';
+
 
 export default function User() {
   //navigate
@@ -60,6 +62,7 @@ export default function User() {
   const [loading, setloading] = useState(false);
   const [imageLoadnig, setImageLoadnig] = useState(false);
   const [user, setUser] = useState(null);
+  const [timeDate,setTimeDate] = useState(dayjs(new Date()))
 
   //Auth
   const auth = getAuth(app);
@@ -74,6 +77,16 @@ export default function User() {
       setUser(user[0]);
     });
   }, [userId]);
+
+
+  useEffect(() => {
+    // setTimeDate(dayjs(new Date()).format('MM/DD/YYYY hh:mm'))
+
+    // console.log(timeDate.toDate(),userId)
+    if(userId){
+      updateDoc(doc(db, "User",  userId), {time:timeDate.toDate()});
+    }
+  }, [userId,timeDate]);
 
   //Set posts data
   useEffect(() => {

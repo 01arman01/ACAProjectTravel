@@ -18,7 +18,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import MoreIcon from '@mui/icons-material/MoreVert';
-import { collection, onSnapshot } from '@firebase/firestore';
+import { addDoc, collection, onSnapshot, setDoc, updateDoc } from '@firebase/firestore';
 import { app, db, storage } from '../../firebase';
 import { getDownloadURL, listAll, ref } from 'firebase/storage';
 import { useDownloadURL } from 'react-firebase-hooks/storage';
@@ -28,6 +28,8 @@ import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import MailIcon from '@mui/icons-material/Mail';
 import MessageDialog from '../Message/MessageDialog';
 import { getAuth } from 'firebase/auth';
+import { Unstable_Grid } from '@mui/system';
+
 const auth = getAuth(app);
 
 
@@ -46,6 +48,7 @@ export default function PeopleComponent() {
     const [timeDate,setTimeDate] =React.useState(dayjs(new Date()).toDate().valueOf())
     const [messageList,setMessageList] =React.useState([])
     const [user,setUser] = React.useState([]);
+    const [friends,setFriends] = React.useState([]);
     // const [online,setOnline] = React.useState(true)
     // .format('MM/DD/YYYY hh:mm')
 
@@ -69,12 +72,28 @@ React.useEffect(() => {
 
       });
   },[])
+  React.useEffect(() => {
+    onSnapshot(collection(db, "Friends"), (data) => {
+      const fri = data.docs.map((doc) => ({ ...doc.data(), id: doc.id })).filter((elem)=>elem.userId === userId || elem.friendId === userId)
+        setFriends(fri)
+    });
+  },[]);
 
 
-
-
+ const sendFriendRequest = async(id)=>{
+  await addDoc(collection(db, "Friends"), {
+    userId: userId,
+    friendId:id,
+    request:false,
+  }).then((res) => {});
+         }
   
-  console.log(users,"sssss")
+const acceptFriendRequest= async(id)=>{
+  await updateDoc(collection(db, "Friends",id), {
+    request:true,
+  }).then((res) => {});
+         }
+
   return (
     <React.Fragment>
       <CssBaseline />
@@ -84,7 +103,7 @@ React.useEffect(() => {
         </Typography>
         <List sx={{ mb: 2 }}>
           {users.map(({ id, name, gender, age ,url,online}) => {
-            
+            console.log(friends,"friend")
             if(id !== userId){
               return(
                 <React.Fragment key={id}>
@@ -95,9 +114,25 @@ React.useEffect(() => {
                       </Badge>
                     </ListItemAvatar>
                     <ListItemText primary={name} secondary={gender+" "+age} />
-                    <Button variant="contained" startIcon={<PersonAddAlt1Icon  />}>
-                            Add Friends
-                          </Button>
+                    {friends.find((elem)=>elem.friendId===id)?<Button variant="contained" startIcon={<PersonAddAlt1Icon  />} onClick={()=>sendFriendRequest(id)}>
+                            send
+                          </Button>:""
+                    }
+                    {friends.find((elem)=>elem.friendId===userId)?<Button variant="contained" startIcon={<PersonAddAlt1Icon  />} onClick={()=>sendFriendRequest(id)}>
+                              accept
+                          </Button>: ""
+                    }
+                    {friends.find((elem)=>(elem.friendId===id || elem.userId===id) && (elem.request===true))?
+                    <Button variant="contained" startIcon={<PersonAddAlt1Icon  />} onClick={()=>sendFriendRequest(id)}>
+                              friend
+                          </Button>:""
+                    }
+                      {friends.find((elem)=>(elem.friendId !==id || elem.userId !==id))?
+                    <Button variant="contained" startIcon={<PersonAddAlt1Icon  />} onClick={()=>sendFriendRequest(id)}>
+                              add Friend
+                          </Button>:""
+                    }
+                    
                           {/* <Badge color="secondary" badgeContent={1} showZero>
                         <MailIcon />
                       </Badge> */}

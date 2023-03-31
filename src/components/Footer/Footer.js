@@ -16,7 +16,7 @@ function Footer(props) {
             <ul className={styles.footerMenuContainer}>
                 <li className={styles.menuItem}><Link className={styles.link} to={H0ME_PAGE}>Post</Link></li>
                 <li className={styles.menuItem}><Link className={styles.link}  to={PEOPLE_PAGE}>People</Link></li>
-                <li className={styles.menuItem}><Link className={styles.link}  to={ABOUT_PAGE}>About</Link> </li>
+                <li className={styles.menuItem}><Link className={styles.link}  to={'/'}>About</Link> </li>
                 <li className={styles.menuItem}><Link className={styles.link} to={CONTACT_PAGE}>Contact</Link></li>
             </ul>
             <span>&copy; 2023,Artashes Blbuljan, Vahe Rubinyan, Arman Papyan,  </span>

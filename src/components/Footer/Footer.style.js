@@ -9,7 +9,6 @@ import twitter from './img/icons8-твиттер.svg'
 const useStyles = createUseStyles({
     footer:{
         width:'100%',
-        // position:"relative",
         padding:'2rem 8%',
         backgroundColor:"#EDF1F4",
         color:"black",
@@ -17,6 +16,11 @@ const useStyles = createUseStyles({
         justifyContent:"space-evenly",
         alignItems:'center',
         flexDirection:"column",
+        "@media (max-width: 560px)": {
+            width:'100vw',
+            height: "auto",
+        },
+
 
 
     },

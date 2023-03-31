@@ -17,7 +17,20 @@ const useStyles = createUseStyles({
     position: "fixed",
     overflow: "scroll",
     paddingBottom: "27px",
-    // borderRadius: '5px',
+    borderRadius: '5px',
+    "@media (max-width: 750px)": {
+      // position:'relative',
+      position:'static',
+      width:'160px',
+      height: "auto",
+    },
+    "@media (max-width: 560px)": {
+      // position:'relative',
+
+      width:'100vw',
+      height: "auto",
+    },
+
   },
   listLi: {
     width: "100%",

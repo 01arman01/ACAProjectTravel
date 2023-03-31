@@ -17,6 +17,13 @@ import Header from "./components/Header/Header";
 import PeopleComponent from "./components/People/PeopleComponent";
 import Footer from "./components/Footer/Footer";
 
+const style ={
+  position:"absolute",
+  bottom:0,
+  left:0,
+  width:'100vw'
+}
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -41,7 +48,7 @@ const router = createBrowserRouter([
   },
   {
     path: USER_PAGE,
-    element: <><Header/><User/><Footer/> </>,
+    element: <><Header/><User/><div style={style}><Footer/></div> </>,
   },
   {
     path:OTHERUSER_PAGE,

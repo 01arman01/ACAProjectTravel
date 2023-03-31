@@ -1,36 +1,36 @@
-import { useCallback, useEffect, useState } from "react";
+import {useCallback, useEffect, useState} from "react";
 //Router
 import { useLocation, useNavigate } from "react-router-dom";
 //firebase
-import { app, db, storage } from "../firebase";
+import {app, db, storage} from "../firebase";
 import {
-  ref,
-  uploadBytes,
-  listAll,
-  getDownloadURL,
-  getStorage,
-  deleteObject,
+    ref,
+    uploadBytes,
+    listAll,
+    getDownloadURL,
+    getStorage,
+    deleteObject,
 } from "firebase/storage";
 import {
-  addDoc,
-  collection,
-  getDocs,
-  Timestamp,
-  deleteDoc,
-  doc,
-  updateDoc,
-  onSnapshot,
+    addDoc,
+    collection,
+    getDocs,
+    Timestamp,
+    deleteDoc,
+    doc,
+    updateDoc,
+    onSnapshot,
 } from "firebase/firestore";
-import { child, get, getDatabase, onValue } from "firebase/database";
-import { getAuth } from "firebase/auth";
+import {child, get, getDatabase, onValue} from "firebase/database";
+import {getAuth} from "firebase/auth";
 //Session
-import { endSession, getSession, isLoggedIn } from "../storage/session";
+import {endSession, getSession, isLoggedIn} from "../storage/session";
 //Mui
-import { Button, Checkbox, Container, TextField } from "@mui/material";
+import {Button, Checkbox, Container, TextField} from "@mui/material";
 //Styles
-import { useUserStyles } from "./user.styles";
+import {useUserStyles} from "./user.styles";
 //Uuid
-import { v4 } from "uuid";
+import {v4} from "uuid";
 //Components
 import PostAdd from "../components/PostAdd/PostAdd";
 import Header from "../components/Header/Header";
@@ -41,22 +41,21 @@ import dayjs from 'dayjs';
 
 
 export default function User() {
-  //navigate
-  let navigate = useNavigate();
-
+    //navigate
+    let navigate = useNavigate();
 
   //Styles
   const styles = useUserStyles();
 
-  //states
-  const [email, setEmail] = useState("");
-  const [title, setTitle] = useState("");
-  const [text, setText] = useState("");
-  const [ImageUpload, setImageUpload] = useState(null);
-  const [date, setDate] = useState(Timestamp.fromDate(new Date()));
-  const [share, setShare] = useState(false);
-  const [posts, setPosts] = useState([]);
-  // const [postsImageUrls, setPostsImageUrls] = useState([]);
+    //states
+    const [email, setEmail] = useState("");
+    const [title, setTitle] = useState("");
+    const [text, setText] = useState("");
+    const [ImageUpload, setImageUpload] = useState(null);
+    const [date, setDate] = useState(Timestamp.fromDate(new Date()));
+    const [share, setShare] = useState(false);
+    const [posts, setPosts] = useState([]);
+    // const [postsImageUrls, setPostsImageUrls] = useState([]);
 
   const [imageId, setImageId] = useState(v4);
   const [loading, setloading] = useState(false);
@@ -64,9 +63,9 @@ export default function User() {
   const [user, setUser] = useState(null);
   const [timeDate,setTimeDate] = useState(dayjs(new Date()))
 
-  //Auth
-  const auth = getAuth(app);
-  const userId = auth.lastNotifiedUid;
+    //Auth
+    const auth = getAuth(app);
+    const userId = auth.lastNotifiedUid;
 
   useEffect(() => {
     onSnapshot(collection(db, "User"), (data) => {
@@ -78,6 +77,17 @@ export default function User() {
     });
   }, [userId]);
 
+    useEffect(() => {
+        onSnapshot(collection(db, "User"), (data) => {
+            const user = data.docs
+                .map((doc) => ({...doc.data(), id: doc.id})).filter((elm) => elm.id === auth.lastNotifiedUid)
+            setUser(user[0])
+        });
+    }, []);
+    // useEffect(() => {
+    //   const user = users.find((el) => el.id === userId);
+    //   setUser(user);
+    // }, [users]);
 
   useEffect(() => {
     // setTimeDate(dayjs(new Date()).format('MM/DD/YYYY hh:mm'))
@@ -90,7 +100,6 @@ export default function User() {
 
   //Set posts data
   useEffect(() => {
-    console.log("b")
     onSnapshot(collection(db, "Posts"), (data) => {
       const newData = data.docs
         .map((doc) => ({ ...doc.data(), id: doc.id }))
@@ -114,43 +123,45 @@ export default function User() {
     });
   }, [userId]);
 
-  //Upload and send image to storage
-  const onUploadImage = () => {
-    if (ImageUpload == null) return;
-    const imageRef = ref(storage, `Images/${imageId}`);
-    uploadBytes(imageRef, ImageUpload).then((res) => {
-      onSendPost();
-      setImageId(v4);
-    });
-  };
+    //Upload and send image to storage
+    const onUploadImage = () => {
+        if (ImageUpload == null) return;
+        const imageRef = ref(storage, `Images/${imageId}`);
+        uploadBytes(imageRef, ImageUpload).then((res) => {
+            onSendPost();
+            setImageId(v4);
+        });
+    };
 
-  const onAddPost = () => {
-    setImageLoadnig(true);
-    onUploadImage();
-  };
+    const onAddPost = () => {
+        setImageLoadnig(true);
+        onUploadImage();
+    };
 
-  //Send post to database
-  const onSendPost = useCallback(async () => {
-    try {
-      await addDoc(collection(db, "Posts"), {
-        userId: userId,
-        title,
-        text,
-        imageId: imageId,
-        date,
-        share,
-      }).then((res) => {});
-    } catch (err) {}
-  }, [title, text, date, share, imageId, userId]);
+    //Send post to database
+    const onSendPost = useCallback(async () => {
+        try {
+            await addDoc(collection(db, "Posts"), {
+                userId: userId,
+                title,
+                text,
+                imageId: imageId,
+                date,
+                share,
+            }).then((res) => {
+            });
+        } catch (err) {
+        }
+    }, [title, text, date, share, imageId, userId]);
 
-  //Login status
-  useEffect(() => {
-    if (!isLoggedIn()) {
-      navigate("/login");
-    }
-    let session = getSession();
-    setEmail(session.email);
-  }, [navigate]);
+    //Login status
+    useEffect(() => {
+        if (!isLoggedIn()) {
+            navigate("/login");
+        }
+        let session = getSession();
+        setEmail(session.email);
+    }, [navigate]);
 
   //Logout function
   const onLogout = () => {

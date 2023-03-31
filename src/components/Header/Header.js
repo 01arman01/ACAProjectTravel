@@ -74,34 +74,52 @@ function Header(props) {
 
             <div className={styles.rightBlock}>
               {!isLoggedIn() ? (
-                <Link
-                  to={LOGIN_PAGE}
-                  className={`${styles.loginButton} ${styles.aLink}`}
-                >
-                  Login
-                </Link>
-              ) : (
-                <>
-                  <a
-                    onClick={openLogoutDialog}
-                    className={`${styles.logoutButton} ${styles.aLink}`}
+                  <Link
+                      to={LOGIN_PAGE}
+                      className={`${styles.loginButton} ${styles.aLink}`}
                   >
-                    Logout
-                  </a>
-                  <Link className={styles.userBlock} to={USER_PAGE}>
-                    <CiUser className={styles.userIcon} />
+                    Login
                   </Link>
-                </>
+              ) : (
+                  <>
+                    <a
+                        onClick={openLogoutDialog}
+                        className={
+                      `${styles.logoutButton} ${styles.aLink}`
+                    }
+                    >
+                      Logout
+                    </a>
+                    <Link className={`${styles.userBlock} ${styles.userblockOther}`} to={USER_PAGE}>
+                      <CiUser className={styles.userIcon} />
+                    </Link>
+                  </>
               )}
-              <LogoutDialog
-                onLogout={onLogout}
-                logoutDialogStatus={logoutDialogStatus}
-                closeLogoutDialog={closeLogoutDialog}
-              />
             </div>
+            <div className={styles.ToggleBtn} >
+              {isLoggedIn() &&  <Link className={styles.userBlock} to={USER_PAGE}>
+                <CiUser className={styles.userIcon} />
+              </Link>
+
+              }
+              <i onClick={onClickBtnStatusChange} className="fa-solid fa-bars"></i>
+            </div>
+            {headerBtnClickChange && <div className={styles.dropdownMenu}>
+              <li><a className={`${styles.aLink} ${styles.dropdownMenuLi}`}href="/">Posts</a></li>
+              <li><a className={`${styles.aLink} ${styles.dropdownMenuLi}`} href="">User Page</a></li>
+              <li><a className={`${styles.aLink} ${styles.dropdownMenuLi}`}href="">Contact</a></li>
+              <li><a className={`${styles.aLink} ${styles.dropdownMenuLi}`} href="">About</a></li>
+              <Link to='/login'  className={`${styles.dropdownMenuActionBtn} ${styles.aLink} ${styles.actionBtn}`} >Login</Link>
+            </div>}
+
           </div>
         </div>
       </header>
+      {logoutDialogStatus && <LogoutDialog
+          onLogout={onLogout}
+          logoutDialogStatus={logoutDialogStatus}
+          closeLogoutDialog={closeLogoutDialog}
+      />}
     </>
   );
 }

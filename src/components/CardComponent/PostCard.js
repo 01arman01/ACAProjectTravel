@@ -50,6 +50,8 @@ import { usePostCardStyles } from "./PostCard.styles";
 import { useDownloadURL } from "react-firebase-hooks/storage";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { OTHERUSER_PAGE, USER_PAGE } from "../../RoutePath/RoutePath";
+import CardCover from '@mui/joy/CardCover';
+
 
 export default function PostCard({ post, load, page, imageLoadnig, user }) {
   //Auth
@@ -93,6 +95,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
       }
     });
   }, [postValue]);
+
 
   useEffect(() => {
     onSnapshot(collection(db, "Likes"), (data) => {
@@ -283,7 +286,25 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
           {imageLoadnig ? (
             <CircularIndeterminate />
           ) : (
-            <img src={postValue.url} alt="" loading="lazy" />
+            <>
+            {/* <img src={postValue.url} alt="" loading="lazy" /> */}
+           
+        <CardCover>
+          <video
+            autoPlay
+            // loop
+            muted
+            poster={postValue.url}
+          >
+            <source
+              src={ postValue.url}
+              type="video/mp4"
+            />
+          </video>
+        </CardCover>
+      
+
+          </>
           )}
 
           {/* <img src={postValue.url} alt="" loading="lazy" /> */}

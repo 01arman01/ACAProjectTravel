@@ -4,17 +4,13 @@ import EditPass from "./EditPass";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import AddPostDialog from "./AddPostDialog";
-import { ImageListItem } from "@mui/material";
-import Button from "@mui/material/Button";
 import Avatar from "@mui/joy/Avatar";
 import { app, db, storage } from "../../firebase";
 import { v4 } from "uuid";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { collection, doc, onSnapshot, updateDoc } from "@firebase/firestore";
+import { ref, uploadBytes } from "firebase/storage";
+import { doc, updateDoc } from "@firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { useStorage } from "react-firebase-hooks/storage";
 import { useDownloadURL } from "react-firebase-hooks/storage";
-import ProgressComponent from "./ProgressComponent";
 import ImageListComponent from "./ImageListComponent";
 import { useLocation } from "react-router-dom";
 import EditUserImageDialog from "../EditUserImageDialog";
@@ -105,7 +101,7 @@ function Navbar({
             sx={{ width: 150, height: 150 }}
           />
         )}
-        {location.pathname == "/user" && (
+        {location.pathname === "/user" && (
           <>
             {
               <EditUserImageDialog
@@ -121,7 +117,7 @@ function Navbar({
         )}
       </div>
       <h1 className={styles.avatarName}>{user.name}</h1>
-      {location.pathname == "/user" && (
+      {location.pathname === "/user" && (
         <ul>
           <li onClick={changeNavbarAddPost} className={styles.listLi}>
             <ListItem button>
@@ -161,6 +157,7 @@ function Navbar({
         </ul>
       )}
       <ImageListComponent
+        key={v4}
         open={openImageList}
         handleClose={handleClose}
         user={user}

@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography';
 import CopmentComponent from './CommentComponent';
 import { Avatar, TextField } from '@mui/material';
 import SendIcon from "@mui/icons-material/Send";
+import { v4 } from 'uuid';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -71,7 +72,7 @@ const [comment, setComment] = React.useState("")
           Comments
         </BootstrapDialogTitle>
         <DialogContent >
-        <CopmentComponent selectedValue={selectedValue} />
+        <CopmentComponent key={v4} selectedValue={selectedValue} />
         </DialogContent>
         <DialogActions>
           {/* <Button autoFocus onClick={handleClose}>

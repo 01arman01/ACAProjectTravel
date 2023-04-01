@@ -1,39 +1,28 @@
 import { useCallback, useEffect, useState } from "react";
 //Router
-import { useLocation, useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
 //firebase
 import { app, db, storage } from "../firebase";
 import {
   ref,
   uploadBytes,
-  listAll,
   getDownloadURL,
-  getStorage,
-  deleteObject,
 } from "firebase/storage";
 import {
   addDoc,
   collection,
-  getDocs,
-  Timestamp,
-  deleteDoc,
   doc,
   updateDoc,
   onSnapshot,
 } from "firebase/firestore";
-import { child, get, getDatabase, onValue } from "firebase/database";
 import { getAuth } from "firebase/auth";
 //Session
 import { endSession, getSession, isLoggedIn } from "../storage/session";
-//Mui
-import { Button, Checkbox, Container, TextField } from "@mui/material";
 //Styles
 import { useUserStyles } from "./user.styles";
 //Uuid
 import { v4 } from "uuid";
 //Components
-import PostAdd from "../components/PostAdd/PostAdd";
-import Header from "../components/Header/Header";
 import PostCard from "../components/CardComponent/PostCard";
 import Navbar from "../components/Navbar/Navbar";
 import { LOGIN_PAGE } from "../RoutePath/RoutePath";
@@ -53,7 +42,7 @@ export default function User() {
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [ImageUpload, setImageUpload] = useState(null);
-  const [date, setDate] = useState(Timestamp.fromDate(new Date()));
+  const [date, setDate] = useState(dayjs(new Date()));
   const [share, setShare] = useState(false);
   const [posts, setPosts] = useState([]);
   // const [postsImageUrls, setPostsImageUrls] = useState([]);
@@ -70,7 +59,6 @@ export default function User() {
 
   useEffect(() => {
     onSnapshot(collection(db, "User"), (data) => {
-      console.log(data, "data");
       const user = data.docs
         .map((doc) => ({ ...doc.data(), id: doc.id }))
         .filter((elm) => elm.id === userId);
@@ -80,17 +68,13 @@ export default function User() {
 
 
   useEffect(() => {
-    // setTimeDate(dayjs(new Date()).format('MM/DD/YYYY hh:mm'))
-
-    // console.log(timeDate.toDate(),userId)
     if(userId){
-      updateDoc(doc(db, "User",  userId), {time:timeDate.toDate()});
+      updateDoc(doc(db, "User",  userId), {time:dayjs(new Date()).toDate()});
     }
   }, [userId,timeDate]);
 
   //Set posts data
   useEffect(() => {
-    console.log("b")
     onSnapshot(collection(db, "Posts"), (data) => {
       const newData = data.docs
         .map((doc) => ({ ...doc.data(), id: doc.id }))
@@ -137,7 +121,7 @@ export default function User() {
         title,
         text,
         imageId: imageId,
-        date,
+        date:date,
         share,
       }).then((res) => {});
     } catch (err) {}

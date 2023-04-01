@@ -50,28 +50,18 @@ export default function MessageDialog({ id, url, name, users }) {
           updateDoc(doc(db, "Message", elem.id), { open: true });
         }
       });
-    setMessageList([
-      ...messageList.sort((p1, p2) => {
-        if (p1["time"].toDate().valueOf() > p2["time"].toDate().valueOf()) {
-          console.log(p1);
-          return -1;
-        }
-        if (p1["time"].toDate().valueOf() < p2["time"].toDate().valueOf()) {
-          return 1;
-        }
-        return 0;
-      }),
-    ]);
-
-    // setMessageList(messageList.map(elem=>{
-    //   if(elem.sender === id && elem.open===false){
-    //     return{
-    //       ...elem,
-    //       open : true
+    // setMessageList([
+    //   ...messageList.sort((p1, p2) => {
+    //     if (p1["time"].seconds > p2["time"].seconds) {
+    //       console.log(p1,"AAASSS");
+    //       return -1;
     //     }
-    //   }
-    //   return elem
-    // }))
+    //     if (p1["time"].seconds < p2["time"].seconds) {
+    //       return 1;
+    //     }
+    //     return 0;
+    //   }),
+    // ]);
   };
 
   const handleClose = () => {
@@ -79,8 +69,7 @@ export default function MessageDialog({ id, url, name, users }) {
   };
   React.useEffect(() => {
     const citiesRef = collection(db, "Message");
-    const q = query(citiesRef, orderBy("message"));
-
+    const q = query(citiesRef, orderBy("time","asc"));
     onSnapshot(q, (data) => {
       const newData = data.docs
         .map((doc) => ({ ...doc.data(), id: doc.id }))
@@ -92,17 +81,8 @@ export default function MessageDialog({ id, url, name, users }) {
       setMessageList(newData);
     });
   }, [id, userId]);
-  //Upload and send image to storage
-  // const onUploadImage = () => {
-  //   if (ImageUpload == null) return;
-  //   const imageRef = ref(storage, `Images/${imageId}`);
-  //   uploadBytes(imageRef, ImageUpload).then((res) => {
-  //     onSendPost();
-  //     setImageId(v4);
-  //   });
-  // };
 
-  // },[])
+
   const descriptionElementRef = React.useRef(null);
   React.useEffect(() => {
     if (open) {
@@ -112,16 +92,7 @@ export default function MessageDialog({ id, url, name, users }) {
       }
     }
   }, [open]);
-  //   React.useEffect(() => {
-  //     await setDoc(collection(db, "Message")
-  //    }, [open]);
-
-  React.useEffect(() => {
-    onSnapshot(collection(db, "Message"), (data) => {
-    data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-        .filter((elem) => elem.userId === userId);
-    });
-  }, [userId]);
+ 
 
   const onSendMessage = async () => {
     addDoc(collection(db, "Message"), {
@@ -129,7 +100,7 @@ export default function MessageDialog({ id, url, name, users }) {
       receiver: id,
       message,
       open: false,
-      time: timeDate.toDate(),
+      time: dayjs(new Date()).toDate(),
     });
   };
 

@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AspectRatio from "@mui/joy/AspectRatio";
 import Avatar from "@mui/joy/Avatar";
 import Box from "@mui/joy/Box";
@@ -16,32 +16,23 @@ import SendOutlined from "@mui/icons-material/SendOutlined";
 import Face from "@mui/icons-material/Face";
 import BookmarkBorderRoundedIcon from "@mui/icons-material/BookmarkBorderRounded";
 // import Card from '@mui/material/Card';
-import CardHeader from "@mui/material/CardHeader";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
-import CardActions from "@mui/material/CardActions";
 // import Avatar from '@mui/material/Avatar';
 // import IconButton from '@mui/material/IconButton';
 // import Typography from '@mui/material/Typography';
-import { red } from "@mui/material/colors";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShareIcon from "@mui/icons-material/Share";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { createUseStyles } from "react-jss";
 import SimpleDialog from "../SimpleDialog";
 import {
   addDoc,
   collection,
   deleteDoc,
-  deleteField,
   doc,
   onSnapshot,
+  orderBy,
+  query,
   updateDoc,
 } from "firebase/firestore";
 import { app, db } from "../../firebase";
 import Share from "../Share";
 import { getAuth } from "firebase/auth";
-import { Button } from "@mui/joy";
 import CommentDialog from "../CommentDialog";
 import { deleteObject, ref } from "@firebase/storage";
 import { storage } from "../../firebase";
@@ -51,6 +42,7 @@ import { useDownloadURL } from "react-firebase-hooks/storage";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { OTHERUSER_PAGE, USER_PAGE } from "../../RoutePath/RoutePath";
 import CardCover from '@mui/joy/CardCover';
+import { v4 } from "uuid";
 
 
 export default function PostCard({ post, load, page, imageLoadnig, user }) {
@@ -92,8 +84,10 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
   }, []);
 
   useEffect(() => {
-    onSnapshot(doc(db, "Posts", postValue.id), (doc) => {
-      const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
+    const citiesRef = collection(db, "Posts");
+    const q = query(citiesRef, orderBy("date","asc"));
+    onSnapshot(q, (doc) => {
+      // const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
       if (!!postValue.url) {
         setPostValue({ ...postValue, ...doc.data() });
       }
@@ -325,6 +319,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
           <IconButton variant="plain" color="neutral" size="sm">
             <ModeCommentOutlined onClick={handleClickOpenComment} />
             <CommentDialog
+              key={v4()}
               openCommentPag={openCommentPag}
               handleCloseComment={handleCloseComment}
               selectedValue={postValue}
@@ -406,7 +401,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
         fontSize="10px"
         sx={{ color: "text.tertiary", my: 0.5 }}
       >
-        {new Date(postValue.date.seconds).toString().slice(16, 21)}{" "}
+        {postValue.date.toDate().toLocaleTimeString(undefined, {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hour12: false, minute:'2-digit', second:'2-digit'})}
       </Link>
       {lastComment ? (<span>{lastComment}</span>) : (<div style={{
         fontSize:"12px",

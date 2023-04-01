@@ -23,14 +23,12 @@ import { getDownloadURL, ref } from 'firebase/storage';
 import dayjs from 'dayjs';
 import { Badge, Button, IconButton } from '@mui/material';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
-import MessageDialog from '../Message/MessageDialog';
 import { getAuth } from 'firebase/auth';
 import PeopleIcon from '@mui/icons-material/People';
 import Diversity3Icon from '@mui/icons-material/Diversity3';
 import InputBase from '@mui/material/InputBase';
-import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
-import DirectionsIcon from '@mui/icons-material/Directions';
+import MessageDialog from '../Message/MessageDialog'
 
 const auth = getAuth(app);
 
@@ -48,8 +46,6 @@ export default function PeopleComponent() {
     const userId = auth.lastNotifiedUid;
       const [users, setUsers] = React.useState([]);
       const [timeDate,setTimeDate] =React.useState(dayjs(new Date()).toDate().valueOf())
-      const [messageList,setMessageList] =React.useState([])
-      const [user,setUser] = React.useState([]);
       const [friends,setFriends] = React.useState([]);
       const [page, setPage] = React.useState('People')
       // const [online,setOnline] = React.useState(true)
@@ -126,21 +122,16 @@ export default function PeopleComponent() {
     setPage('Friends')
   }
   const onSearch =(value)=>{
-    // console.log(value,value.slice(0, value.length+1))
-    // console.log(users)
     if(value === ""){
       getUser()
     }
-    const filterCheckItem =users.filter((elem)=>elem.name.slice(0, value.length) === value)
-    console.log(filterCheckItem,"KKKKK")
+  const filterCheckItem =users.filter((elem)=>elem.name.slice(0, value.length) === value)
     setUsers(filterCheckItem.map((elem,index)=>{
         return{
           ...elem,
         }
       }
     ))
-    // setUsers([...users.filter((elem)=>(elem.name.slice(0, value.length+1)) === (value))])
-    console.log(users)
   }
 
   return (
@@ -217,7 +208,6 @@ export default function PeopleComponent() {
       </IconButton>
     </Paper>
           {users.map(({ id, name, gender, age ,url,online}) => {
-            console.log(friends,"friend")
             if(id !== userId){
               return(
                 <React.Fragment key={id} >

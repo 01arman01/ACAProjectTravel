@@ -28,7 +28,6 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { createUseStyles } from "react-jss";
-import SimpleDialog from "../SimpleDialog";
 import {
   addDoc,
   collection,

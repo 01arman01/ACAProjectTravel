@@ -15,18 +15,6 @@ import ModeCommentOutlined from "@mui/icons-material/ModeCommentOutlined";
 import SendOutlined from "@mui/icons-material/SendOutlined";
 import Face from "@mui/icons-material/Face";
 import BookmarkBorderRoundedIcon from "@mui/icons-material/BookmarkBorderRounded";
-// import Card from '@mui/material/Card';
-// import Avatar from '@mui/material/Avatar';
-// import IconButton from '@mui/material/IconButton';
-// import Typography from '@mui/material/Typography';
-
-import SimpleDialog from "../SimpleDialog";
-
-import { red } from "@mui/material/colors";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShareIcon from "@mui/icons-material/Share";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { createUseStyles } from "react-jss";
 
 import {
   addDoc,
@@ -95,16 +83,16 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
     });
   }, []);
 
-  useEffect(() => {
-    const citiesRef = collection(db, "Posts");
-    const q = query(citiesRef, orderBy("date","asc"));
-    onSnapshot(q, (doc) => {
-      // const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
-      if (!!postValue.url) {
-        setPostValue({ ...postValue, ...doc.data() });
-      }
-    });
-  }, [postValue]);
+  // useEffect(() => {
+  //   const citiesRef = collection(db, "Posts");
+  //   const q = query(citiesRef, orderBy("date","asc"));
+  //   onSnapshot(q, (doc) => {
+  //     // const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
+  //     if (!!postValue.url) {
+  //       setPostValue({ ...postValue, ...doc.data() });
+  //     }
+  //   });
+  // }, [postValue]);
 
   useEffect(() => {
     onSnapshot(collection(db, "Likes"), (data) => {
@@ -398,7 +386,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
           sx={{ fontSize: "12px" }}
         >
           <span onClick={onNavigatePage} className={styles.userName}>
-            {user.name}
+            { postValue.title}
           </span>
         </Link>{" "}
         {openFullText ? postValue.text : postValue.text.slice(0, 15)}

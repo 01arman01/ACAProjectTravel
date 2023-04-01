@@ -41,21 +41,17 @@ import dayjs from 'dayjs';
 export default function User() {
     //navigate
     let navigate = useNavigate();
-
   //Styles
   const styles = useUserStyles();
-
-
   //states
   const [email, setEmail] = useState("");
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [ImageUpload, setImageUpload] = useState(null);
-  const [date, setDate] = useState(dayjs(new Date()));
+  const [date, setDate] = useState(dayjs(new Date()).toDate());
   const [share, setShare] = useState(false);
   const [posts, setPosts] = useState([]);
   // const [postsImageUrls, setPostsImageUrls] = useState([]);
-
 
   const [imageId, setImageId] = useState(v4);
   const [loading, setloading] = useState(false);
@@ -82,11 +78,8 @@ export default function User() {
                 .map((doc) => ({...doc.data(), id: doc.id})).filter((elm) => elm.id === auth.lastNotifiedUid)
             setUser(user[0])
         });
-    }, []);
-    // useEffect(() => {
-    //   const user = users.find((el) => el.id === userId);
-    //   setUser(user);
-    // }, [users]);
+    }, [auth.lastNotifiedUid]);
+
 
   useEffect(() => {
     if(userId){
@@ -97,27 +90,34 @@ export default function User() {
   //Set posts data
   useEffect(() => {
     onSnapshot(collection(db, "Posts"), (data) => {
-      const newData = data.docs
-        .map((doc) => ({ ...doc.data(), id: doc.id }))
-        .filter((elem) => elem.userId === userId);
-      newData.forEach((elm, index) => {
-        const starsRef = ref(storage, `Images/${elm.imageId}`);
-        getDownloadURL(starsRef)
+      console.log(data)
+      const newData = data.docs.filter((elem) => elem.data().share === true).map((doc) => {
+        const storageRef = ref(storage,`Images/${doc.data().imageId}`);
+        return getDownloadURL(storageRef)
           .then((url) => {
-            elm["url"] = url;
+            return {
+              ...doc.data(),
+              id: doc.id,
+              url: url,
+            };
           })
-          .then((elem) => {
-            if (index + 1 === newData.length) {
-              setloading(true);
-            }
-          })
-          .then(() => {
-            setImageLoadnig(false);
+          .catch((err) => {
+            return {
+              ...doc.data(),
+              id: doc.id,
+              url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlHBoELHG9IPFDyVp_5_lRfL-9zTYR-YG1nEC8N9c&s",
+            };
           });
       });
-      setPosts(newData);
+      Promise.all(newData)
+        .then((downloadUrls) => {
+          setImageLoadnig(false);
+          setPosts(downloadUrls);
+        })
+        .catch((error) => console.log(error, "asdfasdf"));
     });
-  }, [userId]);
+  },[]);
+
 
     //Upload and send image to storage
     const onUploadImage = () => {
@@ -130,8 +130,9 @@ export default function User() {
     };
 
     const onAddPost = () => {
-        setImageLoadnig(true);
         onUploadImage();
+        setImageLoadnig(true);
+
     };
 
   //Send post to database
@@ -144,8 +145,8 @@ export default function User() {
         imageId: imageId,
         date:date,
         share,
-      }).then((res) => {});
-    } catch (err) {}
+      }).then((res) => {console.log(res,"postt")}).catch((err)=>{console.log(err,"err")});
+    } catch (err) {console.log(err,"err")}
   }, [title, text, date, share, imageId, userId]);
 
 

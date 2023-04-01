@@ -35,7 +35,7 @@ function AddPostDialog({
       className={styles.dialog}
     >
       <DialogTitle id="alert-dialog-title" sx={{textAlign:"center"}}>{"Add New Post"}</DialogTitle>
-      {/* <DialogContent>
+      <DialogContent>
         <TextField
           id="standard-basic"
           label="Title"
@@ -43,7 +43,7 @@ function AddPostDialog({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
-      </DialogContent> */}
+      </DialogContent>
       <DialogContent >
         <TextField
           id="outlined-multiline-static"

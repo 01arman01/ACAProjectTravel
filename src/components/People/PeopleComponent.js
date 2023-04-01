@@ -1,18 +1,24 @@
-
 import * as React from 'react';
-import { styled } from '@mui/material/styles';
-import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
+import Drawer from '@mui/material/Drawer';
+import AppBar from '@mui/material/AppBar';
 import CssBaseline from '@mui/material/CssBaseline';
 import Toolbar from '@mui/material/Toolbar';
+import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+import MailIcon from '@mui/icons-material/Mail';
+
+import { styled } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Fab from '@mui/material/Fab';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 import Avatar from '@mui/material/Avatar';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -26,7 +32,6 @@ import { useDownloadURL } from 'react-firebase-hooks/storage';
 import dayjs from 'dayjs';
 import { Badge, Button } from '@mui/material';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
-import MailIcon from '@mui/icons-material/Mail';
 import MessageDialog from '../Message/MessageDialog';
 import { getAuth } from 'firebase/auth';
 import { Unstable_Grid } from '@mui/system';
@@ -42,78 +47,130 @@ const StyledFab = styled(Fab)({
   right: 0,
   margin: "0 auto",
 });
+const drawerWidth = 240;
 
 export default function PeopleComponent() {
-  const userId = auth.lastNotifiedUid;
-    const [users, setUsers] = React.useState([]);
-    const [timeDate,setTimeDate] =React.useState(dayjs(new Date()).toDate().valueOf())
-    const [messageList,setMessageList] =React.useState([])
-    const [user,setUser] = React.useState([]);
-    const [friends,setFriends] = React.useState([]);
-    // const [online,setOnline] = React.useState(true)
-    // .format('MM/DD/YYYY hh:mm')
-
-
-  React.useEffect(() => {
-    onSnapshot(collection(db, "User"), (data) => {
-      const newData = data.docs.map((doc) => {
-        const storageRef = ref(
-          storage,
-          `user_image/${doc?.id}/${doc.data()?.image}`
-        );
-        return getDownloadURL(storageRef)
-          .then((url) => {
-            return {
-              ...doc.data(),
-              id: doc.id,
-              url: url,
-              online: !(timeDate / 1000 - doc.data().time?.seconds < 600),
-            };
-          })
-          .catch((err) => {
-            return {
-              ...doc.data(),
-              id: doc.id,
-              url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlHBoELHG9IPFDyVp_5_lRfL-9zTYR-YG1nEC8N9c&s",
-              online: !(timeDate / 1000 - doc.data().time?.seconds < 600),
-            };
-          });
-      });
-      Promise.all(newData)
-      .then((downloadUrls) => {
-        setUsers(downloadUrls);
-      })
-      .catch((error) => console.log(error, "asdfasdf"));
-  });
-}, []);
-
-
-  React.useEffect(() => {
-    onSnapshot(collection(db, "Friends"), (data) => {
-      const fri = data.docs.map((doc) => ({ ...doc.data(), id: doc.id })).filter((elem)=>elem.userId === userId || elem.friendId === userId)
-        setFriends(fri)
-    });
-  },[userId]);
-
-
- const sendFriendRequest = async(id)=>{
-  await addDoc(collection(db, "Friends"), {
-    userId: userId,
-    friendId:id,
-    request:false,
-  }).then((res) => {});
-         }
+    const userId = auth.lastNotifiedUid;
+      const [users, setUsers] = React.useState([]);
+      const [timeDate,setTimeDate] =React.useState(dayjs(new Date()).toDate().valueOf())
+      const [messageList,setMessageList] =React.useState([])
+      const [user,setUser] = React.useState([]);
+      const [friends,setFriends] = React.useState([]);
+      // const [online,setOnline] = React.useState(true)
+      // .format('MM/DD/YYYY hh:mm')
   
-const acceptFriendRequest= (id)=>{
-  console.log(id)
-   updateDoc(doc(db, "Friends",id), {
-    request:true,
-  }).then((res) => {console.log(res,'dddd')}).catch((err)=>{console.log(err,'eeee')});
-         }
-
+  
+    React.useEffect(() => {
+      onSnapshot(collection(db, "User"), (data) => {
+        const newData = data.docs.map((doc) => {
+          const storageRef = ref(
+            storage,
+            `user_image/${doc?.id}/${doc.data()?.image}`
+          );
+          return getDownloadURL(storageRef)
+            .then((url) => {
+              return {
+                ...doc.data(),
+                id: doc.id,
+                url: url,
+                online: !(timeDate / 1000 - doc.data().time?.seconds < 600),
+              };
+            })
+            .catch((err) => {
+              return {
+                ...doc.data(),
+                id: doc.id,
+                url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlHBoELHG9IPFDyVp_5_lRfL-9zTYR-YG1nEC8N9c&s",
+                online: !(timeDate / 1000 - doc.data().time?.seconds < 600),
+              };
+            });
+        });
+        Promise.all(newData)
+        .then((downloadUrls) => {
+          setUsers(downloadUrls);
+        })
+        .catch((error) => console.log(error, "asdfasdf"));
+    });
+  }, [timeDate]);
+  
+  
+    React.useEffect(() => {
+      onSnapshot(collection(db, "Friends"), (data) => {
+        const fri = data.docs.map((doc) => ({ ...doc.data(), id: doc.id })).filter((elem)=>elem.userId === userId || elem.friendId === userId)
+          setFriends(fri)
+      });
+    },[userId]);
+  
+  
+   const sendFriendRequest = async(id)=>{
+    await addDoc(collection(db, "Friends"), {
+      userId: userId,
+      friendId:id,
+      request:false,
+    }).then((res) => {});
+           }
+    
+  const acceptFriendRequest= (id)=>{
+    console.log(id)
+     updateDoc(doc(db, "Friends",id), {
+      request:true,
+    }).then((res) => {console.log(res,'dddd')}).catch((err)=>{console.log(err,'eeee')});
+           }
+  const filterFrinds = ()=>{
+    setUsers([...users.filter((elem)=>!!friends.find((ele)=>ele.request===true && (ele.userId===elem.id || ele.friendId===elem.id) ))])
+  }
 
   return (
-    <React.Fragment>
+    <Box sx={{ display: 'flex' }}>
+     
+      <Drawer
+        variant="permanent"
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          [`& .MuiDrawer-paper`]: { width: drawerWidth,  },
+          zIndex: 1,
+        }}
+      >
+        <Toolbar />
+        <Box sx={{ overflow: 'auto' }}>
+          <List>
+              <ListItem key={"text"} disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                     <MailIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={"People"} />
+                </ListItemButton>
+              </ListItem>
+              <ListItem key={"text"} disablePadding>
+                <ListItemButton  onClick={filterFrinds}>
+                  <ListItemIcon>
+                     <MailIcon  />
+                  </ListItemIcon>
+                  <ListItemText primary={"Friends"} />
+                </ListItemButton>
+              </ListItem>
+          </List>
+          <Divider />
+          <List>
+            {['All mail', 'Trash', 'Spam'].map((text, index) => (
+              <ListItem key={text} disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  </ListItemIcon>
+                  <ListItemText primary={text} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Drawer>
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <Toolbar />
+        <React.Fragment 
+    >
       <CssBaseline />
       <Paper square sx={{ pb: "50px" }}>
         <Typography
@@ -130,9 +187,8 @@ const acceptFriendRequest= (id)=>{
             console.log(friends,"friend")
             if(id !== userId){
               return(
-
-                <React.Fragment key={id}>
-                  <ListItem button>
+                <React.Fragment key={id} >
+                  <ListItem sx={{boxShadow:"0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);", borderRadius:1}}>
                     <ListItemAvatar>
                       <Badge color="secondary" variant="dot" invisible={online}>
                         <Avatar alt="Profile Picture" src={url} />
@@ -179,5 +235,7 @@ const acceptFriendRequest= (id)=>{
         </List>
       </Paper>
     </React.Fragment>
+      </Box>
+    </Box>
   );
 }

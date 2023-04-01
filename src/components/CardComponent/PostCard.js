@@ -80,6 +80,10 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
   const storageRef = ref(storage, `user_image/${user?.id}/${user?.image}`);
   const [url, loadProces] = useDownloadURL(storageRef);
 
+
+
+
+
   useEffect(() => {
     onSnapshot(collection(db, "User"), (data) => {
       const newData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
@@ -292,18 +296,14 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
         <CardCover>
           <video
             autoPlay
-            // loop
+            loop
             muted
-            poster={postValue.url}
-          >
+            poster={postValue.url}>
             <source
               src={ postValue.url}
-              type="video/mp4"
-            />
+              type="video/mp4" />
           </video>
         </CardCover>
-      
-
           </>
           )}
 
@@ -328,6 +328,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
               openCommentPag={openCommentPag}
               handleCloseComment={handleCloseComment}
               selectedValue={postValue}
+              onAddComment={onAddComment}
             />
             {/* openCommentPag */}
           </IconButton>

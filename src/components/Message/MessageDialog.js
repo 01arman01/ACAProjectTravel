@@ -28,6 +28,7 @@ import { app, db } from "../../firebase";
 import dayjs from "dayjs";
 import { getAuth } from "firebase/auth";
 import SendIcon from "@mui/icons-material/Send";
+import PeopleIcon from '@mui/icons-material/People';
 const auth = getAuth(app);
 
 export default function MessageDialog({ id, url, name, users }) {
@@ -173,7 +174,7 @@ export default function MessageDialog({ id, url, name, users }) {
                       <ListItem  sx={{ padding: 0 }}>
                         <ListItemText
                           sx={{boxShadow:" 0 1px 3px gray", borderRadius:3,padding:1, margin:1, display: "inline-block"}}
-                          primary={user.name}
+                          primary={user?.name}
                           secondary={elem.message}
                         />
                         <ListItemAvatar>
@@ -182,7 +183,7 @@ export default function MessageDialog({ id, url, name, users }) {
                             variant="dot"
                             invisible={true}
                           >
-                            <Avatar alt="Profile Picture" src={user.url}  sx={{ width: 37, height: 37, marginBottom: "40px"}}/>
+                            <Avatar alt="Profile Picture" src={user?.url}  sx={{ width: 37, height: 37, marginBottom: "40px"}}/>
                           </Badge>
                         </ListItemAvatar>
                       </ListItem>

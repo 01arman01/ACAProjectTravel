@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
-import AppBar from '@mui/material/AppBar';
 import CssBaseline from '@mui/material/CssBaseline';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
@@ -13,29 +12,25 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
-
 import { styled } from '@mui/material/styles';
-import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Fab from '@mui/material/Fab';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListSubheader from '@mui/material/ListSubheader';
 import Avatar from '@mui/material/Avatar';
-import MenuIcon from '@mui/icons-material/Menu';
-import AddIcon from '@mui/icons-material/Add';
-import SearchIcon from '@mui/icons-material/Search';
-import MoreIcon from '@mui/icons-material/MoreVert';
-import { addDoc, collection, doc, onSnapshot, setDoc, updateDoc } from '@firebase/firestore';
+import { addDoc, collection, doc, onSnapshot, updateDoc } from '@firebase/firestore';
 import { app, db, storage } from '../../firebase';
-import { getDownloadURL, listAll, ref } from 'firebase/storage';
-import { useDownloadURL } from 'react-firebase-hooks/storage';
+import { getDownloadURL, ref } from 'firebase/storage';
 import dayjs from 'dayjs';
-import { Badge, Button } from '@mui/material';
+import { Badge, Button, IconButton } from '@mui/material';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import MessageDialog from '../Message/MessageDialog';
 import { getAuth } from 'firebase/auth';
-import { Unstable_Grid } from '@mui/system';
-
+import PeopleIcon from '@mui/icons-material/People';
+import Diversity3Icon from '@mui/icons-material/Diversity3';
+import InputBase from '@mui/material/InputBase';
+import MenuIcon from '@mui/icons-material/Menu';
+import SearchIcon from '@mui/icons-material/Search';
+import DirectionsIcon from '@mui/icons-material/Directions';
 
 const auth = getAuth(app);
 
@@ -56,11 +51,11 @@ export default function PeopleComponent() {
       const [messageList,setMessageList] =React.useState([])
       const [user,setUser] = React.useState([]);
       const [friends,setFriends] = React.useState([]);
+      const [page, setPage] = React.useState('People')
       // const [online,setOnline] = React.useState(true)
       // .format('MM/DD/YYYY hh:mm')
-  
-  
-    React.useEffect(() => {
+
+    const getUser = React.useCallback(() => {
       onSnapshot(collection(db, "User"), (data) => {
         const newData = data.docs.map((doc) => {
           const storageRef = ref(
@@ -93,6 +88,11 @@ export default function PeopleComponent() {
     });
   }, [timeDate]);
   
+  React.useEffect(()=>{
+    getUser()
+  },[getUser])
+
+
   
     React.useEffect(() => {
       onSnapshot(collection(db, "Friends"), (data) => {
@@ -116,13 +116,35 @@ export default function PeopleComponent() {
       request:true,
     }).then((res) => {console.log(res,'dddd')}).catch((err)=>{console.log(err,'eeee')});
            }
+
+  const peoplePage = () => {
+    setPage('People')
+    getUser()
+  }
   const filterFrinds = ()=>{
     setUsers([...users.filter((elem)=>!!friends.find((ele)=>ele.request===true && (ele.userId===elem.id || ele.friendId===elem.id) ))])
+    setPage('Friends')
+  }
+  const onSearch =(value)=>{
+    // console.log(value,value.slice(0, value.length+1))
+    // console.log(users)
+    if(value === ""){
+      getUser()
+    }
+    const filterCheckItem =users.filter((elem)=>elem.name.slice(0, value.length) === value)
+    console.log(filterCheckItem,"KKKKK")
+    setUsers(filterCheckItem.map((elem,index)=>{
+        return{
+          ...elem,
+        }
+      }
+    ))
+    // setUsers([...users.filter((elem)=>(elem.name.slice(0, value.length+1)) === (value))])
+    console.log(users)
   }
 
   return (
     <Box sx={{ display: 'flex' }}>
-     
       <Drawer
         variant="permanent"
         sx={{
@@ -136,9 +158,9 @@ export default function PeopleComponent() {
         <Box sx={{ overflow: 'auto' }}>
           <List>
               <ListItem key={"text"} disablePadding>
-                <ListItemButton>
+                <ListItemButton onClick={peoplePage}>
                   <ListItemIcon>
-                     <MailIcon />
+                     <PeopleIcon />
                   </ListItemIcon>
                   <ListItemText primary={"People"} />
                 </ListItemButton>
@@ -146,7 +168,7 @@ export default function PeopleComponent() {
               <ListItem key={"text"} disablePadding>
                 <ListItemButton  onClick={filterFrinds}>
                   <ListItemIcon>
-                     <MailIcon  />
+                     <Diversity3Icon />
                   </ListItemIcon>
                   <ListItemText primary={"Friends"} />
                 </ListItemButton>
@@ -179,10 +201,21 @@ export default function PeopleComponent() {
           component="div"
           sx={{ p: 2, pb: 0 }}
         >
-          Inbox
+          {page}
         </Typography>
         <List sx={{ mb: 2 }}>
-
+        <Paper
+      component="form"
+      sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 'auto' }}>
+      <InputBase
+        sx={{ ml: 1, flex: 1 }}
+        placeholder="Search People"
+        inputProps={{ 'aria-label': 'search google maps' }}
+        onChange={(e)=>onSearch(e.target.value)}/>
+      <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
+        <SearchIcon />
+      </IconButton>
+    </Paper>
           {users.map(({ id, name, gender, age ,url,online}) => {
             console.log(friends,"friend")
             if(id !== userId){

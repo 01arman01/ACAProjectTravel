@@ -15,6 +15,14 @@ import OtherUser from "./routes/OtherUser";
 import {USER_PAGE,H0ME_PAGE,LOGIN_PAGE,REGISTER_PAGE, PEOPLE_PAGE,OTHERUSER_PAGE} from "./RoutePath/RoutePath";
 import Header from "./components/Header/Header";
 import PeopleComponent from "./components/People/PeopleComponent";
+import Footer from "./components/Footer/Footer";
+
+const style ={
+  position:"absolute",
+  bottom:0,
+  left:0,
+  width:'100vw'
+}
 
 const router = createBrowserRouter([
   {
@@ -28,19 +36,20 @@ const router = createBrowserRouter([
   },
   {
     path:H0ME_PAGE,
-    element:<><Header /> <Homepage /></>
+    element:<><Header /> <Homepage /><Footer/></>
   },
   {
     path: LOGIN_PAGE,
-    element: <Login />,
+    element: <><Login /></>,
   },
   {
     path: REGISTER_PAGE,
-    element: <Register />,
+    element: <><Register /></>,
   },
   {
     path: USER_PAGE,
-    element: <><Header /> <User /></>,
+    element: <><Header/><User/></>,
+    //<div style={style}><Footer/></div>
   },
   {
     path:OTHERUSER_PAGE,

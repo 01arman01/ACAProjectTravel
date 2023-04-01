@@ -9,6 +9,10 @@ export const useHeaderStyles = createUseStyles({
     borderBottom: ".5px solid #CBCDCF",
     position: "fixed",
     zIndex: "999",
+    "@media (max-width: 740px)": {
+      position:'static',
+    },
+
   },
   container: {
     maxWidth: "1200px",
@@ -22,11 +26,17 @@ export const useHeaderStyles = createUseStyles({
   },
   nav: {
     width: "325px",
+    "@media (max-width: 740px)": {
+      display: "none",
+    },
   },
   links: {
     display: "flex",
     justifyContent: "space-around",
     alignItems: "center",
+    "@media (max-width: 740px)": {
+      display: "none",
+    },
   },
   navLink: {
     fontSize: "18px",
@@ -42,6 +52,7 @@ export const useHeaderStyles = createUseStyles({
     height: "auto",
     marginTop: "10px",
     position:"absolute",
+    zIndex:'45',
     right:"47%"
   },
   rightBlock: {
@@ -49,6 +60,7 @@ export const useHeaderStyles = createUseStyles({
     display: "flex",
     alignItems: "center",
     justifyContent: "space-evenly",
+    marginRight:'10px'
   },
   loginButton: {
     textDecoration: "none",
@@ -66,7 +78,7 @@ export const useHeaderStyles = createUseStyles({
       color: "white",
       backgroundColor: "#1e5aaf",
     },
-    "@media (max-width: 620px)": {
+    "@media (max-width: 740px)": {
       display: "none",
     },
   },
@@ -86,7 +98,7 @@ export const useHeaderStyles = createUseStyles({
       color: "white",
       backgroundColor: "#9D0A35",
     },
-    "@media (max-width: 620px)": {
+    "@media (max-width: 740px)": {
       display: "none",
     },
   },
@@ -103,8 +115,81 @@ export const useHeaderStyles = createUseStyles({
       backgroundColor: "#9FA5A9",
     },
   },
+  userblockOther:{
+    "@media (max-width: 740px)": {
+      display: "none",
+    },
+  },
   userIcon: {
     width: "22px",
     height: "22px",
   },
+  //--tulbar
+  ToggleBtn:{
+    fontSize:'1.5rem',
+    cursor:'pointer',
+    display:'none',
+    '@media (max-width: 740px)': {
+      display:'flex',
+      justifyContent:'center',
+      alignItems:'center'
+
+    }
+  },
+  dropdownMenu:{
+    zIndex:4,
+    position:'absolute',
+    right:'2rem',
+    top:'60px',
+    width:'300px',
+    display:'block',
+    height:'240px',
+    background:'rgba(255,255,255,0.1)',
+    backdropFilter:'blur(15px)',
+    borderRadius: '10px',
+    overflow:"hidden",
+    padding:'1px',
+    '@media (min-width: 740px)': {
+      display:'none'
+    }
+    // display:'none'
+  },
+  dropdownMenuOpen:{
+    position:'absolute',
+    right:'2rem',
+    top:'60px',
+    width:'300px',
+    height:'240px',
+    background:'rgba(255,255,255,0.1)',
+    backdropFilter:'blur(15px)',
+    borderRadius: '10px',
+    overflow:"hidden",
+    padding:'1px',
+  },
+
+  dropdownMenuLi:{
+    padding:'0.7rem',
+    display:'flex',
+    alignItems:'center',
+    justifyContent:'center',
+  },
+  dropdownMenuActionBtn:{
+    display:'flex',
+    width:'100%',
+    justifyContent:'center',
+  },
+  aLink:{
+    textDecoration: 'none',
+    fontSize: '1rem',
+    color: 'black',
+    "&:hover":{
+      color:"rgb(8,180,206)",
+    },
+
+  },
+
+
+
+
+
 });

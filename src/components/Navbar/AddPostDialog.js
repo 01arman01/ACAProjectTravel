@@ -9,6 +9,7 @@ import {
   TextField,
 } from "@mui/material";
 import Button from "@mui/material/Button";
+import { useAddPostDialogStyles } from "./AddPostDialog.styles";
 
 function AddPostDialog({
   title,
@@ -21,6 +22,7 @@ function AddPostDialog({
   setShare,
   closeAddPostDialog,
 }) {
+  const styles = useAddPostDialogStyles();
   const styleContain = {
     width: "40vw",
   };
@@ -30,9 +32,10 @@ function AddPostDialog({
       onClose={closeAddPostDialog}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
+      className={styles.dialog}
     >
-      <DialogTitle id="alert-dialog-title">{"Add New Post"}</DialogTitle>
-      <DialogContent>
+      <DialogTitle id="alert-dialog-title" sx={{textAlign:"center"}}>{"Add New Post"}</DialogTitle>
+      {/* <DialogContent>
         <TextField
           id="standard-basic"
           label="Title"
@@ -40,20 +43,21 @@ function AddPostDialog({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
-      </DialogContent>
-      <DialogContent>
+      </DialogContent> */}
+      <DialogContent >
         <TextField
           id="outlined-multiline-static"
-          label="Contemt"
+          label="Content"
           multiline
           rows={4}
           defaultValue="Default Value"
           value={text}
           onChange={(e) => setText(e.target.value)}
+          sx={{marginTop:"10px"}}
         />
       </DialogContent>
       <DialogContent>
-        <div>
+        <div className={styles.uploadShare}>
           <Button variant="contained" component="label">
             Upload Image
             <input
@@ -72,8 +76,12 @@ function AddPostDialog({
             inputProps={{ "aria-label": "controlled" }}
           />
         </div>
-        <Button
-          variant="contained"
+      </DialogContent>
+      <div className={styles.addClosebtns}>
+        <button onClick={closeAddPostDialog} className={styles.cancelBtn}>
+          Cancel
+        </button>
+        <button
           onClick={() => {
             closeAddPostDialog();
             onAddPost();
@@ -81,16 +89,11 @@ function AddPostDialog({
             setText("");
             setImageUpload(null);
           }}
-          type="submit"
-          sx={{ mt: 3 }}
-          fullWidth
+          className={styles.addBtn}
         >
-          add Post
-        </Button>
-        <Button variant="text" onClick={closeAddPostDialog}>
-          Close
-        </Button>
-      </DialogContent>
+          Add
+        </button>
+      </div>
       <DialogActions></DialogActions>
     </Dialog>
   );

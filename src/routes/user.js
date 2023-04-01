@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import {useCallback, useEffect, useState} from "react";
 //Router
 import {useNavigate } from "react-router-dom";
 //firebase
-import { app, db, storage } from "../firebase";
+import {app, db, storage} from "../firebase";
 import {
   ref,
   uploadBytes,
@@ -17,11 +17,20 @@ import {
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 //Session
-import { endSession, getSession, isLoggedIn } from "../storage/session";
+import {
+    getDocs,
+    Timestamp,
+    deleteDoc,
+} from "firebase/firestore";
+import {child, get, getDatabase, onValue} from "firebase/database";
+//Session
+import {endSession, getSession, isLoggedIn} from "../storage/session";
+//Mui
+import {Button, Checkbox, Container, TextField} from "@mui/material";
 //Styles
-import { useUserStyles } from "./user.styles";
+import {useUserStyles} from "./user.styles";
 //Uuid
-import { v4 } from "uuid";
+import {v4} from "uuid";
 //Components
 import PostCard from "../components/CardComponent/PostCard";
 import Navbar from "../components/Navbar/Navbar";
@@ -30,12 +39,12 @@ import dayjs from 'dayjs';
 
 
 export default function User() {
-  //navigate
-  let navigate = useNavigate();
-
+    //navigate
+    let navigate = useNavigate();
 
   //Styles
   const styles = useUserStyles();
+
 
   //states
   const [email, setEmail] = useState("");
@@ -47,15 +56,16 @@ export default function User() {
   const [posts, setPosts] = useState([]);
   // const [postsImageUrls, setPostsImageUrls] = useState([]);
 
+
   const [imageId, setImageId] = useState(v4);
   const [loading, setloading] = useState(false);
   const [imageLoadnig, setImageLoadnig] = useState(false);
   const [user, setUser] = useState(null);
   const [timeDate,setTimeDate] = useState(dayjs(new Date()))
 
-  //Auth
-  const auth = getAuth(app);
-  const userId = auth.lastNotifiedUid;
+    //Auth
+    const auth = getAuth(app);
+    const userId = auth.lastNotifiedUid;
 
   useEffect(() => {
     onSnapshot(collection(db, "User"), (data) => {
@@ -66,6 +76,17 @@ export default function User() {
     });
   }, [userId]);
 
+    useEffect(() => {
+        onSnapshot(collection(db, "User"), (data) => {
+            const user = data.docs
+                .map((doc) => ({...doc.data(), id: doc.id})).filter((elm) => elm.id === auth.lastNotifiedUid)
+            setUser(user[0])
+        });
+    }, []);
+    // useEffect(() => {
+    //   const user = users.find((el) => el.id === userId);
+    //   setUser(user);
+    // }, [users]);
 
   useEffect(() => {
     if(userId){
@@ -98,20 +119,20 @@ export default function User() {
     });
   }, [userId]);
 
-  //Upload and send image to storage
-  const onUploadImage = () => {
-    if (ImageUpload == null) return;
-    const imageRef = ref(storage, `Images/${imageId}`);
-    uploadBytes(imageRef, ImageUpload).then((res) => {
-      onSendPost();
-      setImageId(v4);
-    });
-  };
+    //Upload and send image to storage
+    const onUploadImage = () => {
+        if (ImageUpload == null) return;
+        const imageRef = ref(storage, `Images/${imageId}`);
+        uploadBytes(imageRef, ImageUpload).then((res) => {
+            onSendPost();
+            setImageId(v4);
+        });
+    };
 
-  const onAddPost = () => {
-    setImageLoadnig(true);
-    onUploadImage();
-  };
+    const onAddPost = () => {
+        setImageLoadnig(true);
+        onUploadImage();
+    };
 
   //Send post to database
   const onSendPost = useCallback(async () => {
@@ -127,14 +148,15 @@ export default function User() {
     } catch (err) {}
   }, [title, text, date, share, imageId, userId]);
 
-  //Login status
-  useEffect(() => {
-    if (!isLoggedIn()) {
-      navigate("/login");
-    }
-    let session = getSession();
-    setEmail(session.email);
-  }, [navigate]);
+
+    //Login status
+    useEffect(() => {
+        if (!isLoggedIn()) {
+            navigate("/login");
+        }
+        let session = getSession();
+        setEmail(session.email);
+    }, [navigate]);
 
   //Logout function
   const onLogout = () => {

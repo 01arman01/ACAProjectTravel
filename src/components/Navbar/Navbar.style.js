@@ -15,6 +15,21 @@ const useStyles = createUseStyles({
     position: "fixed",
     overflow: "scroll",
     paddingBottom: "27px",
+    paddingTop:"10px",
+
+    borderRadius: "5px",
+    "@media (max-width: 750px)": {
+      // position:'relative',
+      position: "static",
+      width: "160px",
+      height: "auto",
+    },
+    "@media (max-width: 560px)": {
+      // position:'relative',
+
+      width: "100vw",
+      height: "auto",
+    },
   },
   listLi: {
     width: "100%",
@@ -50,9 +65,8 @@ const useStyles = createUseStyles({
   },
   //User info styles
   avatarContainer: {
-    margin: "10px auto",
-    padding: "0 0 0 10px",
-    textAlign: "center",
+    position: "absolute",
+    left: "42px",
   },
   avatarName: {
     marginRight: "10px",

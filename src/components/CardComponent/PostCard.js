@@ -15,11 +15,7 @@ import ModeCommentOutlined from "@mui/icons-material/ModeCommentOutlined";
 import SendOutlined from "@mui/icons-material/SendOutlined";
 import Face from "@mui/icons-material/Face";
 import BookmarkBorderRoundedIcon from "@mui/icons-material/BookmarkBorderRounded";
-// import Card from '@mui/material/Card';
-// import Avatar from '@mui/material/Avatar';
-// import IconButton from '@mui/material/IconButton';
-// import Typography from '@mui/material/Typography';
-import SimpleDialog from "../SimpleDialog";
+
 import {
   addDoc,
   collection,
@@ -43,6 +39,7 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { OTHERUSER_PAGE, USER_PAGE } from "../../RoutePath/RoutePath";
 import CardCover from '@mui/joy/CardCover';
 import { v4 } from "uuid";
+import EditPostDialog from "../EditPost/EditPostDialog";
 
 
 export default function PostCard({ post, load, page, imageLoadnig, user }) {
@@ -50,9 +47,14 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
   const auth = getAuth(app);
   const userId = auth.lastNotifiedUid;
   const styles = usePostCardStyles();
+  //refresh
+  const refresh = () => window.location.reload(true);
 
   const [loading, setLoading] = useState(load);
   const location = useLocation();
+
+  //for edit
+  const [openEdit, setOpenEdit] = useState(false);
 
   //states
   const [open, setOpen] = useState(false);
@@ -64,6 +66,8 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
   const [openFullText, setOpenFullText] = useState(false);
   const [users, setUsers] = useState([]);
 
+  const [plainStatus, setPlainStatus] = useState(false);
+
   const [comment, setComment] = useState("");
   const [lastComment, setLastComment] = useState("");
   const [openCommentPag, setOpenCommentPage] = useState(false);
@@ -72,10 +76,6 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
   const storageRef = ref(storage, `user_image/${user?.id}/${user?.image}`);
   const [url, loadProces] = useDownloadURL(storageRef);
 
-
-
-
-
   useEffect(() => {
     onSnapshot(collection(db, "User"), (data) => {
       const newData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
@@ -83,17 +83,16 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
     });
   }, []);
 
-  useEffect(() => {
-    const citiesRef = collection(db, "Posts");
-    const q = query(citiesRef, orderBy("date","asc"));
-    onSnapshot(q, (doc) => {
-      // const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
-      if (!!postValue.url) {
-        setPostValue({ ...postValue, ...doc.data() });
-      }
-    });
-  }, [postValue]);
-
+  // useEffect(() => {
+  //   const citiesRef = collection(db, "Posts");
+  //   const q = query(citiesRef, orderBy("date","asc"));
+  //   onSnapshot(q, (doc) => {
+  //     // const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
+  //     if (!!postValue.url) {
+  //       setPostValue({ ...postValue, ...doc.data() });
+  //     }
+  //   });
+  // }, [postValue]);
 
   useEffect(() => {
     onSnapshot(collection(db, "Likes"), (data) => {
@@ -142,6 +141,11 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
     } else {
       navigate(OTHERUSER_PAGE, { state: user });
     }
+  };
+
+  const onCloseEditPage = () => {
+    setOpenEdit(false);
+    setPlainStatus(false);
   };
 
   const handleClickOpen = () => {
@@ -267,15 +271,29 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
             size="sm"
             sx={{ ml: "auto" }}
           >
-            <MoreHoriz onClick={handleClickOpen} />
-            <SimpleDialog
-              selectedValue={postValue}
-              postId={postValue.id}
-              onDeletePost={onDeletePost}
-              onUpdatePost={onUpdatePost}
-              open={open}
-              onClose={handleClose}
-            />
+            {plainStatus && (
+              <ul className={styles.lists}>
+                <li
+                  onClick={() => setOpenEdit(!openEdit)}
+                  className={styles.list}
+                >
+                  Edit
+                </li>
+                <EditPostDialog
+                  open={openEdit}
+                  onCloseEditPage={onCloseEditPage}
+                  post={postValue}
+                  onUpdatePost={onUpdatePost}
+                  postId={postValue.id}
+                />
+                <li
+                  onClick={() => onDeletePost(postValue.id, postValue.imageId)}
+                  className={styles.list}
+                >
+                  Delete
+                </li>
+              </ul>
+            )}
           </IconButton>
         )}
       </Box>
@@ -285,23 +303,13 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
             <CircularIndeterminate />
           ) : (
             <>
-            {/* <img src={postValue.url} alt="" loading="lazy" /> */}
-           
-        <CardCover>
-          <video
-            autoPlay
-            loop
-            muted
-            poster={postValue.url}>
-            <source
-              src={ postValue.url}
-              type="video/mp4" />
-          </video>
-        </CardCover>
-          </>
+              <CardCover>
+                <video autoPlay loop muted poster={postValue.url}>
+                  <source src={postValue.url} type="video/mp4" />
+                </video>
+              </CardCover>
+            </>
           )}
-
-          {/* <img src={postValue.url} alt="" loading="lazy" /> */}
         </AspectRatio>
       </CardOverflow>
       <Box sx={{ display: "flex", alignItems: "center", mx: -1, my: 1 }}>
@@ -378,7 +386,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
           sx={{ fontSize: "12px" }}
         >
           <span onClick={onNavigatePage} className={styles.userName}>
-            {user.name}
+            { postValue.title}
           </span>
         </Link>{" "}
         {openFullText ? postValue.text : postValue.text.slice(0, 15)}
@@ -403,11 +411,19 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
       >
         {postValue.date.toDate().toLocaleTimeString(undefined, {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hour12: false, minute:'2-digit', second:'2-digit'})}
       </Link>
-      {lastComment ? (<span>{lastComment}</span>) : (<div style={{
-        fontSize:"12px",
-        textAlign:"center",
-        color:"#A5C4C5"
-      }}>no comments</div>)}
+      {lastComment ? (
+        <span>{lastComment}</span>
+      ) : (
+        <div
+          style={{
+            fontSize: "12px",
+            textAlign: "center",
+            color: "#A5C4C5",
+          }}
+        >
+          no comments
+        </div>
+      )}
       <CardOverflow
         sx={{
           p: "var(--Card-padding)",

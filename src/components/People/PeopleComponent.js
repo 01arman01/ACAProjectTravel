@@ -1,3 +1,4 @@
+
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -43,7 +44,7 @@ const StyledFab = styled(Fab)({
 const drawerWidth = 240;
 
 export default function PeopleComponent() {
-    const userId = auth.lastNotifiedUid;
+      const userId = auth.lastNotifiedUid;
       const [users, setUsers] = React.useState([]);
       const [timeDate,setTimeDate] =React.useState(dayjs(new Date()).toDate().valueOf())
       const [friends,setFriends] = React.useState([]);
@@ -51,69 +52,77 @@ export default function PeopleComponent() {
       // const [online,setOnline] = React.useState(true)
       // .format('MM/DD/YYYY hh:mm')
 
-    const getUser = React.useCallback(() => {
-      onSnapshot(collection(db, "User"), (data) => {
-        const newData = data.docs.map((doc) => {
-          const storageRef = ref(
-            storage,
-            `user_image/${doc?.id}/${doc.data()?.image}`
-          );
-          return getDownloadURL(storageRef)
-            .then((url) => {
-              return {
-                ...doc.data(),
-                id: doc.id,
-                url: url,
-                online: !(timeDate / 1000 - doc.data().time?.seconds < 600),
-              };
-            })
-            .catch((err) => {
-              return {
-                ...doc.data(),
-                id: doc.id,
-                url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlHBoELHG9IPFDyVp_5_lRfL-9zTYR-YG1nEC8N9c&s",
-                online: !(timeDate / 1000 - doc.data().time?.seconds < 600),
-              };
-            });
-        });
-        Promise.all(newData)
+  const getUser = React.useCallback(() => {
+    onSnapshot(collection(db, "User"), (data) => {
+      const newData = data.docs.map((doc) => {
+        const storageRef = ref(
+          storage,
+          `user_image/${doc?.id}/${doc.data()?.image}`
+        );
+        return getDownloadURL(storageRef)
+          .then((url) => {
+            return {
+              ...doc.data(),
+              id: doc.id,
+              url: url,
+              online: !(timeDate / 1000 - doc.data().time?.seconds < 600),
+            };
+          })
+          .catch((err) => {
+            return {
+              ...doc.data(),
+              id: doc.id,
+              url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlHBoELHG9IPFDyVp_5_lRfL-9zTYR-YG1nEC8N9c&s",
+              online: !(timeDate / 1000 - doc.data().time?.seconds < 600),
+            };
+          });
+      });
+      Promise.all(newData)
         .then((downloadUrls) => {
           setUsers(downloadUrls);
         })
         .catch((error) => console.log(error, "asdfasdf"));
     });
   }, [timeDate]);
-  
-  React.useEffect(()=>{
-    getUser()
-  },[getUser])
 
+  React.useEffect(() => {
+    getUser();
+  }, [getUser]);
 
-  
-    React.useEffect(() => {
-      onSnapshot(collection(db, "Friends"), (data) => {
-        const fri = data.docs.map((doc) => ({ ...doc.data(), id: doc.id })).filter((elem)=>elem.userId === userId || elem.friendId === userId)
-          setFriends(fri)
-      });
-    },[userId]);
-  
-  
-   const sendFriendRequest = async(id)=>{
+  const onNavigatePage = () => {};
+
+  React.useEffect(() => {
+    onSnapshot(collection(db, "Friends"), (data) => {
+      const fri = data.docs
+        .map((doc) => ({ ...doc.data(), id: doc.id }))
+        .filter((elem) => elem.userId === userId || elem.friendId === userId);
+      setFriends(fri);
+    });
+  }, [userId]);
+
+  const sendFriendRequest = async (id) => {
     await addDoc(collection(db, "Friends"), {
       userId: userId,
-      friendId:id,
-      request:false,
+      friendId: id,
+      request: false,
     }).then((res) => {});
-           }
-    
-  const acceptFriendRequest= (id)=>{
-    console.log(id)
-     updateDoc(doc(db, "Friends",id), {
-      request:true,
-    }).then((res) => {console.log(res,'dddd')}).catch((err)=>{console.log(err,'eeee')});
-           }
+  };
+
+  const acceptFriendRequest = (id) => {
+    console.log(id);
+    updateDoc(doc(db, "Friends", id), {
+      request: true,
+    })
+      .then((res) => {
+        console.log(res, "dddd");
+      })
+      .catch((err) => {
+        console.log(err, "eeee");
+      });
+  };
 
   const peoplePage = () => {
+
     setPage('People')
     getUser()
   }
@@ -134,40 +143,41 @@ export default function PeopleComponent() {
     ))
   }
 
+
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: "flex" }}>
       <Drawer
         variant="permanent"
         sx={{
           width: drawerWidth,
           flexShrink: 0,
-          [`& .MuiDrawer-paper`]: { width: drawerWidth,  },
+          [`& .MuiDrawer-paper`]: { width: drawerWidth },
           zIndex: 1,
         }}
       >
         <Toolbar />
-        <Box sx={{ overflow: 'auto' }}>
+        <Box sx={{ overflow: "auto" }}>
           <List>
-              <ListItem key={"text"} disablePadding>
-                <ListItemButton onClick={peoplePage}>
-                  <ListItemIcon>
-                     <PeopleIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={"People"} />
-                </ListItemButton>
-              </ListItem>
-              <ListItem key={"text"} disablePadding>
-                <ListItemButton  onClick={filterFrinds}>
-                  <ListItemIcon>
-                     <Diversity3Icon />
-                  </ListItemIcon>
-                  <ListItemText primary={"Friends"} />
-                </ListItemButton>
-              </ListItem>
+            <ListItem key={"text"} disablePadding>
+              <ListItemButton onClick={peoplePage}>
+                <ListItemIcon>
+                  <PeopleIcon />
+                </ListItemIcon>
+                <ListItemText primary={"People"} />
+              </ListItemButton>
+            </ListItem>
+            <ListItem key={"text"} disablePadding>
+              <ListItemButton onClick={filterFrinds}>
+                <ListItemIcon>
+                  <Diversity3Icon />
+                </ListItemIcon>
+                <ListItemText primary={"Friends"} />
+              </ListItemButton>
+            </ListItem>
           </List>
           <Divider />
           <List>
-            {['All mail', 'Trash', 'Spam'].map((text, index) => (
+            {["All mail", "Trash", "Spam"].map((text, index) => (
               <ListItem key={text} disablePadding>
                 <ListItemButton>
                   <ListItemIcon>
@@ -218,46 +228,94 @@ export default function PeopleComponent() {
                       </Badge>
                     </ListItemAvatar>
 
-                    <ListItemText primary={name} secondary={gender+" "+age} />
-                    {friends.find((elem)=>elem.friendId===id && (elem.request===false))?<Button variant="contained" startIcon={<PersonAddAlt1Icon  />} onClick={()=>sendFriendRequest(id)}>
-                            send
-                          </Button>:""
-                    }
-                    {friends.find((elem)=>(elem.userId===id) && (elem.request===false))?<Button variant="contained" startIcon={<PersonAddAlt1Icon  />} 
-                    onClick={()=>acceptFriendRequest(friends.find((elem)=>(elem.userId===id) && (elem.request===false)).id)}>
-                              accept
-                          </Button>: ""
-                    }
-                    
-                    {friends.find((elem)=>(elem.friendId===id || elem.userId===id) && (elem.request===true))?
-                    <Button variant="contained" disabled startIcon={<PersonAddAlt1Icon  />} onClick={()=>sendFriendRequest(id)}>
-                              friend
-                          </Button>:""
-                    }
-                    {friends.find((elem)=>(elem.friendId === id || elem.userId === id))?
-                   "": <Button variant="contained" startIcon={<PersonAddAlt1Icon  />} onClick={()=>sendFriendRequest(id)}>
-                   add Friend
-               </Button>
-                    }
-                    
-                          {/* <Badge color="secondary" badgeContent={1} showZero>
+
+                        <ListItemText
+                          primary={name}
+                          secondary={gender + " " + age}
+                        />
+                        {friends.find(
+                          (elem) =>
+                            elem.friendId === id && elem.request === false
+                        ) ? (
+                          <Button
+                            variant="contained"
+                            startIcon={<PersonAddAlt1Icon />}
+                            onClick={() => sendFriendRequest(id)}
+                          >
+                            sended
+                          </Button>
+                        ) : (
+                          ""
+                        )}
+                        {friends.find(
+                          (elem) => elem.userId === id && elem.request === false
+                        ) ? (
+                          <Button
+                            variant="contained"
+                            startIcon={<PersonAddAlt1Icon />}
+                            onClick={() =>
+                              acceptFriendRequest(
+                                friends.find(
+                                  (elem) =>
+                                    elem.userId === id && elem.request === false
+                                ).id
+                              )
+                            }
+                          >
+                            accept
+                          </Button>
+                        ) : (
+                          ""
+                        )}
+
+                        {friends.find(
+                          (elem) =>
+                            (elem.friendId === id || elem.userId === id) &&
+                            elem.request === true
+                        ) ? (
+                          <Button
+                            variant="contained"
+                            disabled
+                            startIcon={<PersonAddAlt1Icon />}
+                            onClick={() => sendFriendRequest(id)}
+                          >
+                            friend
+                          </Button>
+                        ) : (
+                          ""
+                        )}
+                        {friends.find(
+                          (elem) => elem.friendId === id || elem.userId === id
+                        ) ? (
+                          ""
+                        ) : (
+                          <Button
+                            variant="contained"
+                            startIcon={<PersonAddAlt1Icon />}
+                            onClick={() => sendFriendRequest(id)}
+                          >
+                            add Friend
+                          </Button>
+                        )}
+
+                        {/* <Badge color="secondary" badgeContent={1} showZero>
 
                         <MailIcon />
                       </Badge> */}
-                    <MessageDialog
-                      id={id}
-                      url={url}
-                      name={name}
-                      users={users}
-                    />
-                  </ListItem>
-                </React.Fragment>
-              );
-            }
-          })}
-        </List>
-      </Paper>
-    </React.Fragment>
+                        <MessageDialog
+                          id={id}
+                          url={url}
+                          name={name}
+                          users={users}
+                        />
+                      </ListItem>
+                    </React.Fragment>
+                  );
+                }
+              })}
+            </List>
+          </Paper>
+        </React.Fragment>
       </Box>
     </Box>
   );

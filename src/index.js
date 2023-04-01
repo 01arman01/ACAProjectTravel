@@ -44,11 +44,20 @@ const router = createBrowserRouter([
   },
   {
     path: REGISTER_PAGE,
+<<<<<<< HEAD
     element: <><Register />></>,
   },
   {
     path: USER_PAGE,
     element: <><Header/><User/><div style={style}><Footer/></div> </>,
+=======
+    element: <><Register /></>,
+  },
+  {
+    path: USER_PAGE,
+    element: <><Header/><User/></>,
+    //<div style={style}><Footer/></div>
+>>>>>>> origin/Artash
   },
   {
     path:OTHERUSER_PAGE,

@@ -1,3 +1,4 @@
+
 import React from 'react'
 import {render} from 'react-dom'
 import {createUseStyles} from 'react-jss'
@@ -100,4 +101,4 @@ const useStyles = createUseStyles({
 
 })
 
-export default useStyles
+

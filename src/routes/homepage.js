@@ -1,20 +1,16 @@
 //React
 import { useCallback, useEffect, useState } from "react";
 //Firebase
-import { collection, getDocs, onSnapshot } from "firebase/firestore";
-import { app, db, storage } from "../firebase";
-import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
+import { collection, onSnapshot } from "firebase/firestore";
+import { db, storage } from "../firebase";
+import { ref, getDownloadURL } from "firebase/storage";
 //Components
-import Header from "../components/Header/Header";
 import InfiniteScroll from "react-infinite-scroll-component";
-import LogoutDialog from "../components/LogoutDialog";
 //Styles
 import { createUseStyles } from "react-jss";
 import PostCard from "../components/CardComponent/PostCard";
 import Main from "../components/Main/Main";
-import bgPosts from "../imgs/posts-section.jpg";
-import { borderBottom } from "@mui/system";
-import { useDownloadURL } from "react-firebase-hooks/storage";
+
 
 const useStyles = createUseStyles({
   postsSection: {
@@ -54,41 +50,73 @@ export default function Homepage(props) {
   //states
   const [posts, setPosts] = useState([]);
   const [postsImageUrls, setPostsImageUrls] = useState([]);
-  const [loading, setloading] = useState(false);
-  const [scrollIndex, setScrollIndex] = useState(10);
+  const [loading, setloading] = useState(true);
+  const [scrollIndex, setScrollIndex] = useState(2);
   const [users, setUsers] = useState([]);
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   onSnapshot(collection(db, "Posts"), (data) => {
+  //     const newData = data.docs
+  //       .map((doc) => ({ ...doc.data(), id: doc.id }))
+  //       .filter((elem) => elem.share === true);
+  //     newData.forEach((elm, index) => {
+  //       const starsRef = ref(storage, `Images/${elm.imageId}`);
+  //       getDownloadURL(starsRef)
+  //         .then((url) => {elm["url"] = url;})
+  //         // .then((elem) => {
+  //         //   if (index + 1 === newData.length) {
+  //         //     setloading(true);
+  //         //   }
+  //         // });
+  //     });
+  //     setPosts(newData);
+  //   });
+  // }, []);
+
+
+useEffect(() => {
     onSnapshot(collection(db, "Posts"), (data) => {
-      const newData = data.docs
-        .map((doc) => ({ ...doc.data(), id: doc.id }))
-        .filter((elem) => elem.share === true);
-      newData.forEach((elm, index) => {
-        const starsRef = ref(storage, `Images/${elm.imageId}`);
-        getDownloadURL(starsRef)
+      console.log(data)
+      const newData = data.docs.filter((elem) => elem.data().share === true).map((doc) => {
+        const storageRef = ref(storage,`Images/${doc.data().imageId}`);
+        return getDownloadURL(storageRef)
           .then((url) => {
-            elm["url"] = url;
+            return {
+              ...doc.data(),
+              id: doc.id,
+              url: url,
+            };
           })
-          .then((elem) => {
-            if (index + 1 === newData.length) {
-              setloading(true);
-            }
+          .catch((err) => {
+            return {
+              ...doc.data(),
+              id: doc.id,
+              url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlHBoELHG9IPFDyVp_5_lRfL-9zTYR-YG1nEC8N9c&s",
+            };
           });
       });
-      setPosts(newData);
+      Promise.all(newData)
+        .then((downloadUrls) => {
+          console.log(downloadUrls,'ssss')
+          setloading(true)
+          setPosts(downloadUrls);
+        })
+        .catch((error) => console.log(error, "asdfasdf"));
     });
-  }, []);
+  },[]);
+
+
 
   //Scrolling function
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     if (
       window.innerHeight + document.documentElement.scrollTop ===
       document.documentElement.offsetHeight
     ) {
-      setScrollIndex(() => scrollIndex + 8);
+      setScrollIndex(() => scrollIndex + 3);
     }
-  };
+  },[scrollIndex]);
 
   useEffect(() => {
     onSnapshot(collection(db, "User"), (data) => {
@@ -100,7 +128,7 @@ export default function Homepage(props) {
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [handleScroll]);
 
   return (
     <>

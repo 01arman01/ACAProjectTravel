@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import {useCallback, useEffect, useState} from "react";
 //Router
 import {useNavigate } from "react-router-dom";
 //firebase
-import { app, db, storage } from "../firebase";
+import {app, db, storage} from "../firebase";
 import {
   ref,
   uploadBytes,
@@ -17,11 +17,20 @@ import {
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 //Session
-import { endSession, getSession, isLoggedIn } from "../storage/session";
+import {
+    getDocs,
+    Timestamp,
+    deleteDoc,
+} from "firebase/firestore";
+import {child, get, getDatabase, onValue} from "firebase/database";
+//Session
+import {endSession, getSession, isLoggedIn} from "../storage/session";
+//Mui
+import {Button, Checkbox, Container, TextField} from "@mui/material";
 //Styles
-import { useUserStyles } from "./user.styles";
+import {useUserStyles} from "./user.styles";
 //Uuid
-import { v4 } from "uuid";
+import {v4} from "uuid";
 //Components
 import PostCard from "../components/CardComponent/PostCard";
 import Navbar from "../components/Navbar/Navbar";
@@ -30,19 +39,16 @@ import dayjs from 'dayjs';
 
 
 export default function User() {
-  //navigate
-  let navigate = useNavigate();
-
-
+    //navigate
+    let navigate = useNavigate();
   //Styles
   const styles = useUserStyles();
-
   //states
   const [email, setEmail] = useState("");
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [ImageUpload, setImageUpload] = useState(null);
-  const [date, setDate] = useState(dayjs(new Date()));
+  const [date, setDate] = useState(dayjs(new Date()).toDate());
   const [share, setShare] = useState(false);
   const [posts, setPosts] = useState([]);
   // const [postsImageUrls, setPostsImageUrls] = useState([]);
@@ -53,9 +59,9 @@ export default function User() {
   const [user, setUser] = useState(null);
   const [timeDate,setTimeDate] = useState(dayjs(new Date()))
 
-  //Auth
-  const auth = getAuth(app);
-  const userId = auth.lastNotifiedUid;
+    //Auth
+    const auth = getAuth(app);
+    const userId = auth.lastNotifiedUid;
 
   useEffect(() => {
     onSnapshot(collection(db, "User"), (data) => {
@@ -65,6 +71,14 @@ export default function User() {
       setUser(user[0]);
     });
   }, [userId]);
+
+    useEffect(() => {
+        onSnapshot(collection(db, "User"), (data) => {
+            const user = data.docs
+                .map((doc) => ({...doc.data(), id: doc.id})).filter((elm) => elm.id === auth.lastNotifiedUid)
+            setUser(user[0])
+        });
+    }, [auth.lastNotifiedUid]);
 
 
   useEffect(() => {
@@ -76,42 +90,50 @@ export default function User() {
   //Set posts data
   useEffect(() => {
     onSnapshot(collection(db, "Posts"), (data) => {
-      const newData = data.docs
-        .map((doc) => ({ ...doc.data(), id: doc.id }))
-        .filter((elem) => elem.userId === userId);
-      newData.forEach((elm, index) => {
-        const starsRef = ref(storage, `Images/${elm.imageId}`);
-        getDownloadURL(starsRef)
+      console.log(data)
+      const newData = data.docs.filter((elem) => elem.data().share === true).map((doc) => {
+        const storageRef = ref(storage,`Images/${doc.data().imageId}`);
+        return getDownloadURL(storageRef)
           .then((url) => {
-            elm["url"] = url;
+            return {
+              ...doc.data(),
+              id: doc.id,
+              url: url,
+            };
           })
-          .then((elem) => {
-            if (index + 1 === newData.length) {
-              setloading(true);
-            }
-          })
-          .then(() => {
-            setImageLoadnig(false);
+          .catch((err) => {
+            return {
+              ...doc.data(),
+              id: doc.id,
+              url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlHBoELHG9IPFDyVp_5_lRfL-9zTYR-YG1nEC8N9c&s",
+            };
           });
       });
-      setPosts(newData);
+      Promise.all(newData)
+        .then((downloadUrls) => {
+          setImageLoadnig(false);
+          setPosts(downloadUrls);
+        })
+        .catch((error) => console.log(error, "asdfasdf"));
     });
-  }, [userId]);
+  },[]);
 
-  //Upload and send image to storage
-  const onUploadImage = () => {
-    if (ImageUpload == null) return;
-    const imageRef = ref(storage, `Images/${imageId}`);
-    uploadBytes(imageRef, ImageUpload).then((res) => {
-      onSendPost();
-      setImageId(v4);
-    });
-  };
 
-  const onAddPost = () => {
-    setImageLoadnig(true);
-    onUploadImage();
-  };
+    //Upload and send image to storage
+    const onUploadImage = () => {
+        if (ImageUpload == null) return;
+        const imageRef = ref(storage, `Images/${imageId}`);
+        uploadBytes(imageRef, ImageUpload).then((res) => {
+            onSendPost();
+            setImageId(v4);
+        });
+    };
+
+    const onAddPost = () => {
+        onUploadImage();
+        setImageLoadnig(true);
+
+    };
 
   //Send post to database
   const onSendPost = useCallback(async () => {
@@ -123,18 +145,19 @@ export default function User() {
         imageId: imageId,
         date:date,
         share,
-      }).then((res) => {});
-    } catch (err) {}
+      }).then((res) => {console.log(res,"postt")}).catch((err)=>{console.log(err,"err")});
+    } catch (err) {console.log(err,"err")}
   }, [title, text, date, share, imageId, userId]);
 
-  //Login status
-  useEffect(() => {
-    if (!isLoggedIn()) {
-      navigate("/login");
-    }
-    let session = getSession();
-    setEmail(session.email);
-  }, [navigate]);
+
+    //Login status
+    useEffect(() => {
+        if (!isLoggedIn()) {
+            navigate("/login");
+        }
+        let session = getSession();
+        setEmail(session.email);
+    }, [navigate]);
 
   //Logout function
   const onLogout = () => {

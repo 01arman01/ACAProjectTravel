@@ -18,9 +18,32 @@ export const usePostCardStyles = createUseStyles({
     margin: "10px",
     boxShadow: "0 5px 15px gray",
     backgroundColor: "#F4F7F9",
-    position:"relative"
+    position: "relative",
   },
-  userName:{
-    cursor:"pointer"
+  userName: {
+    cursor: "pointer",
+  },
+  lists:{
+    display:"flex",
+    flexDirection:"column",
+    gap:"5px",
+    width:"60px",
+    height:"66px",
+    position:"absolute",
+    top:"2px",
+    right:"32px",
+    zIndex:1000,
+    backgroundColor:"#DFE5EA",
+    borderRadius:"7px",
+    borderTopRightRadius:"0",
+    paddingTop:"7px"
+  },
+  list:{
+    padding:"3px 0",
+    borderRadius:"5px",
+    transition:"background .1s linear",
+    "&:hover":{
+      backgroundColor:"#AFB9BD"
+    }
   }
 });

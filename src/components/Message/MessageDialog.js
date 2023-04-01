@@ -19,18 +19,16 @@ import {
   addDoc,
   collection,
   doc,
-  getDoc,
   onSnapshot,
   orderBy,
   query,
-  setDoc,
   updateDoc,
 } from "firebase/firestore";
 import { app, db } from "../../firebase";
 import dayjs from "dayjs";
 import { getAuth } from "firebase/auth";
 import SendIcon from "@mui/icons-material/Send";
-import { TroubleshootOutlined, TroubleshootRounded } from "@mui/icons-material";
+import PeopleIcon from '@mui/icons-material/People';
 const auth = getAuth(app);
 
 export default function MessageDialog({ id, url, name, users }) {
@@ -120,8 +118,7 @@ export default function MessageDialog({ id, url, name, users }) {
 
   React.useEffect(() => {
     onSnapshot(collection(db, "Message"), (data) => {
-      const newData = data.docs
-        .map((doc) => ({ ...doc.data(), id: doc.id }))
+    data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
         .filter((elem) => elem.userId === userId);
     });
   }, [userId]);
@@ -174,9 +171,10 @@ export default function MessageDialog({ id, url, name, users }) {
                   console.log();
                   return (
                     <React.Fragment>
-                      <ListItem button>
+                      <ListItem  sx={{ padding: 0 }}>
                         <ListItemText
-                          primary={user.name}
+                          sx={{boxShadow:" 0 1px 3px gray", borderRadius:3,padding:1, margin:1, display: "inline-block"}}
+                          primary={user?.name}
                           secondary={elem.message}
                         />
                         <ListItemAvatar>
@@ -185,7 +183,7 @@ export default function MessageDialog({ id, url, name, users }) {
                             variant="dot"
                             invisible={true}
                           >
-                            <Avatar alt="Profile Picture" src={user.url} />
+                            <Avatar alt="Profile Picture" src={user?.url}  sx={{ width: 37, height: 37, marginBottom: "40px"}}/>
                           </Badge>
                         </ListItemAvatar>
                       </ListItem>
@@ -194,17 +192,20 @@ export default function MessageDialog({ id, url, name, users }) {
                 } else {
                   return (
                     <React.Fragment>
-                      <ListItem button>
+                      <ListItem sx={{ padding: 0 }}>
                         <ListItemAvatar>
                           <Badge
                             color="secondary"
                             variant="dot"
                             invisible={true}
                           >
-                            <Avatar alt="Profile Picture" src={url} />
+                            <Avatar alt="Profile Picture" src={url} sx={{ width: 37, height: 37, marginBottom: "55px"}} />
                           </Badge>
                         </ListItemAvatar>
-                        <ListItemText primary={name} secondary={elem.message} />
+                        <ListItemText 
+                          sx={{boxShadow:" 0 1px 3px gray", borderRadius:3,padding:1, margin:1, display: "inline-block"}}
+
+                        primary={name} secondary={elem.message} />
                       </ListItem>
                     </React.Fragment>
                   );
@@ -218,6 +219,7 @@ export default function MessageDialog({ id, url, name, users }) {
             id="outlined-basic"
             label="Outlined"
             variant="outlined"
+            fullWidth 
             onChange={(e) => setMessage(e.target.value)}
           />
 

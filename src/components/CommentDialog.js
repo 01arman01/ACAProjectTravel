@@ -10,6 +10,8 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import CopmentComponent from './CommentComponent';
+import { Avatar, TextField } from '@mui/material';
+import SendIcon from "@mui/icons-material/Send";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -49,10 +51,11 @@ BootstrapDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-export default function CommentDialog({openCommentPag,handleCloseComment,selectedValue}) {
+export default function CommentDialog({openCommentPag,handleCloseComment,selectedValue,onAddComment}) {
 //   const [open, setOpen] = React.useState(openCommentPag);
 
-  
+const [comment, setComment] = React.useState("")
+
   const handleClose = () => {
     handleCloseComment();
   };
@@ -65,14 +68,27 @@ export default function CommentDialog({openCommentPag,handleCloseComment,selecte
         open={openCommentPag}
       >
         <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
-          Modal title
+          Comments
         </BootstrapDialogTitle>
-        <DialogContent dividers>
+        <DialogContent >
         <CopmentComponent selectedValue={selectedValue} />
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleClose}>
-            Save changes
+          {/* <Button autoFocus onClick={handleClose}>
+            
+          </Button> */}
+          <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+          <TextField
+            id="outlined-basic"
+            label="Comment"
+            variant="outlined"
+            size="small"
+            fullWidth 
+            onChange={(e) => setComment(e.target.value)}
+          />
+          <Button autoFocus onClick={()=>{onAddComment(comment) 
+            }}>
+            <SendIcon />
           </Button>
         </DialogActions>
       </BootstrapDialog>

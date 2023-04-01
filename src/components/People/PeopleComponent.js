@@ -1,43 +1,42 @@
 import * as React from "react";
-import { styled } from "@mui/material/styles";
-import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
+import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
 import Toolbar from "@mui/material/Toolbar";
+import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
+import Divider from "@mui/material/Divider";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import InboxIcon from "@mui/icons-material/MoveToInbox";
+import MailIcon from "@mui/icons-material/Mail";
+import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import Fab from "@mui/material/Fab";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
-import ListItemText from "@mui/material/ListItemText";
-import ListSubheader from "@mui/material/ListSubheader";
 import Avatar from "@mui/material/Avatar";
-import MenuIcon from "@mui/icons-material/Menu";
-import AddIcon from "@mui/icons-material/Add";
-import SearchIcon from "@mui/icons-material/Search";
-import MoreIcon from "@mui/icons-material/MoreVert";
 import {
   addDoc,
   collection,
   doc,
   onSnapshot,
-  setDoc,
   updateDoc,
 } from "@firebase/firestore";
 import { app, db, storage } from "../../firebase";
-import { getDownloadURL, listAll, ref } from "firebase/storage";
-import { useDownloadURL } from "react-firebase-hooks/storage";
+import { getDownloadURL, ref } from "firebase/storage";
 import dayjs from "dayjs";
-import { Badge, Button } from "@mui/material";
+import { Badge, Button, IconButton } from "@mui/material";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
-import MailIcon from "@mui/icons-material/Mail";
 import MessageDialog from "../Message/MessageDialog";
 import { getAuth } from "firebase/auth";
-import { Unstable_Grid } from "@mui/system";
-import { useNavigate } from "react-router-dom";
-import { OTHERUSER_PAGE } from "../../RoutePath/RoutePath";
+import PeopleIcon from "@mui/icons-material/People";
+import Diversity3Icon from "@mui/icons-material/Diversity3";
+import InputBase from "@mui/material/InputBase";
+import MenuIcon from "@mui/icons-material/Menu";
+import SearchIcon from "@mui/icons-material/Search";
+import DirectionsIcon from "@mui/icons-material/Directions";
 
 const auth = getAuth(app);
 
@@ -49,6 +48,7 @@ const StyledFab = styled(Fab)({
   right: 0,
   margin: "0 auto",
 });
+const drawerWidth = 240;
 
 export default function PeopleComponent() {
   const userId = auth.lastNotifiedUid;
@@ -59,12 +59,11 @@ export default function PeopleComponent() {
   const [messageList, setMessageList] = React.useState([]);
   const [user, setUser] = React.useState([]);
   const [friends, setFriends] = React.useState([]);
-
-  const navigate = useNavigate()
+  const [page, setPage] = React.useState("People");
   // const [online,setOnline] = React.useState(true)
   // .format('MM/DD/YYYY hh:mm')
 
-  React.useEffect(() => {
+  const getUser = React.useCallback(() => {
     onSnapshot(collection(db, "User"), (data) => {
       const newData = data.docs.map((doc) => {
         const storageRef = ref(
@@ -95,7 +94,13 @@ export default function PeopleComponent() {
         })
         .catch((error) => console.log(error, "asdfasdf"));
     });
-  }, []);
+  }, [timeDate]);
+
+  React.useEffect(() => {
+    getUser();
+  }, [getUser]);
+
+  const onNavigatePage = () => {};
 
   React.useEffect(() => {
     onSnapshot(collection(db, "Friends"), (data) => {
@@ -127,120 +132,237 @@ export default function PeopleComponent() {
       });
   };
 
-  const onNavigatePage = () =>{
-
-  }
+  const peoplePage = () => {
+    setPage("People");
+    getUser();
+  };
+  const filterFrinds = () => {
+    setUsers([
+      ...users.filter(
+        (elem) =>
+          !!friends.find(
+            (ele) =>
+              ele.request === true &&
+              (ele.userId === elem.id || ele.friendId === elem.id)
+          )
+      ),
+    ]);
+    setPage("Friends");
+  };
+  const onSearch = (value) => {
+    // console.log(value,value.slice(0, value.length+1))
+    // console.log(users)
+    if (value === "") {
+      getUser();
+    }
+    const filterCheckItem = users.filter(
+      (elem) => elem.name.slice(0, value.length) === value
+    );
+    console.log(filterCheckItem, "KKKKK");
+    setUsers(
+      filterCheckItem.map((elem, index) => {
+        return {
+          ...elem,
+        };
+      })
+    );
+    // setUsers([...users.filter((elem)=>(elem.name.slice(0, value.length+1)) === (value))])
+    console.log(users);
+  };
 
   return (
-    <React.Fragment>
-      <CssBaseline />
-      <Paper square sx={{ pb: "50px" }}>
-        <Typography
-          variant="h5"
-          gutterBottom
-          component="div"
-          sx={{ p: 2, pb: 0 }}
-        >
-          Inbox
-        </Typography>
-        <List sx={{ mb: 2 }}>
-          {users.map(({ id, name, gender, age, url, online }) => {
-            console.log(friends, "friend");
-            if (id !== userId) {
-              return (
-                <React.Fragment key={id}>
-                  <ListItem button onClick={() => navigate(OTHERUSER_PAGE, { state: user })}>
-                    <ListItemAvatar>
-                      <Badge color="secondary" variant="dot" invisible={online}>
-                        <Avatar alt="Profile Picture" src={url} />
-                      </Badge>
-                    </ListItemAvatar>
+    <Box sx={{ display: "flex" }}>
+      <Drawer
+        variant="permanent"
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          [`& .MuiDrawer-paper`]: { width: drawerWidth },
+          zIndex: 1,
+        }}
+      >
+        <Toolbar />
+        <Box sx={{ overflow: "auto" }}>
+          <List>
+            <ListItem key={"text"} disablePadding>
+              <ListItemButton onClick={peoplePage}>
+                <ListItemIcon>
+                  <PeopleIcon />
+                </ListItemIcon>
+                <ListItemText primary={"People"} />
+              </ListItemButton>
+            </ListItem>
+            <ListItem key={"text"} disablePadding>
+              <ListItemButton onClick={filterFrinds}>
+                <ListItemIcon>
+                  <Diversity3Icon />
+                </ListItemIcon>
+                <ListItemText primary={"Friends"} />
+              </ListItemButton>
+            </ListItem>
+          </List>
+          <Divider />
+          <List>
+            {["All mail", "Trash", "Spam"].map((text, index) => (
+              <ListItem key={text} disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  </ListItemIcon>
+                  <ListItemText primary={text} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Drawer>
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <Toolbar />
+        <React.Fragment>
+          <CssBaseline />
+          <Paper square sx={{ pb: "50px" }}>
+            <Typography
+              variant="h5"
+              gutterBottom
+              component="div"
+              sx={{ p: 2, pb: 0 }}
+            >
+              {page}
+            </Typography>
+            <List sx={{ mb: 2 }}>
+              <Paper
+                component="form"
+                sx={{
+                  p: "2px 4px",
+                  display: "flex",
+                  alignItems: "center",
+                  width: "auto",
+                }}
+              >
+                <InputBase
+                  sx={{ ml: 1, flex: 1 }}
+                  placeholder="Search People"
+                  inputProps={{ "aria-label": "search google maps" }}
+                  onChange={(e) => onSearch(e.target.value)}
+                />
+                <IconButton
+                  type="button"
+                  sx={{ p: "10px" }}
+                  aria-label="search"
+                >
+                  <SearchIcon />
+                </IconButton>
+              </Paper>
+              {users.map(({ id, name, gender, age, url, online }) => {
+                console.log(friends, "friend");
+                if (id !== userId) {
+                  return (
+                    <React.Fragment key={id}>
+                      <ListItem
+                        sx={{
+                          boxShadow:
+                            "0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);",
+                          borderRadius: 1,
+                        }}
+                      >
+                        <ListItemAvatar>
+                          <Badge
+                            color="secondary"
+                            variant="dot"
+                            invisible={online}
+                          >
+                            <Avatar alt="Profile Picture" src={url} />
+                          </Badge>
+                        </ListItemAvatar>
 
-                    <ListItemText
-                      primary={name}
-                      secondary={gender + " " + age}
-                    />
-                    {friends.find(
-                      (elem) => elem.friendId === id && elem.request === false
-                    ) ? (
-                      <Button
-                        variant="contained"
-                        startIcon={<PersonAddAlt1Icon />}
-                        onClick={() => sendFriendRequest(id)}
-                      >
-                        send
-                      </Button>
-                    ) : (
-                      ""
-                    )}
-                    {friends.find(
-                      (elem) => elem.userId === id && elem.request === false
-                    ) ? (
-                      <Button
-                        variant="contained"
-                        startIcon={<PersonAddAlt1Icon />}
-                        onClick={() =>
-                          acceptFriendRequest(
-                            friends.find(
-                              (elem) =>
-                                elem.userId === id && elem.request === false
-                            ).id
-                          )
-                        }
-                      >
-                        accept
-                      </Button>
-                    ) : (
-                      ""
-                    )}
+                        <ListItemText
+                          primary={name}
+                          secondary={gender + " " + age}
+                        />
+                        {friends.find(
+                          (elem) =>
+                            elem.friendId === id && elem.request === false
+                        ) ? (
+                          <Button
+                            variant="contained"
+                            startIcon={<PersonAddAlt1Icon />}
+                            onClick={() => sendFriendRequest(id)}
+                          >
+                            sended
+                          </Button>
+                        ) : (
+                          ""
+                        )}
+                        {friends.find(
+                          (elem) => elem.userId === id && elem.request === false
+                        ) ? (
+                          <Button
+                            variant="contained"
+                            startIcon={<PersonAddAlt1Icon />}
+                            onClick={() =>
+                              acceptFriendRequest(
+                                friends.find(
+                                  (elem) =>
+                                    elem.userId === id && elem.request === false
+                                ).id
+                              )
+                            }
+                          >
+                            accept
+                          </Button>
+                        ) : (
+                          ""
+                        )}
 
-                    {friends.find(
-                      (elem) =>
-                        (elem.friendId === id || elem.userId === id) &&
-                        elem.request === true
-                    ) ? (
-                      <Button
-                        variant="contained"
-                        disabled
-                        startIcon={<PersonAddAlt1Icon />}
-                        onClick={() => sendFriendRequest(id)}
-                      >
-                        friend
-                      </Button>
-                    ) : (
-                      ""
-                    )}
-                    {friends.find(
-                      (elem) => elem.friendId === id || elem.userId === id
-                    ) ? (
-                      ""
-                    ) : (
-                      <Button
-                        variant="contained"
-                        startIcon={<PersonAddAlt1Icon />}
-                        onClick={() => sendFriendRequest(id)}
-                      >
-                        add Friend
-                      </Button>
-                    )}
+                        {friends.find(
+                          (elem) =>
+                            (elem.friendId === id || elem.userId === id) &&
+                            elem.request === true
+                        ) ? (
+                          <Button
+                            variant="contained"
+                            disabled
+                            startIcon={<PersonAddAlt1Icon />}
+                            onClick={() => sendFriendRequest(id)}
+                          >
+                            friend
+                          </Button>
+                        ) : (
+                          ""
+                        )}
+                        {friends.find(
+                          (elem) => elem.friendId === id || elem.userId === id
+                        ) ? (
+                          ""
+                        ) : (
+                          <Button
+                            variant="contained"
+                            startIcon={<PersonAddAlt1Icon />}
+                            onClick={() => sendFriendRequest(id)}
+                          >
+                            add Friend
+                          </Button>
+                        )}
 
-                    {/* <Badge color="secondary" badgeContent={1} showZero>
+                        {/* <Badge color="secondary" badgeContent={1} showZero>
 
                         <MailIcon />
                       </Badge> */}
-                    <MessageDialog
-                      id={id}
-                      url={url}
-                      name={name}
-                      users={users}
-                    />
-                  </ListItem>
-                </React.Fragment>
-              );
-            }
-          })}
-        </List>
-      </Paper>
-    </React.Fragment>
+                        <MessageDialog
+                          id={id}
+                          url={url}
+                          name={name}
+                          users={users}
+                        />
+                      </ListItem>
+                    </React.Fragment>
+                  );
+                }
+              })}
+            </List>
+          </Paper>
+        </React.Fragment>
+      </Box>
+    </Box>
   );
 }

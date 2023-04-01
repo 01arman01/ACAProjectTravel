@@ -50,17 +50,22 @@ import { usePostCardStyles } from "./PostCard.styles";
 import { useDownloadURL } from "react-firebase-hooks/storage";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { OTHERUSER_PAGE, USER_PAGE } from "../../RoutePath/RoutePath";
-import CardCover from '@mui/joy/CardCover';
-
+import CardCover from "@mui/joy/CardCover";
+import EditPostDialog from "../EditPost/EditPostDialog";
 
 export default function PostCard({ post, load, page, imageLoadnig, user }) {
   //Auth
   const auth = getAuth(app);
   const userId = auth.lastNotifiedUid;
   const styles = usePostCardStyles();
+  //refresh
+  const refresh = () => window.location.reload(true);
 
   const [loading, setLoading] = useState(load);
   const location = useLocation();
+
+  //for edit
+  const [openEdit, setOpenEdit] = useState(false);
 
   //states
   const [open, setOpen] = useState(false);
@@ -71,6 +76,8 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
   const [like, setLike] = useState(false);
   const [openFullText, setOpenFullText] = useState(false);
   const [users, setUsers] = useState([]);
+
+  const [plainStatus, setPlainStatus] = useState(false);
 
   const [comment, setComment] = useState("");
   const [lastComment, setLastComment] = useState("");
@@ -95,7 +102,6 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
       }
     });
   }, [postValue]);
-
 
   useEffect(() => {
     onSnapshot(collection(db, "Likes"), (data) => {
@@ -144,6 +150,11 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
     } else {
       navigate(OTHERUSER_PAGE, { state: user });
     }
+  };
+
+  const onCloseEditPage = () => {
+    setOpenEdit(false);
+    setPlainStatus(false);
   };
 
   const handleClickOpen = () => {
@@ -269,15 +280,29 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
             size="sm"
             sx={{ ml: "auto" }}
           >
-            <MoreHoriz onClick={handleClickOpen} />
-            <SimpleDialog
-              selectedValue={postValue}
-              postId={postValue.id}
-              onDeletePost={onDeletePost}
-              onUpdatePost={onUpdatePost}
-              open={open}
-              onClose={handleClose}
-            />
+            {plainStatus && (
+              <ul className={styles.lists}>
+                <li
+                  onClick={() => setOpenEdit(!openEdit)}
+                  className={styles.list}
+                >
+                  Edit
+                </li>
+                <EditPostDialog
+                  open={openEdit}
+                  onCloseEditPage={onCloseEditPage}
+                  post={postValue}
+                  onUpdatePost={onUpdatePost}
+                  postId={postValue.id}
+                />
+                <li
+                  onClick={() => onDeletePost(postValue.id, postValue.imageId)}
+                  className={styles.list}
+                >
+                  Delete
+                </li>
+              </ul>
+            )}
           </IconButton>
         )}
       </Box>
@@ -287,27 +312,13 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
             <CircularIndeterminate />
           ) : (
             <>
-            {/* <img src={postValue.url} alt="" loading="lazy" /> */}
-           
-        <CardCover>
-          <video
-            autoPlay
-            // loop
-            muted
-            poster={postValue.url}
-          >
-            <source
-              src={ postValue.url}
-              type="video/mp4"
-            />
-          </video>
-        </CardCover>
-      
-
-          </>
+              <CardCover>
+                <video autoPlay loop muted poster={postValue.url}>
+                  <source src={postValue.url} type="video/mp4" />
+                </video>
+              </CardCover>
+            </>
           )}
-
-          {/* <img src={postValue.url} alt="" loading="lazy" /> */}
         </AspectRatio>
       </CardOverflow>
       <Box sx={{ display: "flex", alignItems: "center", mx: -1, my: 1 }}>
@@ -328,6 +339,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
               openCommentPag={openCommentPag}
               handleCloseComment={handleCloseComment}
               selectedValue={postValue}
+              onAddComment={onAddComment}
             />
             {/* openCommentPag */}
           </IconButton>
@@ -407,11 +419,19 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
       >
         {new Date(postValue.date.seconds).toString().slice(16, 21)}{" "}
       </Link>
-      {lastComment ? (<span>{lastComment}</span>) : (<div style={{
-        fontSize:"12px",
-        textAlign:"center",
-        color:"#A5C4C5"
-      }}>no comments</div>)}
+      {lastComment ? (
+        <span>{lastComment}</span>
+      ) : (
+        <div
+          style={{
+            fontSize: "12px",
+            textAlign: "center",
+            color: "#A5C4C5",
+          }}
+        >
+          no comments
+        </div>
+      )}
       <CardOverflow
         sx={{
           p: "var(--Card-padding)",

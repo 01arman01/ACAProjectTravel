@@ -36,6 +36,7 @@ import PostCard from "../components/CardComponent/PostCard";
 import Navbar from "../components/Navbar/Navbar";
 import { LOGIN_PAGE } from "../RoutePath/RoutePath";
 import dayjs from 'dayjs';
+import Footer from "../components/Footer/Footer";
 
 
 export default function User() {
@@ -88,35 +89,36 @@ export default function User() {
   }, [userId,timeDate]);
 
   //Set posts data
-  useEffect(() => {
-    onSnapshot(collection(db, "Posts"), (data) => {
-      console.log(data)
-      const newData = data.docs.filter((elem) => elem.data().share === true).map((doc) => {
-        const storageRef = ref(storage,`Images/${doc.data().imageId}`);
-        return getDownloadURL(storageRef)
-          .then((url) => {
-            return {
-              ...doc.data(),
-              id: doc.id,
-              url: url,
-            };
-          })
-          .catch((err) => {
-            return {
-              ...doc.data(),
-              id: doc.id,
-              url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlHBoELHG9IPFDyVp_5_lRfL-9zTYR-YG1nEC8N9c&s",
-            };
-          });
-      });
-      Promise.all(newData)
-        .then((downloadUrls) => {
-          setImageLoadnig(false);
-          setPosts(downloadUrls);
-        })
-        .catch((error) => console.log(error, "asdfasdf"));
-    });
-  },[]);
+    useEffect(() => {
+        onSnapshot(collection(db, "Posts"), (data) => {
+            const newData = data.docs
+                .filter((elem) => elem.data().userId === userId)
+                .map((doc) => {
+                    const storageRef = ref(storage, `Images/${doc.data().imageId}`);
+                    return getDownloadURL(storageRef)
+                        .then((url) => {
+                            return {
+                                ...doc.data(),
+                                id: doc.id,
+                                url: url,
+                            };
+                        })
+                        .catch((err) => {
+                            return {
+                                ...doc.data(),
+                                id: doc.id,
+                                url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlHBoELHG9IPFDyVp_5_lRfL-9zTYR-YG1nEC8N9c&s",
+                            };
+                        });
+                });
+            Promise.all(newData)
+                .then((downloadUrls) => {
+                    setImageLoadnig(false);
+                    setPosts(downloadUrls);
+                })
+                .catch((error) => console.log(error, "asdfasdf"));
+        });
+    }, [userId]);
 
 
     //Upload and send image to storage
@@ -167,7 +169,8 @@ export default function User() {
 
   return (
     isLoggedIn() && user != null && (
-      <div className={styles.userWrapper}>
+       <div className={styles.overflo}>
+      <div className={styles.usermain}>
         <Navbar
           title={title}
           setTitle={setTitle}
@@ -179,12 +182,13 @@ export default function User() {
           setShare={setShare}
           user={user}
         />
-
-        <div className={styles.postsSection}>
+         <div className={styles.postFooterContainer}>
+        <div className={styles.postsContainer}>
           {posts.length !== 0 &&
             posts.map((post) => {
               return (
                 <PostCard
+                  className={styles.postCard}
                   key={post.id}
                   post={post}
                   load={loading}
@@ -195,6 +199,8 @@ export default function User() {
             })}
         </div>
       </div>
+      </div>
+        </div>
     )
   );
 }

@@ -30,6 +30,10 @@ import Diversity3Icon from '@mui/icons-material/Diversity3';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
 import MessageDialog from '../Message/MessageDialog'
+import {useEffect} from "react";
+import {getSession, isLoggedIn} from "../../storage/session";
+import {useNavigate} from "react-router-dom";
+
 
 const auth = getAuth(app);
 
@@ -51,6 +55,17 @@ export default function PeopleComponent() {
       const [page, setPage] = React.useState('People')
       // const [online,setOnline] = React.useState(true)
       // .format('MM/DD/YYYY hh:mm')
+
+
+  // -----------
+  let navigate = useNavigate();
+  useEffect(() => {
+    if (!isLoggedIn()) {
+      navigate("/login");
+    }
+  }, [navigate]);
+
+  // ----------------
 
   const getUser = React.useCallback(() => {
     onSnapshot(collection(db, "User"), (data) => {
@@ -145,6 +160,7 @@ export default function PeopleComponent() {
 
 
   return (
+      isLoggedIn() &&
     <Box sx={{ display: "flex" }}>
       <Drawer
         variant="permanent"

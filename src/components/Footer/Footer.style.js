@@ -10,13 +10,14 @@ import twitter from './img/icons8-твиттер.svg'
 const useStyles = createUseStyles({
     footer:{
         width:'100%',
-        padding:'2rem 8%',
+        padding:'0.5rem 8%',
         backgroundColor:"#EDF1F4",
         color:"black",
         display:'flex',
         justifyContent:"space-evenly",
         alignItems:'center',
         flexDirection:"column",
+        margin:'auto auto 0 auto',
         "@media (max-width: 560px)": {
             width:'100vw',
             height: "auto",
@@ -29,7 +30,7 @@ const useStyles = createUseStyles({
         display:"flex",
         alignItems:'center',
         flexWrap:'wrap',
-        marginBottom:'1rem',
+        // marginBottom:'1rem',
         "@media (max-width: 400px)": {
             display: "grid",
             gridTemplateColumns: '1fr 1fr',
@@ -40,16 +41,15 @@ const useStyles = createUseStyles({
         width:'50px',
         height:'50px',
         borderRadius:'50px',
-        marginBottom:'1rem',
+        // marginBottom:'0.5rem',
         backgroundSize:'100%',
         backgroundPosition:'center',
         backgroundRepeat:"no-repeat",
-        margin:'1rem',
+        margin:' 0rem 1rem',
         // border:'1px solid  blue ',
         '&:hover':{
             // border:'1px solid  black ',
             // filter:'invert(1)'
-
         }
     },
     footerMenuContainer:{
@@ -69,7 +69,7 @@ const useStyles = createUseStyles({
     },
     menuItem:{
          color:'black',
-        margin:'1rem 1.5rem',
+        margin:'0.5rem 1.5rem',
         cursor:'pointer',
         opacity:0.6,
         '&:hover':{
@@ -100,5 +100,7 @@ const useStyles = createUseStyles({
 
 
 })
+
+export default useStyles
 
 

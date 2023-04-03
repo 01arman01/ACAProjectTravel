@@ -9,22 +9,24 @@ const useStyles = createUseStyles({
     gap: "10px",
     listStyle: "none",
     width: "270px",
-    height: "100vh",
+    height: "auto",
+    overflow:'hidden',
     background: "#EDF1F4",
     backdropFilter: "blur(15px)",
-    position: "fixed",
-    overflow: "scroll",
+    // position: "fixed",
+    // overflow: "scroll",
     paddingBottom: "27px",
     paddingTop:"10px",
+
 
     borderRadius: "5px",
     "@media (max-width: 750px)": {
       // position:'relative',
-      position: "static",
-      width: "160px",
+      // position: "static",
+      width: "250px",
       height: "auto",
     },
-    "@media (max-width: 560px)": {
+    "@media (max-width: 618px)": {
       // position:'relative',
 
       width: "100vw",
@@ -73,7 +75,10 @@ const useStyles = createUseStyles({
     textAlign: "center",
   },
   avatarBlock: {
+    margin:'0 auto',
     position: "relative",
+    width:'275px',
+    // display:'inline-block',
   },
   plusButton: {
     position: "absolute",

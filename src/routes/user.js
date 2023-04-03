@@ -1,13 +1,9 @@
-import {useCallback, useEffect, useState} from "react";
+import { useCallback, useEffect, useState } from "react";
 //Router
-import {useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 //firebase
-import {app, db, storage} from "../firebase";
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-} from "firebase/storage";
+import { app, db, storage } from "../firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import {
   addDoc,
   collection,
@@ -17,30 +13,26 @@ import {
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 //Session
-import {
-    getDocs,
-    Timestamp,
-    deleteDoc,
-} from "firebase/firestore";
-import {child, get, getDatabase, onValue} from "firebase/database";
+import { getDocs, Timestamp, deleteDoc } from "firebase/firestore";
+import { child, get, getDatabase, onValue } from "firebase/database";
 //Session
-import {endSession, getSession, isLoggedIn} from "../storage/session";
+import { endSession, getSession, isLoggedIn } from "../storage/session";
 //Mui
-import {Button, Checkbox, Container, TextField} from "@mui/material";
+import { Button, Checkbox, Container, TextField } from "@mui/material";
 //Styles
-import {useUserStyles} from "./user.styles";
+import { useUserStyles } from "./user.styles";
 //Uuid
-import {v4} from "uuid";
+import { v4 } from "uuid";
 //Components
 import PostCard from "../components/CardComponent/PostCard";
 import Navbar from "../components/Navbar/Navbar";
 import { LOGIN_PAGE } from "../RoutePath/RoutePath";
-import dayjs from 'dayjs';
-
+import dayjs from "dayjs";
+import Footer from "../components/Footer/Footer";
 
 export default function User() {
-    //navigate
-    let navigate = useNavigate();
+  //navigate
+  let navigate = useNavigate();
   //Styles
   const styles = useUserStyles();
   //states
@@ -57,11 +49,11 @@ export default function User() {
   const [loading, setloading] = useState(false);
   const [imageLoadnig, setImageLoadnig] = useState(false);
   const [user, setUser] = useState(null);
-  const [timeDate,setTimeDate] = useState(dayjs(new Date()))
+  const [timeDate, setTimeDate] = useState(dayjs(new Date()));
 
-    //Auth
-    const auth = getAuth(app);
-    const userId = auth.lastNotifiedUid;
+  //Auth
+  const auth = getAuth(app);
+  const userId = auth.lastNotifiedUid;
 
   useEffect(() => {
     onSnapshot(collection(db, "User"), (data) => {
@@ -72,43 +64,35 @@ export default function User() {
     });
   }, [userId]);
 
-    useEffect(() => {
-        onSnapshot(collection(db, "User"), (data) => {
-            const user = data.docs
-                .map((doc) => ({...doc.data(), id: doc.id})).filter((elm) => elm.id === auth.lastNotifiedUid)
-            setUser(user[0])
-        });
-    }, [auth.lastNotifiedUid]);
-
-
   useEffect(() => {
-    if(userId){
-      updateDoc(doc(db, "User",  userId), {time:dayjs(new Date()).toDate()});
+    if (userId) {
+      updateDoc(doc(db, "User", userId), { time: dayjs(new Date()).toDate() });
     }
-  }, [userId,timeDate]);
+  }, [userId, timeDate]);
 
   //Set posts data
   useEffect(() => {
     onSnapshot(collection(db, "Posts"), (data) => {
-      console.log(data)
-      const newData = data.docs.filter((elem) => elem.data().share === true).map((doc) => {
-        const storageRef = ref(storage,`Images/${doc.data().imageId}`);
-        return getDownloadURL(storageRef)
-          .then((url) => {
-            return {
-              ...doc.data(),
-              id: doc.id,
-              url: url,
-            };
-          })
-          .catch((err) => {
-            return {
-              ...doc.data(),
-              id: doc.id,
-              url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlHBoELHG9IPFDyVp_5_lRfL-9zTYR-YG1nEC8N9c&s",
-            };
-          });
-      });
+      const newData = data.docs
+        .filter((elem) => elem.data().userId === userId)
+        .map((doc) => {
+          const storageRef = ref(storage, `Images/${doc.data().imageId}`);
+          return getDownloadURL(storageRef)
+            .then((url) => {
+              return {
+                ...doc.data(),
+                id: doc.id,
+                url: url,
+              };
+            })
+            .catch((err) => {
+              return {
+                ...doc.data(),
+                id: doc.id,
+                url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlHBoELHG9IPFDyVp_5_lRfL-9zTYR-YG1nEC8N9c&s",
+              };
+            });
+        });
       Promise.all(newData)
         .then((downloadUrls) => {
           setImageLoadnig(false);
@@ -116,24 +100,22 @@ export default function User() {
         })
         .catch((error) => console.log(error, "asdfasdf"));
     });
-  },[]);
+  }, [userId]);
 
+  //Upload and send image to storage
+  const onUploadImage = () => {
+    if (ImageUpload == null) return;
+    const imageRef = ref(storage, `Images/${imageId}`);
+    uploadBytes(imageRef, ImageUpload).then((res) => {
+      setImageId(v4);
+      onSendPost();
+    });
+  };
 
-    //Upload and send image to storage
-    const onUploadImage = () => {
-        if (ImageUpload == null) return;
-        const imageRef = ref(storage, `Images/${imageId}`);
-        uploadBytes(imageRef, ImageUpload).then((res) => {
-            onSendPost();
-            setImageId(v4);
-        });
-    };
-
-    const onAddPost = () => {
-        onUploadImage();
-        setImageLoadnig(true);
-
-    };
+  const onAddPost = () => {
+    onUploadImage();
+    setImageLoadnig(true);
+  };
 
   //Send post to database
   const onSendPost = useCallback(async () => {
@@ -143,21 +125,28 @@ export default function User() {
         title,
         text,
         imageId: imageId,
-        date:date,
+        date: date,
         share,
-      }).then((res) => {console.log(res,"postt")}).catch((err)=>{console.log(err,"err")});
-    } catch (err) {console.log(err,"err")}
+      })
+        .then((res) => {
+          console.log(res, "postt");
+        })
+        .catch((err) => {
+          console.log(err, "err");
+        });
+    } catch (err) {
+      console.log(err, "err");
+    }
   }, [title, text, date, share, imageId, userId]);
 
-
-    //Login status
-    useEffect(() => {
-        if (!isLoggedIn()) {
-            navigate("/login");
-        }
-        let session = getSession();
-        setEmail(session.email);
-    }, [navigate]);
+  //Login status
+  useEffect(() => {
+    if (!isLoggedIn()) {
+      navigate("/login");
+    }
+    let session = getSession();
+    setEmail(session.email);
+  }, [navigate]);
 
   //Logout function
   const onLogout = () => {
@@ -166,33 +155,38 @@ export default function User() {
   };
 
   return (
-    isLoggedIn() && user != null && (
-      <div className={styles.userWrapper}>
-        <Navbar
-          title={title}
-          setTitle={setTitle}
-          text={text}
-          setText={setText}
-          onAddPost={onAddPost}
-          setImageUpload={setImageUpload}
-          share={share}
-          setShare={setShare}
-          user={user}
-        />
-
-        <div className={styles.postsSection}>
-          {posts.length !== 0 &&
-            posts.map((post) => {
-              return (
-                <PostCard
-                  key={post.id}
-                  post={post}
-                  load={loading}
-                  imageLoadnig={imageLoadnig}
-                  user={user}
-                />
-              );
-            })}
+    isLoggedIn() &&
+    user != null && (
+      <div className={styles.overflo}>
+        <div className={styles.usermain}>
+          <Navbar
+            title={title}
+            setTitle={setTitle}
+            text={text}
+            setText={setText}
+            onAddPost={onAddPost}
+            setImageUpload={setImageUpload}
+            share={share}
+            setShare={setShare}
+            user={user}
+          />
+          <div className={styles.postFooterContainer}>
+            <div className={styles.postsContainer}>
+              {posts.length !== 0 &&
+                posts.map((post) => {
+                  return (
+                    <PostCard
+                      className={styles.postCard}
+                      key={post.id}
+                      post={post}
+                      load={loading}
+                      imageLoadnig={imageLoadnig}
+                      user={user}
+                    />
+                  );
+                })}
+            </div>
+          </div>
         </div>
       </div>
     )

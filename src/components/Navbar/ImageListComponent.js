@@ -53,9 +53,8 @@ export default function ImageListComponent({open,handleClose,user}) {
       {urls.map((item) => {
         const cols = item.featured ? 2 : 1;
         const rows = item.featured ? 2 : 1;
-        console.log(item.img)
         return (
-          <ImageListItem key={item.img} cols={cols} rows={rows}>
+          <ImageListItem key={item.url} cols={cols} rows={rows}>
             <img
               {...srcset(item.url, 250, 200, rows, cols)}
               alt={item.title}

@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { useCallback, useEffect, useState } from "react";
 import AspectRatio from "@mui/joy/AspectRatio";
 import Avatar from "@mui/joy/Avatar";
@@ -14,6 +13,9 @@ import ModeCommentOutlined from "@mui/icons-material/ModeCommentOutlined";
 import SendOutlined from "@mui/icons-material/SendOutlined";
 import Face from "@mui/icons-material/Face";
 import BookmarkBorderRoundedIcon from "@mui/icons-material/BookmarkBorderRounded";
+
+import { getSession, isLoggedIn } from "../../storage/session";
+
 import {
   addDoc,
   collection,
@@ -33,10 +35,10 @@ import { usePostCardStyles } from "./PostCard.styles";
 import { useDownloadURL } from "react-firebase-hooks/storage";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { OTHERUSER_PAGE, USER_PAGE } from "../../RoutePath/RoutePath";
-import CardCover from '@mui/joy/CardCover';
+import CardCover from "@mui/joy/CardCover";
 import { v4 } from "uuid";
 import EditPostDialog from "../EditPost/EditPostDialog";
-
+import { MoreHoriz } from "@mui/icons-material";
 
 export default function PostCard({ post, load, page, imageLoadnig, user }) {
   //Auth
@@ -288,6 +290,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
                 </li>
               </ul>
             )}
+            <MoreHoriz onClick={() => setPlainStatus(!plainStatus)} />
           </IconButton>
         )}
       </Box>
@@ -380,7 +383,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
           sx={{ fontSize: "12px" }}
         >
           <span onClick={onNavigatePage} className={styles.userName}>
-            { postValue.title}
+            {postValue.title}
           </span>
         </Link>{" "}
         {openFullText ? postValue.text : postValue.text.slice(0, 15)}
@@ -403,7 +406,17 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
         fontSize="10px"
         sx={{ color: "text.tertiary", my: 0.5 }}
       >
-        {postValue.date.toDate().toLocaleTimeString(undefined, {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hour12: false, minute:'2-digit', second:'2-digit'})}
+        {postValue.date
+          .toDate()
+          .toLocaleTimeString(undefined, {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            hour12: false,
+            minute: "2-digit",
+            second: "2-digit",
+          })}
       </Link>
       {lastComment ? (
         <span>{lastComment}</span>
@@ -425,10 +438,17 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
           marginTop: lastComment ? "" : "4px",
         }}
       >
-        <IconButton size="sm" variant="plain" color="neutral" sx={{ ml: -1 }}>
+        <IconButton
+          disabled={!isLoggedIn()}
+          size="sm"
+          variant="plain"
+          color="neutral"
+          sx={{ ml: -1 }}
+        >
           <Face />
         </IconButton>
         <Input
+          disabled={!isLoggedIn()}
           variant="plain"
           size="sm"
           placeholder="Add a comment…"
@@ -438,7 +458,11 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
             setComment(e.target.value);
           }}
         />
-        <button className={styles.commentButton} onClick={hendleComment}>
+        <button
+          disabled={!isLoggedIn()}
+          className={styles.commentButton}
+          onClick={hendleComment}
+        >
           Send
         </button>
       </CardOverflow>

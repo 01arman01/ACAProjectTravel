@@ -103,13 +103,6 @@ export default function EditPostDialog({
               type="file"
             />
           </Button>
-
-          <Checkbox
-            label="Text"
-            checked={share}
-            onChange={() => setShare(!share)}
-            inputProps={{ "aria-label": "controlled" }}
-          />
           <Button
             variant="contained"
             onClick={onEditPost}

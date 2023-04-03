@@ -1,5 +1,4 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AspectRatio from "@mui/joy/AspectRatio";
 import Avatar from "@mui/joy/Avatar";
 import Box from "@mui/joy/Box";
@@ -15,33 +14,20 @@ import ModeCommentOutlined from "@mui/icons-material/ModeCommentOutlined";
 import SendOutlined from "@mui/icons-material/SendOutlined";
 import Face from "@mui/icons-material/Face";
 import BookmarkBorderRoundedIcon from "@mui/icons-material/BookmarkBorderRounded";
-// import Card from '@mui/material/Card';
-import CardHeader from "@mui/material/CardHeader";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
-import CardActions from "@mui/material/CardActions";
-// import Avatar from '@mui/material/Avatar';
-// import IconButton from '@mui/material/IconButton';
-// import Typography from '@mui/material/Typography';
-import { red } from "@mui/material/colors";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShareIcon from "@mui/icons-material/Share";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { createUseStyles } from "react-jss";
-import {getSession, isLoggedIn} from "../../storage/session";
+import { getSession, isLoggedIn } from "../../storage/session";
 import {
   addDoc,
   collection,
   deleteDoc,
-  deleteField,
   doc,
   onSnapshot,
+  orderBy,
+  query,
   updateDoc,
 } from "firebase/firestore";
 import { app, db } from "../../firebase";
 import Share from "../Share";
 import { getAuth } from "firebase/auth";
-import { Button } from "@mui/joy";
 import CommentDialog from "../CommentDialog";
 import { deleteObject, ref } from "@firebase/storage";
 import { storage } from "../../firebase";
@@ -51,8 +37,8 @@ import { useDownloadURL } from "react-firebase-hooks/storage";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { OTHERUSER_PAGE, USER_PAGE } from "../../RoutePath/RoutePath";
 import CardCover from "@mui/joy/CardCover";
-import EditPostDialog from "../EditPost/EditPostDialog";
 import { v4 } from "uuid";
+import EditPostDialog from "../EditPost/EditPostDialog";
 
 export default function PostCard({ post, load, page, imageLoadnig, user }) {
   //Auth
@@ -95,14 +81,16 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
     });
   }, []);
 
-  useEffect(() => {
-    onSnapshot(doc(db, "Posts", postValue.id), (doc) => {
-      const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
-      if (!!postValue.url) {
-        setPostValue({ ...postValue, ...doc.data() });
-      }
-    });
-  }, [postValue]);
+  // useEffect(() => {
+  //   const citiesRef = collection(db, "Posts");
+  //   const q = query(citiesRef, orderBy("date","asc"));
+  //   onSnapshot(q, (doc) => {
+  //     // const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
+  //     if (!!postValue.url) {
+  //       setPostValue({ ...postValue, ...doc.data() });
+  //     }
+  //   });
+  // }, [postValue]);
 
   useEffect(() => {
     onSnapshot(collection(db, "Likes"), (data) => {
@@ -132,7 +120,6 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
         userId: auth.lastNotifiedUid,
         postId: postValue.id,
         comment: commentText,
-        commentId:v4()
       });
     } catch (err) {}
   }, []);
@@ -268,7 +255,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
         </Box>
         <Typography fontWeight="lg">
           {location.pathname === "/homepage" ? (
-            <span onClick={() => onNavigatePage()} className={styles.userName}>
+            <span onClick={onNavigatePage} className={styles.userName}>
               {user.name}
             </span>
           ) : (
@@ -287,7 +274,6 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
                 <li
                   onClick={() => setOpenEdit(!openEdit)}
                   className={styles.list}
-                  key="edit"
                 >
                   Edit
                 </li>
@@ -301,7 +287,6 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
                 <li
                   onClick={() => onDeletePost(postValue.id, postValue.imageId)}
                   className={styles.list}
-                  key="delete"
                 >
                   Delete
                 </li>
@@ -341,10 +326,11 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
           <IconButton variant="plain" color="neutral" size="sm">
             <ModeCommentOutlined onClick={handleClickOpenComment} />
             <CommentDialog
+              key={v4()}
               openCommentPag={openCommentPag}
               handleCloseComment={handleCloseComment}
               selectedValue={postValue}
-              // onAddComment={onAddComment}
+              onAddComment={onAddComment}
             />
             {/* openCommentPag */}
           </IconButton>
@@ -391,11 +377,17 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
         {likeValue.length} Likes
       </Link>
       <Typography fontSize="sm">
-        <span
-          style={{ fontSize: "12px", fontWeight: "bold", marginRight: "2px" }}
+        <Link
+          component="button"
+          color="neutral"
+          fontWeight="lg"
+          textColor="text.primary"
+          sx={{ fontSize: "12px" }}
         >
-          {postValue.title}
-        </span>
+          <span onClick={onNavigatePage} className={styles.userName}>
+            {postValue.title}
+          </span>
+        </Link>{" "}
         {openFullText ? postValue.text : postValue.text.slice(0, 15)}
       </Typography>
       <Link
@@ -416,13 +408,22 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
         fontSize="10px"
         sx={{ color: "text.tertiary", my: 0.5 }}
       >
-        {new Date(postValue.date.seconds).toString().slice(16, 21)}{" "}
+        {postValue.date
+          .toDate()
+          .toLocaleTimeString(undefined, {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            hour12: false,
+            minute: "2-digit",
+            second: "2-digit",
+          })}
       </Link>
       {lastComment ? (
         <span>{lastComment}</span>
       ) : (
         <div
-
           style={{
             fontSize: "12px",
             textAlign: "center",
@@ -440,12 +441,16 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
         }}
       >
         <IconButton
-            disabled={!isLoggedIn()}
-            size="sm" variant="plain" color="neutral" sx={{ ml: -1 }}>
+          disabled={!isLoggedIn()}
+          size="sm"
+          variant="plain"
+          color="neutral"
+          sx={{ ml: -1 }}
+        >
           <Face />
         </IconButton>
         <Input
-         disabled={!isLoggedIn()}
+          disabled={!isLoggedIn()}
           variant="plain"
           size="sm"
           placeholder="Add a comment…"
@@ -455,9 +460,11 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
             setComment(e.target.value);
           }}
         />
-        <button  disabled={!isLoggedIn()}
-        className={styles.commentButton}
-         onClick={hendleComment}>
+        <button
+          disabled={!isLoggedIn()}
+          className={styles.commentButton}
+          onClick={hendleComment}
+        >
           Send
         </button>
       </CardOverflow>

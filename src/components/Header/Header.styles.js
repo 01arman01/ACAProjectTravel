@@ -126,6 +126,7 @@ export const useHeaderStyles = createUseStyles({
   },
   //--tulbar
   ToggleBtn:{
+    paddingRight:'15px',
     fontSize:'1.5rem',
     cursor:'pointer',
     display:'none',

@@ -28,6 +28,7 @@ import PostCard from "../components/CardComponent/PostCard";
 import Navbar from "../components/Navbar/Navbar";
 import { LOGIN_PAGE } from "../RoutePath/RoutePath";
 import dayjs from "dayjs";
+import Footer from "../components/Footer/Footer";
 
 export default function User() {
   //navigate
@@ -156,32 +157,36 @@ export default function User() {
   return (
     isLoggedIn() &&
     user != null && (
-      <div className={styles.userWrapper}>
-        <Navbar
-          title={title}
-          setTitle={setTitle}
-          text={text}
-          setText={setText}
-          onAddPost={onAddPost}
-          setImageUpload={setImageUpload}
-          share={share}
-          setShare={setShare}
-          user={user}
-        />
-
-        <div className={styles.postsSection}>
-          {posts.length !== 0 &&
-            posts.map((post) => {
-              return (
-                <PostCard
-                  key={post.id}
-                  post={post}
-                  load={loading}
-                  imageLoadnig={imageLoadnig}
-                  user={user}
-                />
-              );
-            })}
+      <div className={styles.overflo}>
+        <div className={styles.usermain}>
+          <Navbar
+            title={title}
+            setTitle={setTitle}
+            text={text}
+            setText={setText}
+            onAddPost={onAddPost}
+            setImageUpload={setImageUpload}
+            share={share}
+            setShare={setShare}
+            user={user}
+          />
+          <div className={styles.postFooterContainer}>
+            <div className={styles.postsContainer}>
+              {posts.length !== 0 &&
+                posts.map((post) => {
+                  return (
+                    <PostCard
+                      className={styles.postCard}
+                      key={post.id}
+                      post={post}
+                      load={loading}
+                      imageLoadnig={imageLoadnig}
+                      user={user}
+                    />
+                  );
+                })}
+            </div>
+          </div>
         </div>
       </div>
     )

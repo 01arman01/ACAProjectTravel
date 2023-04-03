@@ -18,10 +18,7 @@ import PeopleComponent from "./components/People/PeopleComponent";
 import Footer from "./components/Footer/Footer";
 
 const style ={
-  position:"absolute",
-  bottom:0,
-  left:0,
-  width:'100vw'
+  overflow:'hidden'
 }
 
 const router = createBrowserRouter([
@@ -44,11 +41,20 @@ const router = createBrowserRouter([
   },
   {
     path: REGISTER_PAGE,
+
+    element: <><Register />></>,
+  },
+  {
+    path: USER_PAGE,
+    element: <><Header/><User/>
+    </>,
+  },{
+    path: REGISTER_PAGE,
     element: <><Register /></>,
   },
   {
     path: USER_PAGE,
-    element: <><Header/><User/></>,
+    element: <div style={style}><Header/><User/></div>,
     //<div style={style}><Footer/></div>
   },
   {

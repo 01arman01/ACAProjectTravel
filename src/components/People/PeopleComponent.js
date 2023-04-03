@@ -35,6 +35,8 @@ import Diversity3Icon from "@mui/icons-material/Diversity3";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import MessageDialog from "../Message/MessageDialog";
+import { useEffect } from "react";
+import { getSession, isLoggedIn } from "../../storage/session";
 import { useNavigate } from "react-router-dom";
 import { OTHERUSER_PAGE } from "../../RoutePath/RoutePath";
 
@@ -60,8 +62,11 @@ export default function PeopleComponent() {
   const [page, setPage] = React.useState("People");
 
   const navigate = useNavigate();
-  // const [online,setOnline] = React.useState(true)
-  // .format('MM/DD/YYYY hh:mm')
+  useEffect(() => {
+    if (!isLoggedIn()) {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const getUser = React.useCallback(() => {
     onSnapshot(collection(db, "User"), (data) => {
@@ -164,205 +169,209 @@ export default function PeopleComponent() {
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
-      <Drawer
-        variant="permanent"
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: { width: drawerWidth },
-          zIndex: 1,
-        }}
-      >
-        <Toolbar />
-        <Box sx={{ overflow: "auto" }}>
-          <List>
-            <ListItem key={"people"} disablePadding>
-              <ListItemButton onClick={peoplePage}>
-                <ListItemIcon>
-                  <PeopleIcon />
-                </ListItemIcon>
-                <ListItemText primary={"People"} />
-              </ListItemButton>
-            </ListItem>
-            <ListItem key={"friends"} disablePadding>
-              <ListItemButton onClick={filterFrinds}>
-                <ListItemIcon>
-                  <Diversity3Icon />
-                </ListItemIcon>
-                <ListItemText primary={"Friends"} />
-              </ListItemButton>
-            </ListItem>
-          </List>
-          <Divider />
-          <List>
-            {["All mail", "Trash", "Spam"].map((text, index) => (
-              <ListItem key={text} disablePadding>
-                <ListItemButton>
+    isLoggedIn() && (
+      <Box sx={{ display: "flex" }}>
+        <Drawer
+          variant="permanent"
+          sx={{
+            width: drawerWidth,
+            flexShrink: 0,
+            [`& .MuiDrawer-paper`]: { width: drawerWidth },
+            zIndex: 1,
+          }}
+        >
+          <Toolbar />
+          <Box sx={{ overflow: "auto" }}>
+            <List>
+              <ListItem key={"people"} disablePadding>
+                <ListItemButton onClick={peoplePage}>
                   <ListItemIcon>
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                    <PeopleIcon />
                   </ListItemIcon>
-                  <ListItemText primary={text} />
+                  <ListItemText primary={"People"} />
                 </ListItemButton>
               </ListItem>
-            ))}
-          </List>
-        </Box>
-      </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Toolbar />
-        <React.Fragment>
-          <CssBaseline />
-          <Paper square sx={{ pb: "50px" }}>
-            <Typography
-              variant="h5"
-              gutterBottom
-              component="div"
-              sx={{ p: 2, pb: 0 }}
-            >
-              {page}
-            </Typography>
-            <List sx={{ mb: 2 }}>
-              <Paper
-                component="form"
-                sx={{
-                  p: "2px 4px",
-                  display: "flex",
-                  alignItems: "center",
-                  width: "auto",
-                }}
+              <ListItem key={"friends"} disablePadding>
+                <ListItemButton onClick={filterFrinds}>
+                  <ListItemIcon>
+                    <Diversity3Icon />
+                  </ListItemIcon>
+                  <ListItemText primary={"Friends"} />
+                </ListItemButton>
+              </ListItem>
+            </List>
+            <Divider />
+            <List>
+              {["All mail", "Trash", "Spam"].map((text, index) => (
+                <ListItem key={text} disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                    </ListItemIcon>
+                    <ListItemText primary={text} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </Box>
+        </Drawer>
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          <Toolbar />
+          <React.Fragment>
+            <CssBaseline />
+            <Paper square sx={{ pb: "50px" }}>
+              <Typography
+                variant="h5"
+                gutterBottom
+                component="div"
+                sx={{ p: 2, pb: 0 }}
               >
-                <InputBase
-                  sx={{ ml: 1, flex: 1 }}
-                  placeholder="Search People"
-                  inputProps={{ "aria-label": "search google maps" }}
-                  onChange={(e) => onSearch(e.target.value)}
-                />
-                <IconButton
-                  type="button"
-                  sx={{ p: "10px" }}
-                  aria-label="search"
+                {page}
+              </Typography>
+              <List sx={{ mb: 2 }}>
+                <Paper
+                  component="form"
+                  sx={{
+                    p: "2px 4px",
+                    display: "flex",
+                    alignItems: "center",
+                    width: "auto",
+                  }}
                 >
-                  <SearchIcon />
-                </IconButton>
-              </Paper>
-              {users.map((user) => {
-                if (user.id !== userId) {
-                  return (
-                    <React.Fragment key={user.id}>
-                      <ListItem
-                        sx={{
-                          boxShadow:
-                            "0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);",
-                          borderRadius: 1,
-                        }}
-                      >
-                        <ListItemAvatar>
-                          <Badge
-                            color="secondary"
-                            variant="dot"
-                            invisible={user.online}
-                          >
-                            <Avatar alt="Profile Picture" src={user.url} />
-                          </Badge>
-                        </ListItemAvatar>
+                  <InputBase
+                    sx={{ ml: 1, flex: 1 }}
+                    placeholder="Search People"
+                    inputProps={{ "aria-label": "search google maps" }}
+                    onChange={(e) => onSearch(e.target.value)}
+                  />
+                  <IconButton
+                    type="button"
+                    sx={{ p: "10px" }}
+                    aria-label="search"
+                  >
+                    <SearchIcon />
+                  </IconButton>
+                </Paper>
+                {users.map((user) => {
+                  if (user.id !== userId) {
+                    return (
+                      <React.Fragment key={user.id}>
+                        <ListItem
+                          sx={{
+                            boxShadow:
+                              "0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);",
+                            borderRadius: 1,
+                          }}
+                        >
+                          <ListItemAvatar>
+                            <Badge
+                              color="secondary"
+                              variant="dot"
+                              invisible={user.online}
+                            >
+                              <Avatar alt="Profile Picture" src={user.url} />
+                            </Badge>
+                          </ListItemAvatar>
 
-                        <ListItemText
-                          primary={user.name}
-                          secondary={user.gender + " " + user.age}
-                          onClick={() =>
-                            navigate(OTHERUSER_PAGE, { state: user })
-                          }
-                          sx={{ cursor: "pointer" }}
-                        />
-                        {friends.find(
-                          (elem) =>
-                            elem.friendId === user.id && elem.request === false
-                        ) ? (
-                          <Button
-                            variant="contained"
-                            startIcon={<PersonAddAlt1Icon />}
-                            onClick={() => sendFriendRequest(user.id)}
-                          >
-                            sended
-                          </Button>
-                        ) : (
-                          ""
-                        )}
-                        {friends.find(
-                          (elem) =>
-                            elem.userId === user.id && elem.request === false
-                        ) ? (
-                          <Button
-                            variant="contained"
-                            startIcon={<PersonAddAlt1Icon />}
+                          <ListItemText
+                            primary={user.name}
+                            secondary={user.gender + " " + user.age}
                             onClick={() =>
-                              acceptFriendRequest(
-                                friends.find(
-                                  (elem) =>
-                                    elem.userId === user.id &&
-                                    elem.request === false
-                                ).user.id
-                              )
+                              navigate(OTHERUSER_PAGE, { state: user })
                             }
-                          >
-                            accept
-                          </Button>
-                        ) : (
-                          ""
-                        )}
+                            sx={{ cursor: "pointer" }}
+                          />
+                          {friends.find(
+                            (elem) =>
+                              elem.friendId === user.id &&
+                              elem.request === false
+                          ) ? (
+                            <Button
+                              variant="contained"
+                              startIcon={<PersonAddAlt1Icon />}
+                              onClick={() => sendFriendRequest(user.id)}
+                            >
+                              sended
+                            </Button>
+                          ) : (
+                            ""
+                          )}
+                          {friends.find(
+                            (elem) =>
+                              elem.userId === user.id && elem.request === false
+                          ) ? (
+                            <Button
+                              variant="contained"
+                              startIcon={<PersonAddAlt1Icon />}
+                              onClick={() =>
+                                acceptFriendRequest(
+                                  friends.find(
+                                    (elem) =>
+                                      elem.userId === user.id &&
+                                      elem.request === false
+                                  ).user.id
+                                )
+                              }
+                            >
+                              accept
+                            </Button>
+                          ) : (
+                            ""
+                          )}
 
-                        {friends.find(
-                          (elem) =>
-                            (elem.friendId === user.id ||
-                              elem.userId === user.id) &&
-                            elem.request === true
-                        ) ? (
-                          <Button
-                            variant="contained"
-                            disabled
-                            startIcon={<PersonAddAlt1Icon />}
-                            onClick={() => sendFriendRequest(user.id)}
-                          >
-                            friend
-                          </Button>
-                        ) : (
-                          ""
-                        )}
-                        {friends.find(
-                          (elem) =>
-                            elem.friendId === user.id || elem.userId === user.id
-                        ) ? (
-                          ""
-                        ) : (
-                          <Button
-                            variant="contained"
-                            startIcon={<PersonAddAlt1Icon />}
-                            onClick={() => sendFriendRequest(user.id)}
-                          >
-                            add Friend
-                          </Button>
-                        )}
+                          {friends.find(
+                            (elem) =>
+                              (elem.friendId === user.id ||
+                                elem.userId === user.id) &&
+                              elem.request === true
+                          ) ? (
+                            <Button
+                              variant="contained"
+                              disabled
+                              startIcon={<PersonAddAlt1Icon />}
+                              onClick={() => sendFriendRequest(user.id)}
+                            >
+                              friend
+                            </Button>
+                          ) : (
+                            ""
+                          )}
+                          {friends.find(
+                            (elem) =>
+                              elem.friendId === user.id ||
+                              elem.userId === user.id
+                          ) ? (
+                            ""
+                          ) : (
+                            <Button
+                              variant="contained"
+                              startIcon={<PersonAddAlt1Icon />}
+                              onClick={() => sendFriendRequest(user.id)}
+                            >
+                              add Friend
+                            </Button>
+                          )}
 
-                        {/* <Badge color="secondary" badgeContent={1} showZero>
+                          {/* <Badge color="secondary" badgeContent={1} showZero>
 
                         <MailIcon />
                       </Badge> */}
-                        <MessageDialog
-                          id={user.id}
-                          url={user.url}
-                          name={user.name}
-                          users={users}
-                        />
-                      </ListItem>
-                    </React.Fragment>
-                  );
-                }
-              })}
-            </List>
-          </Paper>
-        </React.Fragment>
+                          <MessageDialog
+                            id={user.id}
+                            url={user.url}
+                            name={user.name}
+                            users={users}
+                          />
+                        </ListItem>
+                      </React.Fragment>
+                    );
+                  }
+                })}
+              </List>
+            </Paper>
+          </React.Fragment>
+        </Box>
       </Box>
-    </Box>
+    )
   );
 }

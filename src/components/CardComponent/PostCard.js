@@ -28,6 +28,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { createUseStyles } from "react-jss";
+import {getSession, isLoggedIn} from "../../storage/session";
 import {
   addDoc,
   collection,
@@ -437,10 +438,13 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
           marginTop: lastComment ? "" : "4px",
         }}
       >
-        <IconButton size="sm" variant="plain" color="neutral" sx={{ ml: -1 }}>
+        <IconButton
+            disabled={!isLoggedIn()}
+            size="sm" variant="plain" color="neutral" sx={{ ml: -1 }}>
           <Face />
         </IconButton>
         <Input
+         disabled={!isLoggedIn()}
           variant="plain"
           size="sm"
           placeholder="Add a comment…"
@@ -450,7 +454,9 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
             setComment(e.target.value);
           }}
         />
-        <button className={styles.commentButton} onClick={hendleComment}>
+        <button  disabled={!isLoggedIn()}
+        className={styles.commentButton}
+         onClick={hendleComment}>
           Send
         </button>
       </CardOverflow>

@@ -416,6 +416,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
         <span>{lastComment}</span>
       ) : (
         <div
+
           style={{
             fontSize: "12px",
             textAlign: "center",

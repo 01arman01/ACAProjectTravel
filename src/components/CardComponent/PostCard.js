@@ -51,6 +51,7 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { OTHERUSER_PAGE, USER_PAGE } from "../../RoutePath/RoutePath";
 import CardCover from "@mui/joy/CardCover";
 import EditPostDialog from "../EditPost/EditPostDialog";
+import { v4 } from "uuid";
 
 export default function PostCard({ post, load, page, imageLoadnig, user }) {
   //Auth
@@ -130,6 +131,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
         userId: auth.lastNotifiedUid,
         postId: postValue.id,
         comment: commentText,
+        commentId:v4()
       });
     } catch (err) {}
   }, []);
@@ -341,7 +343,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
               openCommentPag={openCommentPag}
               handleCloseComment={handleCloseComment}
               selectedValue={postValue}
-              onAddComment={onAddComment}
+              // onAddComment={onAddComment}
             />
             {/* openCommentPag */}
           </IconButton>
@@ -388,15 +390,11 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
         {likeValue.length} Likes
       </Link>
       <Typography fontSize="sm">
-        <Link
-          component="button"
-          color="neutral"
-          fontWeight="lg"
-          textColor="text.primary"
-          sx={{ fontSize: "12px" }}
+        <span
+          style={{ fontSize: "12px", fontWeight: "bold", marginRight: "2px" }}
         >
-          <span className={styles.userName}>{postValue.title}</span>
-        </Link>{" "}
+          {postValue.title}
+        </span>
         {openFullText ? postValue.text : postValue.text.slice(0, 15)}
       </Typography>
       <Link

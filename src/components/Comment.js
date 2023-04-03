@@ -1,4 +1,4 @@
-import { useEffect, useState, Fragment } from "react";
+import { useEffect, useState, Fragment, useCallback } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Divider from "@mui/material/Divider";
@@ -8,12 +8,24 @@ import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import { getAuth } from "firebase/auth";
 import { app, db, storage } from "../firebase";
-import { addDoc, collection, onSnapshot } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+} from "firebase/firestore";
+import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import { getDownloadURL, ref } from "firebase/storage";
+import { useCommentStyles } from "./Comment.styles";
+import { v4 } from "uuid";
 
-export default function CopmentComponent({ selectedValue }) {
+export default function Comment({ selectedValue }) {
+  const styles = useCommentStyles();
+
   const [comments, setComments] = useState([]);
   const [users, setUsers] = useState([]);
+
 
   useEffect(() => {
     onSnapshot(collection(db, "Comments"), (data) => {
@@ -34,7 +46,9 @@ export default function CopmentComponent({ selectedValue }) {
   useEffect(() => {
     onSnapshot(collection(db, "User"), (data) => {
       const newData = data.docs.map((doc) => {
-        const storageRef = ref(storage,`user_image/${doc?.id}/${doc.data()?.image}`
+        const storageRef = ref(
+          storage,
+          `user_image/${doc?.id}/${doc.data()?.image}`
         );
         return getDownloadURL(storageRef)
           .then((url) => {
@@ -53,37 +67,56 @@ export default function CopmentComponent({ selectedValue }) {
           });
       });
       Promise.all(newData)
-      .then((downloadUrls) => {
-        setUsers(downloadUrls);
-      })
-      .catch((error) => console.log(error, "asdfasdf"));
-  });
-}, []);
+        .then((downloadUrls) => {
+          setUsers(downloadUrls);
+        })
+        .catch((error) => console.log(error, "asdfasdf"));
+    });
+  }, []);
+
+  const onDeleteComment = (comment) => {
+    onSnapshot(collection(db, "Comments"), (data) => {
+      const docName = data.docs.filter(
+        (doc) => doc.data().commentId === comment.commentId
+      );
+      docName.forEach((elem) => {
+        deleteDoc(doc(db, "Comments", elem.id));
+      });
+    });
+  };
 
   return (
     <List sx={{ width: "100%", maxWidth: 400, bgcolor: "background.paper" }}>
-      {comments.map((element) => {
-        const user = users.find((el) => el.id === element.userId);
+      {comments.map((comment) => {
+        const user = users.find((el) => el.id === comment.userId);
         return (
-            <ListItem alignItems="flex-start" sx={{ padding: 0 }}>
-              <ListItemAvatar>
-                <Avatar 
-                alt="Remy Sharp" 
+          <ListItem
+            alignItems="flex-start"
+            sx={{ padding: 0 }}
+            key={comment.commentId}
+          >
+            <ListItemAvatar>
+              <Avatar
+                alt="Remy Sharp"
                 src={user?.url}
                 sx={{ width: 37, height: 37 }}
-                />
-              </ListItemAvatar>
-              <ListItemText
-                sx={{boxShadow:" 0 1px 3px gray", borderRadius:3, padding:1,display: "inline-block"}}
-                primary={user?user.name:""}
-                secondary={
-                  <Fragment>
-                    { element.comment}
-                  </Fragment>
-                }
               />
-            </ListItem>
-          
+            </ListItemAvatar>
+            <ListItemText
+              sx={{
+                boxShadow: " 0 1px 3px gray",
+                borderRadius: 3,
+                padding: 1,
+                display: "inline-block",
+              }}
+              primary={user ? user.name : ""}
+              secondary={<Fragment>{comment.comment}</Fragment>}
+            />
+            <DeleteForeverOutlinedIcon
+              className={styles.deleteIcon}
+              onClick={() => onDeleteComment(comment)}
+            />
+          </ListItem>
         );
       })}
     </List>

@@ -9,21 +9,17 @@ import Link from "@mui/joy/Link";
 import IconButton from "@mui/joy/IconButton";
 import Input from "@mui/joy/Input";
 import Typography from "@mui/joy/Typography";
-import MoreHoriz from "@mui/icons-material/MoreHoriz";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import ModeCommentOutlined from "@mui/icons-material/ModeCommentOutlined";
 import SendOutlined from "@mui/icons-material/SendOutlined";
 import Face from "@mui/icons-material/Face";
 import BookmarkBorderRoundedIcon from "@mui/icons-material/BookmarkBorderRounded";
-
 import {
   addDoc,
   collection,
   deleteDoc,
   doc,
   onSnapshot,
-  orderBy,
-  query,
   updateDoc,
 } from "firebase/firestore";
 import { app, db } from "../../firebase";
@@ -49,7 +45,6 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
   const styles = usePostCardStyles();
   //refresh
   const refresh = () => window.location.reload(true);
-
   const [loading, setLoading] = useState(load);
   const location = useLocation();
 
@@ -103,7 +98,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
       setLikeValue(da);
       setLike(!!as);
     });
-  }, []);
+  }, [postValue.id]);
 
   useEffect(() => {
     onSnapshot(collection(db, "Comments"), (data) => {
@@ -188,7 +183,6 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
         userId: auth.lastNotifiedUid,
       }).then((res) => res);
     } catch (err) {
-      console.log(err, "like", id, userId);
     }
   }, []);
 

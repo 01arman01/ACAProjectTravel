@@ -13,12 +13,7 @@ import {
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 //Session
-import { getDocs, Timestamp, deleteDoc } from "firebase/firestore";
-import { child, get, getDatabase, onValue } from "firebase/database";
-//Session
-import { endSession, getSession, isLoggedIn } from "../storage/session";
-//Mui
-import { Button, Checkbox, Container, TextField } from "@mui/material";
+import { isLoggedIn } from "../storage/session";
 //Styles
 import { useUserStyles } from "./user.styles";
 //Uuid
@@ -26,9 +21,7 @@ import { v4 } from "uuid";
 //Components
 import PostCard from "../components/CardComponent/PostCard";
 import Navbar from "../components/Navbar/Navbar";
-import { LOGIN_PAGE } from "../RoutePath/RoutePath";
 import dayjs from "dayjs";
-import Footer from "../components/Footer/Footer";
 
 export default function User() {
   //navigate
@@ -36,20 +29,16 @@ export default function User() {
   //Styles
   const styles = useUserStyles();
   //states
-  const [email, setEmail] = useState("");
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [ImageUpload, setImageUpload] = useState(null);
-  const [date, setDate] = useState(dayjs(new Date()).toDate());
   const [share, setShare] = useState(false);
   const [posts, setPosts] = useState([]);
   // const [postsImageUrls, setPostsImageUrls] = useState([]);
 
   const [imageId, setImageId] = useState(v4);
-  const [loading, setloading] = useState(false);
   const [imageLoadnig, setImageLoadnig] = useState(false);
   const [user, setUser] = useState(null);
-  const [timeDate, setTimeDate] = useState(dayjs(new Date()));
 
   //Auth
   const auth = getAuth(app);
@@ -68,7 +57,7 @@ export default function User() {
     if (userId) {
       updateDoc(doc(db, "User", userId), { time: dayjs(new Date()).toDate() });
     }
-  }, [userId, timeDate]);
+  }, [userId]);
 
   //Set posts data
   useEffect(() => {
@@ -125,7 +114,7 @@ export default function User() {
         title,
         text,
         imageId: imageId,
-        date: date,
+        date: dayjs(new Date()).toDate(),
         share,
       })
         .then((res) => {
@@ -137,22 +126,14 @@ export default function User() {
     } catch (err) {
       console.log(err, "err");
     }
-  }, [title, text, date, share, imageId, userId]);
+  }, [title, text, share, imageId, userId]);
 
   //Login status
   useEffect(() => {
     if (!isLoggedIn()) {
       navigate("/login");
     }
-    let session = getSession();
-    setEmail(session.email);
   }, [navigate]);
-
-  //Logout function
-  const onLogout = () => {
-    endSession();
-    navigate(LOGIN_PAGE);
-  };
 
   return (
     isLoggedIn() &&
@@ -179,7 +160,6 @@ export default function User() {
                       className={styles.postCard}
                       key={post.id}
                       post={post}
-                      load={loading}
                       imageLoadnig={imageLoadnig}
                       user={user}
                     />

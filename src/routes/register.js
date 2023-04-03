@@ -29,11 +29,9 @@ export default function Register() {
   const [username, setUsername] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
-  const [image, setImage] = useState("text");
 
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
-  const [timeDate, setTimeDate] = useState(dayjs(new Date()));
 
   // Add a new document in collection "cities"
   useEffect(() => {
@@ -65,8 +63,8 @@ export default function Register() {
         name: username,
         age,
         gender,
-        image,
-        time: timeDate.toDate(),
+        image:"userImage",
+        time: dayjs(new Date()).toDate(),
       });
 
       navigate(USER_PAGE);
@@ -78,7 +76,7 @@ export default function Register() {
   return (
     !isLoggedIn() && (
       <div className={styles.wrapper}>
-        <img className={styles.bg_img} />
+        <img className={styles.bg_img} alt="bg_registerImage"/>
         <Container maxWidth="xs" sx={{ mt: 2 }} className={styles.container}>
           <Typography
             variant="h5"

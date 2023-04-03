@@ -1,6 +1,5 @@
 import {
   Button,
-  Checkbox,
   Container,
   Dialog,
   DialogActions,
@@ -24,7 +23,7 @@ export default function EditPostDialog({
   //states
   const [title, setTitle] = useState(post.title);
   const [text, setText] = useState(post.text);
-  const [share, setShare] = useState(post.share);
+  const [share] = useState(post.share);
   const [ImageUpload, setImageUpload] = useState(null);
 
   const onEditImage = async () => {

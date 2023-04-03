@@ -14,15 +14,13 @@ import ModeCommentOutlined from "@mui/icons-material/ModeCommentOutlined";
 import SendOutlined from "@mui/icons-material/SendOutlined";
 import Face from "@mui/icons-material/Face";
 import BookmarkBorderRoundedIcon from "@mui/icons-material/BookmarkBorderRounded";
-import { getSession, isLoggedIn } from "../../storage/session";
+import { isLoggedIn } from "../../storage/session";
 import {
   addDoc,
   collection,
   deleteDoc,
   doc,
   onSnapshot,
-  orderBy,
-  query,
   updateDoc,
 } from "firebase/firestore";
 import { app, db } from "../../firebase";
@@ -34,35 +32,29 @@ import { storage } from "../../firebase";
 import CircularIndeterminate from "../CircularIndeterminate";
 import { usePostCardStyles } from "./PostCard.styles";
 import { useDownloadURL } from "react-firebase-hooks/storage";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { OTHERUSER_PAGE, USER_PAGE } from "../../RoutePath/RoutePath";
 import CardCover from "@mui/joy/CardCover";
 import { v4 } from "uuid";
 import EditPostDialog from "../EditPost/EditPostDialog";
 
-export default function PostCard({ post, load, page, imageLoadnig, user }) {
+export default function PostCard({ post, imageLoadnig, user }) {
   //Auth
   const auth = getAuth(app);
   const userId = auth.lastNotifiedUid;
   const styles = usePostCardStyles();
-  //refresh
-  const refresh = () => window.location.reload(true);
 
-  const [loading, setLoading] = useState(load);
   const location = useLocation();
 
   //for edit
   const [openEdit, setOpenEdit] = useState(false);
 
   //states
-  const [open, setOpen] = useState(false);
   const [openShare, setOpenShare] = useState(false);
-  const [selectedValue, setSelectedValue] = useState();
-  const [postValue, setPostValue] = useState(post);
+  const [postValue] = useState(post);
   const [likeValue, setLikeValue] = useState(0);
   const [like, setLike] = useState(false);
   const [openFullText, setOpenFullText] = useState(false);
-  const [users, setUsers] = useState([]);
 
   const [plainStatus, setPlainStatus] = useState(false);
 
@@ -72,25 +64,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
   const navigate = useNavigate();
 
   const storageRef = ref(storage, `user_image/${user?.id}/${user?.image}`);
-  const [url, loadProces] = useDownloadURL(storageRef);
-
-  useEffect(() => {
-    onSnapshot(collection(db, "User"), (data) => {
-      const newData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-      setUsers(newData);
-    });
-  }, []);
-
-  // useEffect(() => {
-  //   const citiesRef = collection(db, "Posts");
-  //   const q = query(citiesRef, orderBy("date","asc"));
-  //   onSnapshot(q, (doc) => {
-  //     // const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
-  //     if (!!postValue.url) {
-  //       setPostValue({ ...postValue, ...doc.data() });
-  //     }
-  //   });
-  // }, [postValue]);
+  const [url] = useDownloadURL(storageRef);
 
   useEffect(() => {
     onSnapshot(collection(db, "Likes"), (data) => {
@@ -101,7 +75,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
       setLikeValue(da);
       setLike(!!as);
     });
-  }, []);
+  }, [auth.lastNotifiedUid, postValue.id]);
 
   useEffect(() => {
     onSnapshot(collection(db, "Comments"), (data) => {
@@ -114,16 +88,19 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
     });
   }, [postValue.id]);
 
-  const onAddComment = useCallback(async (commentText) => {
-    try {
-      await addDoc(collection(db, "Comments"), {
-        userId: auth.lastNotifiedUid,
-        postId: postValue.id,
-        comment: commentText,
-        commentId: v4(),
-      });
-    } catch (err) {}
-  }, []);
+  const onAddComment = useCallback(
+    async (commentText) => {
+      try {
+        await addDoc(collection(db, "Comments"), {
+          userId: auth.lastNotifiedUid,
+          postId: postValue.id,
+          comment: commentText,
+          commentId: v4(),
+        });
+      } catch (err) {}
+    },
+    [auth.lastNotifiedUid, postValue.id]
+  );
 
   const onDeleteComment = (comment) => {
     onSnapshot(collection(db, "Comments"), (data) => {
@@ -136,15 +113,6 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
     });
     setLastComment("");
   };
-
-  setTimeout(() => {
-    setLoading(load);
-    if (postValue.url) {
-      setLoading(load);
-    } else {
-      setLoading(false);
-    }
-  });
 
   const onNavigatePage = () => {
     if (user.id === userId) {
@@ -159,14 +127,6 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
     setPlainStatus(false);
   };
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = (postValue) => {
-    setOpen(false);
-    setSelectedValue(postValue);
-  };
   const handleClickOpenShare = () => {
     setOpenShare(true);
   };
@@ -192,16 +152,19 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
   };
 
   //posts like function
-  const onLike = useCallback(async (id) => {
-    try {
-      await addDoc(collection(db, "Likes"), {
-        postId: id,
-        userId: auth.lastNotifiedUid,
-      }).then((res) => res);
-    } catch (err) {
-      console.log(err, "like", id, userId);
-    }
-  }, []);
+  const onLike = useCallback(
+    async (id) => {
+      try {
+        await addDoc(collection(db, "Likes"), {
+          postId: id,
+          userId: auth.lastNotifiedUid,
+        }).then((res) => res);
+      } catch (err) {
+        console.log(err, "like", id, userId);
+      }
+    },
+    [auth.lastNotifiedUid, userId]
+  );
 
   //delete posts function
   const onDeletePost = async (id, image_id) => {
@@ -346,7 +309,6 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
               onAddComment={onAddComment}
               onDeleteComment={onDeleteComment}
             />
-            {/* openCommentPag */}
           </IconButton>
           {location.pathname === "/user" && (
             <IconButton variant="plain" color="neutral" size="sm">

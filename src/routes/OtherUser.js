@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import Navbar from "../components/Navbar/Navbar";
-import { Navigate } from "react-router-dom";
+import { useLocation} from "react-router-dom";
 import OtherUserNavbar from "../components/Navbar/OtherUserNavbar/OtherUserNavbar";
 import { useOtherUserStyles } from "./OtherUser.styles";
 import PostCard from "../components/CardComponent/PostCard";
@@ -27,14 +25,6 @@ export default function OtherUser({ route }) {
         getDownloadURL(starsRef).then((url) => {
           elm["url"] = url;
         });
-        //   .then((elem) => {
-        //     if (index + 1 === newData.length) {
-        //       setloading(true);
-        //     }
-        //   })
-        //   .then(() => {
-        //     setImageLoadnig(false);
-        //   });
       });
       setPosts(newData);
     });

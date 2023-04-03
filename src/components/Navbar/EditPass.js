@@ -2,9 +2,7 @@ import React, {useEffect, useState} from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import useStyles from "./Navbar.style";
-import {getAuth, onAuthStateChanged, updatePassword} from "firebase/auth";
-
-// import firebase from "firebase/compat";
+import {getAuth, updatePassword} from "firebase/auth";
 
 
 function EditPass(props) {
@@ -13,8 +11,6 @@ function EditPass(props) {
     const [newPassword, setNewPassword] = useState('')
     const [repeatNewPassword, setRepeatNewPassword] = useState('')
 
-    // console.log(user)
-    // console.log('aaaaaaaaa')
     const onChangeUserPasswordText = (e) => {
         setUserPasswordText(e.target.value)
     }

@@ -8,12 +8,11 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import Typography from "@mui/material/Typography";
 import Comment from "./Comment";
 import { Avatar, TextField } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { v4 } from "uuid";
-import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
 import { app, db } from "../firebase";
 import { getAuth } from "firebase/auth";
 
@@ -59,10 +58,8 @@ export default function CommentDialog({
   openCommentPag,
   handleCloseComment,
   selectedValue,
-  onDeleteComment
+  onDeleteComment,
 }) {
-  //   const [open, setOpen] = React.useState(openCommentPag);
-
   const [comment, setComment] = React.useState("");
   const auth = getAuth(app);
 
@@ -70,16 +67,19 @@ export default function CommentDialog({
     handleCloseComment();
   };
 
-  const onAddComment = React.useCallback(async (commentText) => {
-    try {
-      await addDoc(collection(db, "Comments"), {
-        userId: auth.lastNotifiedUid,
-        postId: selectedValue.id,
-        comment: commentText,
-        commentId: v4(),
-      });
-    } catch (err) {}
-  }, []);
+  const onAddComment = React.useCallback(
+    async (commentText) => {
+      try {
+        await addDoc(collection(db, "Comments"), {
+          userId: auth.lastNotifiedUid,
+          postId: selectedValue.id,
+          comment: commentText,
+          commentId: v4(),
+        });
+      } catch (err) {}
+    },
+    [auth.lastNotifiedUid, selectedValue.id]
+  );
 
   const onComment = () => {
     onAddComment(comment);
@@ -100,7 +100,11 @@ export default function CommentDialog({
           Comments
         </BootstrapDialogTitle>
         <DialogContent>
-          <Comment key={v4} selectedValue={selectedValue} onDeleteComment={onDeleteComment}/>
+          <Comment
+            key={v4}
+            selectedValue={selectedValue}
+            onDeleteComment={onDeleteComment}
+          />
         </DialogContent>
         <DialogActions>
           <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />

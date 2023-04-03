@@ -1,5 +1,3 @@
-import React from "react";
-import { render } from "react-dom";
 import { createUseStyles } from "react-jss";
 
 const useStyles = createUseStyles({
@@ -36,7 +34,7 @@ const useStyles = createUseStyles({
   listLi: {
     width: "100%",
     fontWeight: "bold",
-    border: "0.5px solid " + "rgba(193,183,183,0.72)",
+    border: "0.5px solid rgba(193,183,183,0.72)",
   },
   liHeader: {
     paddingLeft: "10px",

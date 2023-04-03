@@ -81,11 +81,15 @@ export const useUserStyles = createUseStyles({
     },
     postsContainer: {
         display: "grid",
-        gridTemplateColumns: '1fr 1fr',
+        gridTemplateColumns: '1fr 1fr 1fr',
         width: "100%",
         // height: '0vh',
         // overflow:"auto",
+        '@media (max-width: 1200px)': {
+            // width:'100vw',
+            gridTemplateColumns: '1fr 1fr',
 
+        },
         '@media (max-width: 930px)': {
             // width:'100vw',
             gridTemplateColumns: '1fr',

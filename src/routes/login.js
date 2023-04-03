@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { isLoggedIn, startSession } from "../storage/session";
 import { signInUser } from "../firebase";
 import { useLoginStyles } from "./login.styles";
-import { USER_PAGE, LOGIN_PAGE, H0ME_PAGE } from "../RoutePath/RoutePath";
+import { USER_PAGE, H0ME_PAGE } from "../RoutePath/RoutePath";
 import logo from "../imgs/logo.png";
 
 export default function Login() {
@@ -29,9 +29,9 @@ export default function Login() {
     }
   });
 
-  const onNavigateHome = () =>{
-    navigate(H0ME_PAGE)
-  }
+  const onNavigateHome = () => {
+    navigate(H0ME_PAGE);
+  };
 
   const onSubmit = async (event) => {
     event.preventDefault();
@@ -48,28 +48,28 @@ export default function Login() {
       startSession(loginResponse.user);
       navigate(USER_PAGE);
     } catch (error) {
-      // console.error(error.message);
       setError(error.message);
     }
   };
   return (
     <>
-        <img
-          src={logo}
-          style={{
-            width: "76px",
-            height: "auto",
-            position: "absolute",
-            zIndex: "10",
-            top: "20px",
-            left: "30px",
-            cursor: "pointer",
-          }}
-          onClick={onNavigateHome}
-        />
+      <img
+      alt="name"
+        src={logo}
+        style={{
+          width: "76px",
+          height: "auto",
+          position: "absolute",
+          zIndex: "10",
+          top: "20px",
+          left: "30px",
+          cursor: "pointer",
+        }}
+        onClick={onNavigateHome}
+      />
       {!isLoggedIn() && (
         <div className={styles.wrapper}>
-          <img className={styles.bg_img} />
+          <img className={styles.bg_img} alt="name"/>
           <Container maxWidth="xs" className={styles.container}>
             <Typography
               variant="h5"

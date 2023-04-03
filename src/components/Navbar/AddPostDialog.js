@@ -4,7 +4,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   TextField,
 } from "@mui/material";
@@ -23,9 +22,7 @@ function AddPostDialog({
   closeAddPostDialog,
 }) {
   const styles = useAddPostDialogStyles();
-  const styleContain = {
-    width: "40vw",
-  };
+  
   return (
     <Dialog
       open={true}

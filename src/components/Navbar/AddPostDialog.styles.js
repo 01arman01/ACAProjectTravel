@@ -1,11 +1,6 @@
 import { createUseStyles } from "react-jss";
 
 export const useAddPostDialogStyles = createUseStyles({
-  dialog: {
-    // width:"500px",
-    // height:"500px",
-    // margin:"0 auto"
-  },
   addClosebtns: {
     display: "flex",
     alignItems: "center",

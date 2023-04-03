@@ -1,4 +1,3 @@
-import react from "react";
 import { createUseStyles } from "react-jss";
 
 export const useHeaderStyles = createUseStyles({
@@ -10,9 +9,8 @@ export const useHeaderStyles = createUseStyles({
     position: "fixed",
     zIndex: "999",
     "@media (max-width: 740px)": {
-      position:'static',
+      position: "static",
     },
-
   },
   container: {
     maxWidth: "1200px",
@@ -51,16 +49,16 @@ export const useHeaderStyles = createUseStyles({
     width: "76px",
     height: "auto",
     marginTop: "10px",
-    position:"absolute",
-    zIndex:'45',
-    right:"47%"
+    position: "absolute",
+    zIndex: "45",
+    right: "47%",
   },
   rightBlock: {
     width: "120px",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-evenly",
-    marginRight:'10px'
+    marginRight: "10px",
   },
   loginButton: {
     textDecoration: "none",
@@ -115,7 +113,7 @@ export const useHeaderStyles = createUseStyles({
       backgroundColor: "#9FA5A9",
     },
   },
-  userblockOther:{
+  userblockOther: {
     "@media (max-width: 740px)": {
       display: "none",
     },
@@ -125,72 +123,65 @@ export const useHeaderStyles = createUseStyles({
     height: "22px",
   },
   //--tulbar
-  ToggleBtn:{
-    paddingRight:'15px',
-    fontSize:'1.5rem',
-    cursor:'pointer',
-    display:'none',
-    '@media (max-width: 740px)': {
-      display:'flex',
-      justifyContent:'center',
-      alignItems:'center'
-
-    }
+  ToggleBtn: {
+    paddingRight: "15px",
+    fontSize: "1.5rem",
+    cursor: "pointer",
+    display: "none",
+    "@media (max-width: 740px)": {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    },
   },
-  dropdownMenu:{
-    zIndex:4,
-    position:'absolute',
-    right:'2rem',
-    top:'60px',
-    width:'300px',
-    display:'block',
-    height:'240px',
-    background:'rgba(255,255,255,0.1)',
-    backdropFilter:'blur(15px)',
-    borderRadius: '10px',
-    overflow:"hidden",
-    padding:'1px',
-    '@media (min-width: 740px)': {
-      display:'none'
-    }
+  dropdownMenu: {
+    zIndex: 4,
+    position: "absolute",
+    right: "2rem",
+    top: "60px",
+    width: "300px",
+    display: "block",
+    height: "240px",
+    background: "rgba(255,255,255,0.1)",
+    backdropFilter: "blur(15px)",
+    borderRadius: "10px",
+    overflow: "hidden",
+    padding: "1px",
+    "@media (min-width: 740px)": {
+      display: "none",
+    },
     // display:'none'
   },
-  dropdownMenuOpen:{
-    position:'absolute',
-    right:'2rem',
-    top:'60px',
-    width:'300px',
-    height:'240px',
-    background:'rgba(255,255,255,0.1)',
-    backdropFilter:'blur(15px)',
-    borderRadius: '10px',
-    overflow:"hidden",
-    padding:'1px',
+  dropdownMenuOpen: {
+    position: "absolute",
+    right: "2rem",
+    top: "60px",
+    width: "300px",
+    height: "240px",
+    background: "rgba(255,255,255,0.1)",
+    backdropFilter: "blur(15px)",
+    borderRadius: "10px",
+    overflow: "hidden",
+    padding: "1px",
   },
 
-  dropdownMenuLi:{
-    padding:'0.7rem',
-    display:'flex',
-    alignItems:'center',
-    justifyContent:'center',
+  dropdownMenuLi: {
+    padding: "0.7rem",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  dropdownMenuActionBtn:{
-    display:'flex',
-    width:'100%',
-    justifyContent:'center',
+  dropdownMenuActionBtn: {
+    display: "flex",
+    width: "100%",
+    justifyContent: "center",
   },
-  aLink:{
-    textDecoration: 'none',
-    fontSize: '1rem',
-    color: 'black',
-    "&:hover":{
-      color:"rgb(8,180,206)",
+  aLink: {
+    textDecoration: "none",
+    fontSize: "1rem",
+    color: "black",
+    "&:hover": {
+      color: "rgb(8,180,206)",
     },
-
   },
-
-
-
-
-
 });

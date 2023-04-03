@@ -28,7 +28,7 @@ import { app, db } from "../../firebase";
 import dayjs from "dayjs";
 import { getAuth } from "firebase/auth";
 import SendIcon from "@mui/icons-material/Send";
-import PeopleIcon from '@mui/icons-material/People';
+import { v4 } from "uuid";
 const auth = getAuth(app);
 
 export default function MessageDialog({ id, url, name, users }) {
@@ -37,7 +37,6 @@ export default function MessageDialog({ id, url, name, users }) {
   const [scroll, setScroll] = React.useState("paper");
   const [message, setMessage] = React.useState("");
   const [messageList, setMessageList] = React.useState([]);
-  const [timeDate, setTimeDate] = React.useState(dayjs(new Date()));
 
   const handleClickOpen = (scrollType) => () => {
     setOpen(true);
@@ -50,18 +49,6 @@ export default function MessageDialog({ id, url, name, users }) {
           updateDoc(doc(db, "Message", elem.id), { open: true });
         }
       });
-    // setMessageList([
-    //   ...messageList.sort((p1, p2) => {
-    //     if (p1["time"].seconds > p2["time"].seconds) {
-    //       console.log(p1,"AAASSS");
-    //       return -1;
-    //     }
-    //     if (p1["time"].seconds < p2["time"].seconds) {
-    //       return 1;
-    //     }
-    //     return 0;
-    //   }),
-    // ]);
   };
 
   const handleClose = () => {
@@ -122,8 +109,6 @@ export default function MessageDialog({ id, url, name, users }) {
         open={open}
         onClose={handleClose}
         scroll={scroll}
-        // aria-labelledby="scroll-dialog-title"
-        // aria-describedby="scroll-dialog-description"
         style={{ justifyContent: " flex-end" }}
       >
         <DialogTitle id="scroll-dialog-title">{name}</DialogTitle>
@@ -136,14 +121,13 @@ export default function MessageDialog({ id, url, name, users }) {
             ref={descriptionElementRef}
             tabIndex={-1}
           >
-            <List sx={{ mb: 2 }}>
+            <List sx={{ mb: 2 }} key={v4()}>
               {messageList.map((elem) => {
                 if (elem.receiver === id) {
                   const user = users.filter((elem) => elem.id === userId)[0];
-                  console.log();
                   return (
                     <React.Fragment>
-                      <ListItem  sx={{ padding: 0 }}>
+                      <ListItem  sx={{ padding: 0 }} key={elem.id}>
                         <ListItemText
                           sx={{boxShadow:" 0 1px 3px gray", borderRadius:3,padding:1, margin:1, display: "inline-block"}}
                           primary={user?.name}
@@ -164,7 +148,7 @@ export default function MessageDialog({ id, url, name, users }) {
                 } else {
                   return (
                     <React.Fragment>
-                      <ListItem sx={{ padding: 0 }}>
+                      <ListItem sx={{ padding: 0 }} key={elem.id}>
                         <ListItemAvatar>
                           <Badge
                             color="secondary"

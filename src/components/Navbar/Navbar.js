@@ -5,11 +5,10 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import AddPostDialog from "./AddPostDialog";
 import Avatar from "@mui/joy/Avatar";
-import { app, db, storage } from "../../firebase";
+import {  db, storage } from "../../firebase";
 import { v4 } from "uuid";
 import { ref, uploadBytes } from "firebase/storage";
 import { doc, updateDoc } from "@firebase/firestore";
-import { getAuth } from "firebase/auth";
 import { useDownloadURL } from "react-firebase-hooks/storage";
 import ImageListComponent from "./ImageListComponent";
 import { useLocation } from "react-router-dom";
@@ -32,8 +31,6 @@ function Navbar({
   const [uploadImage, setUploadImage] = useState(null);
   const [imgId, setImgId] = useState(v4());
   const [openImageList, setOpenImageList] = useState(false);
-  const auth = getAuth(app);
-  const userId = auth.lastNotifiedUid;
   const location = useLocation();
 
   const storageRef = ref(storage, `user_image/${user?.id}/${user?.image}`);
@@ -56,13 +53,6 @@ function Navbar({
     }
     setNavbarEditPass(!navbarEditPass);
   };
-  // const changeNavbarEditUserImage = () => {
-  //   if (!navbarEditUserImage) {
-  //     setNavbarEditPass(false);
-  //     setNavbarAddPost(false);
-  //   }
-  //   setNavbarEditUserImage(!navbarEditUserImage);
-  // };
 
   const onChangeUploadImage = (e) => {
     setUploadImage(e.target.files[0]);
@@ -138,13 +128,11 @@ function Navbar({
             />
           )}
           <li onClick={changeNavbarEditPass} className={styles.listLi}>
-            {/*<h2 className={styles.liHeader} onClick={changeNavbarEditPass}>Edit password</h2>*/}
             <ListItem button>
               <ListItemText primary="Change Password" />
             </ListItem>
             {navbarEditPass && (
               <div className={styles.DropdownClass}>
-                {/*<h3>Edit Pass</h3>*/}
                 <EditPass />
               </div>
             )}

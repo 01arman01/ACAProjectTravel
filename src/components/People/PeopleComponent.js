@@ -12,9 +12,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
-import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
-import Fab from "@mui/material/Fab";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import {
@@ -36,28 +34,17 @@ import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import MessageDialog from "../Message/MessageDialog";
 import { useEffect } from "react";
-import { getSession, isLoggedIn } from "../../storage/session";
+import { isLoggedIn } from "../../storage/session";
 import { useNavigate } from "react-router-dom";
 import { OTHERUSER_PAGE } from "../../RoutePath/RoutePath";
 
 const auth = getAuth(app);
-
-const StyledFab = styled(Fab)({
-  position: "absolute",
-  zIndex: 1,
-  top: -30,
-  left: 0,
-  right: 0,
-  margin: "0 auto",
-});
 const drawerWidth = 240;
 
 export default function PeopleComponent() {
   const userId = auth.lastNotifiedUid;
   const [users, setUsers] = React.useState([]);
-  const [timeDate, setTimeDate] = React.useState(
-    dayjs(new Date()).toDate().valueOf()
-  );
+  const [timeDate] = React.useState(dayjs(new Date()).toDate().valueOf());
   const [friends, setFriends] = React.useState([]);
   const [page, setPage] = React.useState("People");
 
@@ -252,8 +239,9 @@ export default function PeopleComponent() {
                     <SearchIcon />
                   </IconButton>
                 </Paper>
-                {users.map((user) => {
-                  if (user.id !== userId) {
+                {users
+                  .filter((user) => user.id !== userId)
+                  .map((user) => {
                     return (
                       <React.Fragment key={user.id}>
                         <ListItem
@@ -351,11 +339,6 @@ export default function PeopleComponent() {
                               add Friend
                             </Button>
                           )}
-
-                          {/* <Badge color="secondary" badgeContent={1} showZero>
-
-                        <MailIcon />
-                      </Badge> */}
                           <MessageDialog
                             id={user.id}
                             url={user.url}
@@ -365,8 +348,7 @@ export default function PeopleComponent() {
                         </ListItem>
                       </React.Fragment>
                     );
-                  }
-                })}
+                  })}
               </List>
             </Paper>
           </React.Fragment>

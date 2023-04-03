@@ -1,31 +1,23 @@
-import { useEffect, useState, Fragment, useCallback } from "react";
+import { useEffect, useState, Fragment} from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import Divider from "@mui/material/Divider";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
-import Typography from "@mui/material/Typography";
-import { getAuth } from "firebase/auth";
-import { app, db, storage } from "../firebase";
+import {  db, storage } from "../firebase";
 import {
-  addDoc,
   collection,
-  deleteDoc,
-  doc,
   onSnapshot,
 } from "firebase/firestore";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import { getDownloadURL, ref } from "firebase/storage";
 import { useCommentStyles } from "./Comment.styles";
-import { v4 } from "uuid";
 
-export default function Comment({ selectedValue }) {
+export default function Comment({ selectedValue, onDeleteComment }) {
   const styles = useCommentStyles();
 
   const [comments, setComments] = useState([]);
   const [users, setUsers] = useState([]);
-
 
   useEffect(() => {
     onSnapshot(collection(db, "Comments"), (data) => {
@@ -35,14 +27,8 @@ export default function Comment({ selectedValue }) {
 
       setComments(newData);
     });
-  }, []);
+  }, [selectedValue.id]);
 
-  // useEffect(() => {
-  //   onSnapshot(collection(db, "User"), (data) => {
-  //     const newData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-  //     setUsers(newData);
-  //   });
-  // }, []);
   useEffect(() => {
     onSnapshot(collection(db, "User"), (data) => {
       const newData = data.docs.map((doc) => {
@@ -73,17 +59,6 @@ export default function Comment({ selectedValue }) {
         .catch((error) => console.log(error, "asdfasdf"));
     });
   }, []);
-
-  const onDeleteComment = (comment) => {
-    onSnapshot(collection(db, "Comments"), (data) => {
-      const docName = data.docs.filter(
-        (doc) => doc.data().commentId === comment.commentId
-      );
-      docName.forEach((elem) => {
-        deleteDoc(doc(db, "Comments", elem.id));
-      });
-    });
-  };
 
   return (
     <List sx={{ width: "100%", maxWidth: 400, bgcolor: "background.paper" }}>

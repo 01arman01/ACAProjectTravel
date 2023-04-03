@@ -20,12 +20,11 @@ import { getDownloadURL, ref } from "firebase/storage";
 import { useCommentStyles } from "./Comment.styles";
 import { v4 } from "uuid";
 
-export default function Comment({ selectedValue }) {
+export default function Comment({ selectedValue, onDeleteComment }) {
   const styles = useCommentStyles();
 
   const [comments, setComments] = useState([]);
   const [users, setUsers] = useState([]);
-
 
   useEffect(() => {
     onSnapshot(collection(db, "Comments"), (data) => {
@@ -73,17 +72,6 @@ export default function Comment({ selectedValue }) {
         .catch((error) => console.log(error, "asdfasdf"));
     });
   }, []);
-
-  const onDeleteComment = (comment) => {
-    onSnapshot(collection(db, "Comments"), (data) => {
-      const docName = data.docs.filter(
-        (doc) => doc.data().commentId === comment.commentId
-      );
-      docName.forEach((elem) => {
-        deleteDoc(doc(db, "Comments", elem.id));
-      });
-    });
-  };
 
   return (
     <List sx={{ width: "100%", maxWidth: 400, bgcolor: "background.paper" }}>

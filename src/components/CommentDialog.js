@@ -59,6 +59,7 @@ export default function CommentDialog({
   openCommentPag,
   handleCloseComment,
   selectedValue,
+  onDeleteComment
 }) {
   //   const [open, setOpen] = React.useState(openCommentPag);
 
@@ -99,7 +100,7 @@ export default function CommentDialog({
           Comments
         </BootstrapDialogTitle>
         <DialogContent>
-          <Comment key={v4} selectedValue={selectedValue} />
+          <Comment key={v4} selectedValue={selectedValue} onDeleteComment={onDeleteComment}/>
         </DialogContent>
         <DialogActions>
           <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />

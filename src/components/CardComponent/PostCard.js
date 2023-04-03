@@ -120,9 +120,22 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
         userId: auth.lastNotifiedUid,
         postId: postValue.id,
         comment: commentText,
+        commentId: v4(),
       });
     } catch (err) {}
   }, []);
+
+  const onDeleteComment = (comment) => {
+    onSnapshot(collection(db, "Comments"), (data) => {
+      const docName = data.docs.filter(
+        (doc) => doc.data().commentId === comment.commentId
+      );
+      docName.forEach((elem) => {
+        deleteDoc(doc(db, "Comments", elem.id));
+      });
+    });
+    setLastComment("");
+  };
 
   setTimeout(() => {
     setLoading(load);
@@ -331,6 +344,7 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
               handleCloseComment={handleCloseComment}
               selectedValue={postValue}
               onAddComment={onAddComment}
+              onDeleteComment={onDeleteComment}
             />
             {/* openCommentPag */}
           </IconButton>
@@ -408,17 +422,15 @@ export default function PostCard({ post, load, page, imageLoadnig, user }) {
         fontSize="10px"
         sx={{ color: "text.tertiary", my: 0.5 }}
       >
-        {postValue.date
-          .toDate()
-          .toLocaleTimeString(undefined, {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            hour12: false,
-            minute: "2-digit",
-            second: "2-digit",
-          })}
+        {postValue.date.toDate().toLocaleTimeString(undefined, {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          hour12: false,
+          minute: "2-digit",
+          second: "2-digit",
+        })}
       </Link>
       {lastComment ? (
         <span>{lastComment}</span>

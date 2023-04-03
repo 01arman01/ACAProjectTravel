@@ -13,6 +13,7 @@ import { v4 } from "uuid";
 import { db, storage } from "../firebase";
 import { useState } from "react";
 import { useDownloadURL } from "react-firebase-hooks/storage";
+import { useAddPostDialogStyles } from "./Navbar/AddPostDialog.styles";
 
 export default function EditUserImageDialog({
   styles,
@@ -70,7 +71,6 @@ export default function EditUserImageDialog({
   // />
   //     </div>
   //   </div>
-
   return (
     <div>
       <button className={styles.plusButton} onClick={handleClickOpen}>
@@ -83,7 +83,7 @@ export default function EditUserImageDialog({
         aria-describedby="alert-dialog-description"
         sx={{overflow:"scroll"}}
       >
-        <DialogTitle id="alert-dialog-title">
+        <DialogTitle id="alert-dialog-title" sx={{textAlign:"center"}}>
           {"Edit Your profile image"}
         </DialogTitle>
         <DialogContent>
@@ -112,7 +112,7 @@ export default function EditUserImageDialog({
             />
           </Button>
           <ProgressComponent onUploadImage={onUploadImage} loading={loading} />
-          <Button onClick={handleClose}>Close</Button>
+          <button onClick={handleClose} className={styles.cancelBtn}>Cancel</button>
         </DialogActions>
       </Dialog>
     </div>

@@ -114,6 +114,7 @@ export default function MessageDialog({ id, url, name, users }) {
             .filter((el) => el.open === false).length
         }
         showZero
+        sx={{cursor:"pointer"}}
       >
         <MailIcon onClick={handleClickOpen("paper")} />
       </Badge>
@@ -125,7 +126,7 @@ export default function MessageDialog({ id, url, name, users }) {
         // aria-describedby="scroll-dialog-description"
         style={{ justifyContent: " flex-end" }}
       >
-        <DialogTitle id="scroll-dialog-title">Subscribe</DialogTitle>
+        <DialogTitle id="scroll-dialog-title">{name}</DialogTitle>
         <DialogContent
           dividers={scroll === "paper"}
           style={{ justifyContent: " flex-end" }}

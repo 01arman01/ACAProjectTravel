@@ -77,7 +77,6 @@ export default function Homepage(props) {
 
 useEffect(() => {
     onSnapshot(collection(db, "Posts"), (data) => {
-      console.log(data)
       const newData = data.docs.filter((elem) => elem.data().share === true).map((doc) => {
         const storageRef = ref(storage,`Images/${doc.data().imageId}`);
         return getDownloadURL(storageRef)
@@ -98,7 +97,6 @@ useEffect(() => {
       });
       Promise.all(newData)
         .then((downloadUrls) => {
-          console.log(downloadUrls,'ssss')
           setloading(true)
           setPosts(downloadUrls);
         })

@@ -89,6 +89,18 @@ const useStyles = createUseStyles({
       backgroundColor: "gray",
     },
   },
+  cancelBtn: {
+    backgroundColor: "#fff",
+    border: "2px solid #6AC6C8",
+    padding: "7px 10px",
+    borderRadius: "7px",
+    marginRight: "10px",
+    cursor: "pointer",
+    transition: "background .2s linear",
+    "&:hover": {
+      backgroundColor: "#5CEDF1",
+    },
+  },
 });
 
 export default useStyles;

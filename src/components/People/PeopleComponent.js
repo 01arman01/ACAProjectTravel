@@ -1,35 +1,42 @@
-
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
-import CssBaseline from '@mui/material/CssBaseline';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
-import { styled } from '@mui/material/styles';
-import Paper from '@mui/material/Paper';
-import Fab from '@mui/material/Fab';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Avatar from '@mui/material/Avatar';
-import { addDoc, collection, doc, onSnapshot, updateDoc } from '@firebase/firestore';
-import { app, db, storage } from '../../firebase';
-import { getDownloadURL, ref } from 'firebase/storage';
-import dayjs from 'dayjs';
-import { Badge, Button, IconButton } from '@mui/material';
-import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
-import { getAuth } from 'firebase/auth';
-import PeopleIcon from '@mui/icons-material/People';
-import Diversity3Icon from '@mui/icons-material/Diversity3';
-import InputBase from '@mui/material/InputBase';
-import SearchIcon from '@mui/icons-material/Search';
-import MessageDialog from '../Message/MessageDialog'
+import * as React from "react";
+import Box from "@mui/material/Box";
+import Drawer from "@mui/material/Drawer";
+import CssBaseline from "@mui/material/CssBaseline";
+import Toolbar from "@mui/material/Toolbar";
+import List from "@mui/material/List";
+import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import InboxIcon from "@mui/icons-material/MoveToInbox";
+import MailIcon from "@mui/icons-material/Mail";
+import { styled } from "@mui/material/styles";
+import Paper from "@mui/material/Paper";
+import Fab from "@mui/material/Fab";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import Avatar from "@mui/material/Avatar";
+import {
+  addDoc,
+  collection,
+  doc,
+  onSnapshot,
+  updateDoc,
+} from "@firebase/firestore";
+import { app, db, storage } from "../../firebase";
+import { getDownloadURL, ref } from "firebase/storage";
+import dayjs from "dayjs";
+import { Badge, Button, IconButton } from "@mui/material";
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import { getAuth } from "firebase/auth";
+import PeopleIcon from "@mui/icons-material/People";
+import Diversity3Icon from "@mui/icons-material/Diversity3";
+import InputBase from "@mui/material/InputBase";
+import SearchIcon from "@mui/icons-material/Search";
+import MessageDialog from "../Message/MessageDialog";
+import { useNavigate } from "react-router-dom";
+import { OTHERUSER_PAGE } from "../../RoutePath/RoutePath";
 
 const auth = getAuth(app);
 
@@ -44,13 +51,17 @@ const StyledFab = styled(Fab)({
 const drawerWidth = 240;
 
 export default function PeopleComponent() {
-      const userId = auth.lastNotifiedUid;
-      const [users, setUsers] = React.useState([]);
-      const [timeDate,setTimeDate] =React.useState(dayjs(new Date()).toDate().valueOf())
-      const [friends,setFriends] = React.useState([]);
-      const [page, setPage] = React.useState('People')
-      // const [online,setOnline] = React.useState(true)
-      // .format('MM/DD/YYYY hh:mm')
+  const userId = auth.lastNotifiedUid;
+  const [users, setUsers] = React.useState([]);
+  const [timeDate, setTimeDate] = React.useState(
+    dayjs(new Date()).toDate().valueOf()
+  );
+  const [friends, setFriends] = React.useState([]);
+  const [page, setPage] = React.useState("People");
+
+  const navigate = useNavigate();
+  // const [online,setOnline] = React.useState(true)
+  // .format('MM/DD/YYYY hh:mm')
 
   const getUser = React.useCallback(() => {
     onSnapshot(collection(db, "User"), (data) => {
@@ -89,8 +100,6 @@ export default function PeopleComponent() {
     getUser();
   }, [getUser]);
 
-  const onNavigatePage = () => {};
-
   React.useEffect(() => {
     onSnapshot(collection(db, "Friends"), (data) => {
       const fri = data.docs
@@ -122,27 +131,37 @@ export default function PeopleComponent() {
   };
 
   const peoplePage = () => {
-
-    setPage('People')
-    getUser()
-  }
-  const filterFrinds = ()=>{
-    setUsers([...users.filter((elem)=>!!friends.find((ele)=>ele.request===true && (ele.userId===elem.id || ele.friendId===elem.id) ))])
-    setPage('Friends')
-  }
-  const onSearch =(value)=>{
-    if(value === ""){
-      getUser()
+    setPage("People");
+    getUser();
+  };
+  const filterFrinds = () => {
+    setUsers([
+      ...users.filter(
+        (elem) =>
+          !!friends.find(
+            (ele) =>
+              ele.request === true &&
+              (ele.userId === elem.id || ele.friendId === elem.id)
+          )
+      ),
+    ]);
+    setPage("Friends");
+  };
+  const onSearch = (value) => {
+    if (value === "") {
+      getUser();
     }
-  const filterCheckItem =users.filter((elem)=>elem.name.slice(0, value.length) === value)
-    setUsers(filterCheckItem.map((elem,index)=>{
-        return{
+    const filterCheckItem = users.filter(
+      (elem) => elem.name.slice(0, value.length) === value
+    );
+    setUsers(
+      filterCheckItem.map((elem, index) => {
+        return {
           ...elem,
-        }
-      }
-    ))
-  }
-
+        };
+      })
+    );
+  };
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -158,7 +177,7 @@ export default function PeopleComponent() {
         <Toolbar />
         <Box sx={{ overflow: "auto" }}>
           <List>
-            <ListItem key={"text"} disablePadding>
+            <ListItem key={"people"} disablePadding>
               <ListItemButton onClick={peoplePage}>
                 <ListItemIcon>
                   <PeopleIcon />
@@ -166,7 +185,7 @@ export default function PeopleComponent() {
                 <ListItemText primary={"People"} />
               </ListItemButton>
             </ListItem>
-            <ListItem key={"text"} disablePadding>
+            <ListItem key={"friends"} disablePadding>
               <ListItemButton onClick={filterFrinds}>
                 <ListItemIcon>
                   <Diversity3Icon />
@@ -192,55 +211,78 @@ export default function PeopleComponent() {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
-        <React.Fragment 
-    >
-      <CssBaseline />
-      <Paper square sx={{ pb: "50px" }}>
-        <Typography
-          variant="h5"
-          gutterBottom
-          component="div"
-          sx={{ p: 2, pb: 0 }}
-        >
-          {page}
-        </Typography>
-        <List sx={{ mb: 2 }}>
-        <Paper
-      component="form"
-      sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 'auto' }}>
-      <InputBase
-        sx={{ ml: 1, flex: 1 }}
-        placeholder="Search People"
-        inputProps={{ 'aria-label': 'search google maps' }}
-        onChange={(e)=>onSearch(e.target.value)}/>
-      <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
-        <SearchIcon />
-      </IconButton>
-    </Paper>
-          {users.map(({ id, name, gender, age ,url,online}) => {
-            if(id !== userId){
-              return(
-                <React.Fragment key={id} >
-                  <ListItem sx={{boxShadow:"0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);", borderRadius:1}}>
-                    <ListItemAvatar>
-                      <Badge color="secondary" variant="dot" invisible={online}>
-                        <Avatar alt="Profile Picture" src={url} />
-                      </Badge>
-                    </ListItemAvatar>
-
+        <React.Fragment>
+          <CssBaseline />
+          <Paper square sx={{ pb: "50px" }}>
+            <Typography
+              variant="h5"
+              gutterBottom
+              component="div"
+              sx={{ p: 2, pb: 0 }}
+            >
+              {page}
+            </Typography>
+            <List sx={{ mb: 2 }}>
+              <Paper
+                component="form"
+                sx={{
+                  p: "2px 4px",
+                  display: "flex",
+                  alignItems: "center",
+                  width: "auto",
+                }}
+              >
+                <InputBase
+                  sx={{ ml: 1, flex: 1 }}
+                  placeholder="Search People"
+                  inputProps={{ "aria-label": "search google maps" }}
+                  onChange={(e) => onSearch(e.target.value)}
+                />
+                <IconButton
+                  type="button"
+                  sx={{ p: "10px" }}
+                  aria-label="search"
+                >
+                  <SearchIcon />
+                </IconButton>
+              </Paper>
+              {users.map((user) => {
+                if (user.id !== userId) {
+                  return (
+                    <React.Fragment key={user.id}>
+                      <ListItem
+                        sx={{
+                          boxShadow:
+                            "0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);",
+                          borderRadius: 1,
+                        }}
+                      >
+                        <ListItemAvatar>
+                          <Badge
+                            color="secondary"
+                            variant="dot"
+                            invisible={user.online}
+                          >
+                            <Avatar alt="Profile Picture" src={user.url} />
+                          </Badge>
+                        </ListItemAvatar>
 
                         <ListItemText
-                          primary={name}
-                          secondary={gender + " " + age}
+                          primary={user.name}
+                          secondary={user.gender + " " + user.age}
+                          onClick={() =>
+                            navigate(OTHERUSER_PAGE, { state: user })
+                          }
+                          sx={{ cursor: "pointer" }}
                         />
                         {friends.find(
                           (elem) =>
-                            elem.friendId === id && elem.request === false
+                            elem.friendId === user.id && elem.request === false
                         ) ? (
                           <Button
                             variant="contained"
                             startIcon={<PersonAddAlt1Icon />}
-                            onClick={() => sendFriendRequest(id)}
+                            onClick={() => sendFriendRequest(user.id)}
                           >
                             sended
                           </Button>
@@ -248,7 +290,8 @@ export default function PeopleComponent() {
                           ""
                         )}
                         {friends.find(
-                          (elem) => elem.userId === id && elem.request === false
+                          (elem) =>
+                            elem.userId === user.id && elem.request === false
                         ) ? (
                           <Button
                             variant="contained"
@@ -257,8 +300,9 @@ export default function PeopleComponent() {
                               acceptFriendRequest(
                                 friends.find(
                                   (elem) =>
-                                    elem.userId === id && elem.request === false
-                                ).id
+                                    elem.userId === user.id &&
+                                    elem.request === false
+                                ).user.id
                               )
                             }
                           >
@@ -270,14 +314,15 @@ export default function PeopleComponent() {
 
                         {friends.find(
                           (elem) =>
-                            (elem.friendId === id || elem.userId === id) &&
+                            (elem.friendId === user.id ||
+                              elem.userId === user.id) &&
                             elem.request === true
                         ) ? (
                           <Button
                             variant="contained"
                             disabled
                             startIcon={<PersonAddAlt1Icon />}
-                            onClick={() => sendFriendRequest(id)}
+                            onClick={() => sendFriendRequest(user.id)}
                           >
                             friend
                           </Button>
@@ -285,14 +330,15 @@ export default function PeopleComponent() {
                           ""
                         )}
                         {friends.find(
-                          (elem) => elem.friendId === id || elem.userId === id
+                          (elem) =>
+                            elem.friendId === user.id || elem.userId === user.id
                         ) ? (
                           ""
                         ) : (
                           <Button
                             variant="contained"
                             startIcon={<PersonAddAlt1Icon />}
-                            onClick={() => sendFriendRequest(id)}
+                            onClick={() => sendFriendRequest(user.id)}
                           >
                             add Friend
                           </Button>
@@ -303,9 +349,9 @@ export default function PeopleComponent() {
                         <MailIcon />
                       </Badge> */}
                         <MessageDialog
-                          id={id}
-                          url={url}
-                          name={name}
+                          id={user.id}
+                          url={user.url}
+                          name={user.name}
                           users={users}
                         />
                       </ListItem>

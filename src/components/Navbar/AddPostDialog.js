@@ -50,7 +50,6 @@ function AddPostDialog({
           label="Content"
           multiline
           rows={4}
-          defaultValue="Default Value"
           value={text}
           onChange={(e) => setText(e.target.value)}
           sx={{marginTop:"10px"}}

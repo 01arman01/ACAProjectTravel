@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { isLoggedIn, startSession } from "../storage/session";
 import { signInUser } from "../firebase";
 import { useLoginStyles } from "./login.styles";
-import { USER_PAGE, H0ME_PAGE } from "../RoutePath/RoutePath";
+import {USER_PAGE, H0ME_PAGE, LOGIN_PAGE} from "../RoutePath/RoutePath";
 import logo from "../imgs/logo.png";
 
 export default function Login() {
@@ -46,7 +46,7 @@ export default function Login() {
     try {
       let loginResponse = await signInUser(email, password);
       startSession(loginResponse.user);
-      navigate(USER_PAGE);
+      navigate(H0ME_PAGE);
     } catch (error) {
       setError(error.message);
     }
@@ -54,7 +54,7 @@ export default function Login() {
   return (
     <>
       <img
-      alt="name"
+        alt="name"
         src={logo}
         style={{
           width: "76px",
@@ -69,7 +69,7 @@ export default function Login() {
       />
       {!isLoggedIn() && (
         <div className={styles.wrapper}>
-          <img className={styles.bg_img} alt="name"/>
+          <div className={styles.bg_img} ></div>
           <Container maxWidth="xs" className={styles.container}>
             <Typography
               variant="h5"

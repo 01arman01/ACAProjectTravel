@@ -91,6 +91,7 @@ function Navbar({
             sx={{ width: 150, height: 150 }}
           />
         )}
+
         {location.pathname === "/user" && (
           <>
             {

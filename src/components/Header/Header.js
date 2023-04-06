@@ -6,7 +6,7 @@ import {
   H0ME_PAGE,
   USER_PAGE,
   LOGIN_PAGE,
-  PEOPLE_PAGE,
+  PEOPLE_PAGE, ABOUT_PAGE, CONTACT_PAGE,
 } from "../../RoutePath/RoutePath";
 import { endSession, isLoggedIn } from "../../storage/session";
 import LogoutDialog from "../LogoutDialog";
@@ -53,12 +53,12 @@ function Header() {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/" className={styles.navLink}>
+                  <Link to={ABOUT_PAGE} className={styles.navLink}>
                     About
                   </Link>
                 </li>
                 <li>
-                  <Link to="/" className={styles.navLink}>
+                  <Link to={CONTACT_PAGE} className={styles.navLink}>
                     Contact
                   </Link>
                 </li>
@@ -106,40 +106,64 @@ function Header() {
             {headerBtnClickChange && (
               <div className={styles.dropdownMenu}>
                 <li>
-                  <a
+                  <Link
                     className={`${styles.aLink} ${styles.dropdownMenuLi}`}
-                    href="/"
+                    to={H0ME_PAGE}
                   >
-                    Posts
-                  </a>
+                    Home
+                  </Link>
                 </li>
                 <li>
-                  <span
-                    className={`${styles.aLink} ${styles.dropdownMenuLi}`}
+                  <Link
+                      className={`${styles.aLink} ${styles.dropdownMenuLi}`}
+                      to={PEOPLE_PAGE}
                   >
-                    User Page
-                  </span>
+                    People
+                  </Link>
                 </li>
                 <li>
-                  <span
-                    className={`${styles.aLink} ${styles.dropdownMenuLi}`}
-                  >
-                    Contact
-                  </span>
-                </li>
-                <li>
-                  <span
-                    className={`${styles.aLink} ${styles.dropdownMenuLi}`}
+                  <Link
+                      className={`${styles.aLink} ${styles.dropdownMenuLi}`}
+                      to={ABOUT_PAGE}
                   >
                     About
-                  </span>
+                  </Link>
                 </li>
-                <Link
-                  to="/login"
-                  className={`${styles.dropdownMenuActionBtn} ${styles.aLink} ${styles.actionBtn}`}
-                >
-                  Login
-                </Link>
+                <li>
+                  <Link
+                      className={`${styles.aLink} ${styles.dropdownMenuLi}`}
+                      to={CONTACT_PAGE}
+                  >
+                    Contact
+                  </Link>
+                </li>
+                  <li>
+                {/*  test*/}
+
+                  <div className={styles.toolbarLoginBlock}>
+                    {!isLoggedIn() ? (
+                        <Link
+                            to={LOGIN_PAGE}
+                            className={`${styles.loginButton1} ${styles.aLink}`}
+                        >
+                          Login
+                        </Link>
+                    ) : (
+                        <>
+                  <span
+                      onClick={openLogoutDialog}
+                      className={`${styles.logoutButton1} ${styles.aLink}`}
+                  >
+                    Logout
+                  </span>
+                        </>
+                    )}
+                  </div>
+
+
+                {/*  test*/}
+                </li>
+
               </div>
             )}
           </div>

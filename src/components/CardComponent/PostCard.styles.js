@@ -43,4 +43,7 @@ export const usePostCardStyles = createUseStyles({
       backgroundColor: "#AFB9BD",
     },
   },
+  userName:{
+    cursor:"pointer"
+  }
 });

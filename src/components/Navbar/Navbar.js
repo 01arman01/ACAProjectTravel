@@ -5,7 +5,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import AddPostDialog from "./AddPostDialog";
 import Avatar from "@mui/joy/Avatar";
-import {  db, storage } from "../../firebase";
+import { db, storage } from "../../firebase";
 import { v4 } from "uuid";
 import { ref, uploadBytes } from "firebase/storage";
 import { doc, updateDoc } from "@firebase/firestore";

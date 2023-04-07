@@ -367,17 +367,7 @@ export default function PostCard({ post, imageLoadnig, user }) {
           {likeValue.length} Likes
         </Link>
         <Typography fontSize="sm">
-          <Link
-            component="button"
-            color="neutral"
-            fontWeight="lg"
-            textColor="text.primary"
-            sx={{ fontSize: "12px" }}
-          >
-            <span onClick={onNavigatePage} className={styles.userName}>
-              {postValue.title}
-            </span>
-          </Link>{" "}
+          <span style={{ fontSize: "12px", fontWeight:"bold" }}>{postValue.title}</span>{" "}
           {openFullText ? postValue.text : postValue.text.slice(0, 15)}
         </Typography>
         <Link

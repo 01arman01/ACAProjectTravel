@@ -39,6 +39,7 @@ import CardCover from "@mui/joy/CardCover";
 import { v4 } from "uuid";
 import EditPostDialog from "../EditPost/EditPostDialog";
 import { MoreHoriz } from "@mui/icons-material";
+import LoginDialog from "../LoginDialog/LoginDialog";
 
 export default function PostCard({ post, imageLoadnig, user }) {
   //Auth
@@ -57,6 +58,7 @@ export default function PostCard({ post, imageLoadnig, user }) {
   const [likeValue, setLikeValue] = useState(0);
   const [like, setLike] = useState(false);
   const [openFullText, setOpenFullText] = useState(false);
+  const [loginStatus, setLoginStatus] = useState(false);
 
   const [plainStatus, setPlainStatus] = useState(false);
 
@@ -116,6 +118,10 @@ export default function PostCard({ post, imageLoadnig, user }) {
     setLastComment("");
   };
 
+  const onCloseLoginDialog = () => {
+    setLoginStatus(false);
+  };
+
   const onNavigatePage = () => {
     if (user.id === userId) {
       navigate(USER_PAGE, { state: user });
@@ -137,13 +143,10 @@ export default function PostCard({ post, imageLoadnig, user }) {
   };
 
   const hendleLike = () => {
-    if (!like) {
-      console.log(like, postValue.id);
-      onLike(postValue.id);
-    }
+    isLoggedIn() ? onLike(postValue.id) : setLoginStatus(true);
   };
   const hendleComment = () => {
-    onAddComment(comment);
+    isLoggedIn() ? onAddComment(comment) : setLoginStatus(true);
     setComment("");
   };
   const handleClickOpenComment = () => {
@@ -201,250 +204,265 @@ export default function PostCard({ post, imageLoadnig, user }) {
   };
 
   return (
-    <Card
-      variant="outlined"
-      className={styles.card}
-      sx={{
-        "--Card-radius": (theme) => theme.vars.radius.xs,
-      }}
-    >
-      <Box sx={{ display: "flex", alignItems: "center", pb: 1.5, gap: 1 }}>
-        <Box
-          sx={{
-            position: "relative",
-            "&:before": {
-              content: '""',
-              position: "absolute",
-              top: 0,
-              left: 0,
-              bottom: 0,
-              right: 0,
-              m: "-2px",
-              borderRadius: "50%",
-              background:
-                "linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)",
-            },
-          }}
-        >
-          <Avatar
-            size="sm"
-            src={url}
-            sx={{ p: 0.0, border: "2px solid", borderColor: "background.body" }}
-          />
-        </Box>
-        <Typography fontWeight="lg">
-          {location.pathname === "/homepage" ? (
-            <span onClick={onNavigatePage} className={styles.userName}>
-              {user.name}
-            </span>
-          ) : (
-            <span>{user.name}</span>
-          )}
-        </Typography>
-        {location.pathname === "/user" && (
-          <IconButton
-            variant="plain"
-            color="neutral"
-            size="sm"
-            sx={{ ml: "auto" }}
-          >
-            {plainStatus && (
-              <ul className={styles.lists}>
-                <li
-                  onClick={() => setOpenEdit(!openEdit)}
-                  className={styles.list}
-                >
-                  Edit
-                </li>
-                <EditPostDialog
-                  open={openEdit}
-                  onCloseEditPage={onCloseEditPage}
-                  post={postValue}
-                  onUpdatePost={onUpdatePost}
-                  postId={postValue.id}
-                />
-                <li
-                  onClick={() => onDeletePost(postValue.id, postValue.imageId)}
-                  className={styles.list}
-                >
-                  Delete
-                </li>
-              </ul>
-            )}
-            <MoreHoriz onClick={() => setPlainStatus(!plainStatus)} />
-          </IconButton>
-        )}
-      </Box>
-      <CardOverflow>
-        <AspectRatio>
-          {imageLoadnig ? (
-            <CircularIndeterminate />
-          ) : (
-            <>
-              <CardCover>
-                <video autoPlay loop muted poster={postValue.url}>
-                  <source src={postValue.url} type="video/mp4" />
-                </video>
-              </CardCover>
-            </>
-          )}
-        </AspectRatio>
-      </CardOverflow>
-      <Box sx={{ display: "flex", alignItems: "center", mx: -1, my: 1 }}>
-        <Box sx={{ width: 0, display: "flex", gap: 0.5 }}>
-          <IconButton
-            variant="plain"
-            color="neutral"
-            size="sm"
+    <>
+      <Card
+        variant="outlined"
+        className={styles.card}
+        sx={{
+          "--Card-radius": (theme) => theme.vars.radius.xs,
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", pb: 1.5, gap: 1 }}>
+          <Box
             sx={{
-              color: like ? "red" : "danger",
+              position: "relative",
+              "&:before": {
+                content: '""',
+                position: "absolute",
+                top: 0,
+                left: 0,
+                bottom: 0,
+                right: 0,
+                m: "-2px",
+                borderRadius: "50%",
+                background:
+                  "linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)",
+              },
             }}
           >
-            <FavoriteBorder onClick={hendleLike} />
-          </IconButton>
-          <IconButton variant="plain" color="neutral" size="sm">
-            <ModeCommentOutlined onClick={handleClickOpenComment} />
-            <CommentDialog
-              key={v4()}
-              openCommentPag={openCommentPag}
-              handleCloseComment={handleCloseComment}
-              selectedValue={postValue}
-              onAddComment={onAddComment}
-              onDeleteComment={onDeleteComment}
+            <Avatar
+              size="sm"
+              src={url}
+              sx={{
+                p: 0.0,
+                border: "2px solid",
+                borderColor: "background.body",
+              }}
             />
-          </IconButton>
+          </Box>
+          <Typography fontWeight="lg">
+            {location.pathname === "/homepage" ? (
+              <span onClick={onNavigatePage} className={styles.userName}>
+                {user.name}
+              </span>
+            ) : (
+              <span>{user.name}</span>
+            )}
+          </Typography>
           {location.pathname === "/user" && (
-            <IconButton variant="plain" color="neutral" size="sm">
-              <SendOutlined onClick={handleClickOpenShare} />
-              <Share
-                postId={postValue.id}
-                onUpdatePost={onUpdatePost}
-                shareOpen={openShare}
-                onShareClose={handleClickCloseShare}
-              />
+            <IconButton
+              variant="plain"
+              color="neutral"
+              size="sm"
+              sx={{ ml: "auto" }}
+            >
+              {plainStatus && (
+                <ul className={styles.lists}>
+                  <li
+                    onClick={() => setOpenEdit(!openEdit)}
+                    className={styles.list}
+                  >
+                    Edit
+                  </li>
+                  <EditPostDialog
+                    open={openEdit}
+                    onCloseEditPage={onCloseEditPage}
+                    post={postValue}
+                    onUpdatePost={onUpdatePost}
+                    postId={postValue.id}
+                  />
+                  <li
+                    onClick={() =>
+                      onDeletePost(postValue.id, postValue.imageId)
+                    }
+                    className={styles.list}
+                  >
+                    Delete
+                  </li>
+                </ul>
+              )}
+              <MoreHoriz onClick={() => setPlainStatus(!plainStatus)} />
             </IconButton>
           )}
         </Box>
-        <Box
-          sx={{ display: "flex", alignItems: "center", gap: 0.5, mx: "auto" }}
-        >
-          {[...Array(5)].map((_, index) => (
-            <Box
-              key={index}
+        <CardOverflow>
+          <AspectRatio>
+            {imageLoadnig ? (
+              <CircularIndeterminate />
+            ) : (
+              <>
+                <CardCover>
+                  <video autoPlay loop muted poster={postValue.url}>
+                    <source src={postValue.url} type="video/mp4" />
+                  </video>
+                </CardCover>
+              </>
+            )}
+          </AspectRatio>
+        </CardOverflow>
+        <Box sx={{ display: "flex", alignItems: "center", mx: -1, my: 1 }}>
+          <Box sx={{ width: 0, display: "flex", gap: 0.5 }}>
+            <IconButton
+              variant="plain"
+              color="neutral"
+              size="sm"
               sx={{
-                borderRadius: "50%",
-                width: `max(${6 - index}px, 3px)`,
-                height: `max(${6 - index}px, 3px)`,
-                bgcolor: index === 0 ? "primary.solidBg" : "background.level3",
+                color: like ? "red" : "danger",
               }}
-            />
-          ))}
+            >
+              <FavoriteBorder onClick={hendleLike} />
+            </IconButton>
+            <IconButton variant="plain" color="neutral" size="sm">
+              <ModeCommentOutlined onClick={handleClickOpenComment} />
+              <CommentDialog
+                key={v4()}
+                openCommentPag={openCommentPag}
+                handleCloseComment={handleCloseComment}
+                selectedValue={postValue}
+                onAddComment={onAddComment}
+                onDeleteComment={onDeleteComment}
+              />
+            </IconButton>
+            {location.pathname === "/user" && (
+              <IconButton variant="plain" color="neutral" size="sm">
+                <SendOutlined onClick={handleClickOpenShare} />
+                <Share
+                  postId={postValue.id}
+                  onUpdatePost={onUpdatePost}
+                  shareOpen={openShare}
+                  onShareClose={handleClickCloseShare}
+                />
+              </IconButton>
+            )}
+          </Box>
+          <Box
+            sx={{ display: "flex", alignItems: "center", gap: 0.5, mx: "auto" }}
+          >
+            {[...Array(5)].map((_, index) => (
+              <Box
+                key={index}
+                sx={{
+                  borderRadius: "50%",
+                  width: `max(${6 - index}px, 3px)`,
+                  height: `max(${6 - index}px, 3px)`,
+                  bgcolor:
+                    index === 0 ? "primary.solidBg" : "background.level3",
+                }}
+              />
+            ))}
+          </Box>
+          <Box sx={{ width: 0, display: "flex", flexDirection: "row-reverse" }}>
+            <IconButton variant="plain" color="neutral" size="sm">
+              <BookmarkBorderRoundedIcon />
+            </IconButton>
+          </Box>
         </Box>
-        <Box sx={{ width: 0, display: "flex", flexDirection: "row-reverse" }}>
-          <IconButton variant="plain" color="neutral" size="sm">
-            <BookmarkBorderRoundedIcon />
-          </IconButton>
-        </Box>
-      </Box>
-      <Link
-        component="button"
-        underline="none"
-        fontSize="sm"
-        fontWeight="lg"
-        textColor="text.primary"
-      >
-        {likeValue.length} Likes
-      </Link>
-      <Typography fontSize="sm">
         <Link
           component="button"
-          color="neutral"
+          underline="none"
+          fontSize="sm"
           fontWeight="lg"
           textColor="text.primary"
-          sx={{ fontSize: "12px" }}
         >
-          <span onClick={onNavigatePage} className={styles.userName}>
-            {postValue.title}
-          </span>
-        </Link>{" "}
-        {openFullText ? postValue.text : postValue.text.slice(0, 15)}
-      </Typography>
-      <Link
-        component="button"
-        underline="none"
-        fontSize="sm"
-        startDecorator="…"
-        sx={{ color: "text.tertiary" }}
-        onClick={() => {
-          setOpenFullText(!openFullText);
-        }}
-      >
-        more
-      </Link>
-      <Link
-        component="button"
-        underline="none"
-        fontSize="10px"
-        sx={{ color: "text.tertiary", my: 0.5 }}
-      >
-        {postValue.date.toDate().toLocaleTimeString(undefined, {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          hour12: false,
-          minute: "2-digit",
-          second: "2-digit",
-        })}
-      </Link>
-      {lastComment ? (
-        <span>{lastComment}</span>
-      ) : (
-        <div
-          style={{
-            fontSize: "12px",
-            textAlign: "center",
-            color: "#A5C4C5",
+          {likeValue.length} Likes
+        </Link>
+        <Typography fontSize="sm">
+          <Link
+            component="button"
+            color="neutral"
+            fontWeight="lg"
+            textColor="text.primary"
+            sx={{ fontSize: "12px" }}
+          >
+            <span onClick={onNavigatePage} className={styles.userName}>
+              {postValue.title}
+            </span>
+          </Link>{" "}
+          {openFullText ? postValue.text : postValue.text.slice(0, 15)}
+        </Typography>
+        <Link
+          component="button"
+          underline="none"
+          fontSize="sm"
+          startDecorator="…"
+          sx={{ color: "text.tertiary" }}
+          onClick={() => {
+            setOpenFullText(!openFullText);
           }}
         >
-          no comments
-        </div>
-      )}
-      <CardOverflow
-        sx={{
-          p: "var(--Card-padding)",
-          display: "flex",
-          marginTop: lastComment ? "" : "4px",
-        }}
-      >
-        <IconButton
-          disabled={!isLoggedIn()}
-          size="sm"
-          variant="plain"
-          color="neutral"
-          sx={{ ml: -1 }}
+          more
+        </Link>
+        <Link
+          component="button"
+          underline="none"
+          fontSize="10px"
+          sx={{ color: "text.tertiary", my: 0.5 }}
         >
-          <Face />
-        </IconButton>
-        <Input
-          disabled={!isLoggedIn()}
-          variant="plain"
-          size="sm"
-          placeholder="Add a comment…"
-          sx={{ flexGrow: 1, mr: 1, "--Input-focusedThickness": "0px" }}
-          value={comment}
-          onChange={(e) => {
-            setComment(e.target.value);
+          {postValue.date.toDate().toLocaleTimeString(undefined, {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            hour12: false,
+            minute: "2-digit",
+            second: "2-digit",
+          })}
+        </Link>
+        {lastComment ? (
+          <span>{lastComment}</span>
+        ) : (
+          <div
+            style={{
+              fontSize: "12px",
+              textAlign: "center",
+              color: "#A5C4C5",
+            }}
+          >
+            no comments
+          </div>
+        )}
+        <CardOverflow
+          sx={{
+            p: "var(--Card-padding)",
+            display: "flex",
+            marginTop: lastComment ? "" : "4px",
           }}
-        />
-        <button
-          disabled={!isLoggedIn()}
-          className={styles.commentButton}
-          onClick={hendleComment}
         >
-          Send
-        </button>
-      </CardOverflow>
-    </Card>
+          <IconButton
+            disabled={!isLoggedIn()}
+            size="sm"
+            variant="plain"
+            color="neutral"
+            sx={{ ml: -1 }}
+          >
+            <Face />
+          </IconButton>
+          <Input
+            disabled={!isLoggedIn()}
+            variant="plain"
+            size="sm"
+            placeholder="Add a comment…"
+            sx={{ flexGrow: 1, mr: 1, "--Input-focusedThickness": "0px" }}
+            value={comment}
+            onChange={(e) => {
+              setComment(e.target.value);
+            }}
+          />
+          <button
+            disabled={!isLoggedIn()}
+            className={styles.commentButton}
+            onClick={hendleComment}
+          >
+            Send
+          </button>
+        </CardOverflow>
+        {!isLoggedIn() && (
+          <LoginDialog
+            loginStatus={loginStatus}
+            onCloseLoginDialog={onCloseLoginDialog}
+          />
+        )}
+      </Card>
+    </>
   );
 }

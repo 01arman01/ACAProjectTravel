@@ -54,7 +54,7 @@ export default function Login() {
   return (
     <>
       <img
-      alt="name"
+        alt="name"
         src={logo}
         style={{
           width: "76px",
@@ -69,7 +69,7 @@ export default function Login() {
       />
       {!isLoggedIn() && (
         <div className={styles.wrapper}>
-          <img className={styles.bg_img} alt="name"/>
+          <img className={styles.bg_img} alt="" />
           <Container maxWidth="xs" className={styles.container}>
             <Typography
               variant="h5"

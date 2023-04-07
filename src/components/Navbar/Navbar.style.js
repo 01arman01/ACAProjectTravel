@@ -81,7 +81,7 @@ const useStyles = createUseStyles({
   plusButton: {
     position: "absolute",
     top: "75%",
-    left: "60%",
+    left: "55%",
     width: "30px",
     height: "30px",
     borderRadius: "50%",

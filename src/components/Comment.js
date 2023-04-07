@@ -1,20 +1,21 @@
-import { useEffect, useState, Fragment} from "react";
+import { useEffect, useState, Fragment } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
-import {  db, storage } from "../firebase";
-import {
-  collection,
-  onSnapshot,
-} from "firebase/firestore";
+import { app, db, storage } from "../firebase";
+import { collection, onSnapshot } from "firebase/firestore";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import { getDownloadURL, ref } from "firebase/storage";
 import { useCommentStyles } from "./Comment.styles";
+import { getAuth } from "firebase/auth";
 
 export default function Comment({ selectedValue, onDeleteComment }) {
   const styles = useCommentStyles();
+
+  const auth = getAuth(app);
+  const userId = auth.lastNotifiedUid;
 
   const [comments, setComments] = useState([]);
   const [users, setUsers] = useState([]);
@@ -87,10 +88,12 @@ export default function Comment({ selectedValue, onDeleteComment }) {
               primary={user ? user.name : ""}
               secondary={<Fragment>{comment.comment}</Fragment>}
             />
-            <DeleteForeverOutlinedIcon
-              className={styles.deleteIcon}
-              onClick={() => onDeleteComment(comment)}
-            />
+            {(comment.userId === userId || selectedValue.userId === userId) && (
+              <DeleteForeverOutlinedIcon
+                className={styles.deleteIcon}
+                onClick={() => onDeleteComment(comment)}
+              />
+            )}
           </ListItem>
         );
       })}

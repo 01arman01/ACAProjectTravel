@@ -40,4 +40,18 @@ export const useLoginStyles = createUseStyles({
     justifyContent: "space-between",
     alignItems: "center",
   },
+  cancelBtn:{
+    color:"#01bdda",
+    backgroundColor:"white",
+    fontWeight:"bold",
+    borderRadius:"5px",
+    padding:"8px 16px",
+    cursor:"pointer",
+    textTransform:"uppercase",
+    border:"1px solid #01bdda",
+    transition:"border .3s linear",
+    "&:hover":{
+      border:"1px solid white"
+    }
+  }
 });

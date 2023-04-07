@@ -82,6 +82,8 @@ export default function Homepage() {
     });
   }, []);
 
+ 
+
   //Scrolling function
   const handleScroll = useCallback(() => {
     if (

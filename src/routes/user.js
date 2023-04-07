@@ -38,7 +38,7 @@ export default function User() {
 
   const [imageId, setImageId] = useState(v4);
   const [imageLoadnig, setImageLoadnig] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState('');
 
   //Auth
   const auth = getAuth(app);
@@ -46,10 +46,10 @@ export default function User() {
 
   useEffect(() => {
     onSnapshot(collection(db, "User"), (data) => {
-      const user = data.docs
+      const userData = data.docs
         .map((doc) => ({ ...doc.data(), id: doc.id }))
         .filter((elm) => elm.id === userId);
-      setUser(user[0]);
+      setUser(userData[0]);
     });
   }, [userId]);
 

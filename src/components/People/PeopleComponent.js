@@ -62,6 +62,7 @@ export default function PeopleComponent() {
           storage,
           `user_image/${doc?.id}/${doc.data()?.image}`
         );
+
         return getDownloadURL(storageRef)
           .then((url) => {
             return {

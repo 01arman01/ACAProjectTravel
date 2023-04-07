@@ -26,6 +26,7 @@ import PeopleComponent from "./components/People/PeopleComponent";
 import Footer from "./components/Footer/Footer";
 import About from "./components/About/About";
 import Contact from "./components/Contact/Contact";
+import ErrorPage from "./error-page";
 
 const style ={
   overflow:'hidden'
@@ -43,7 +44,8 @@ const router = createBrowserRouter([
   },
   {
     path:H0ME_PAGE,
-    element:<><Header /> <Homepage /><Footer/></>
+    element:<><Header /> <Homepage /><Footer/></>,
+    errorElement: <ErrorPage />,
   },
   {
     path: LOGIN_PAGE,
@@ -51,7 +53,7 @@ const router = createBrowserRouter([
   },
   {
     path: ABOUT_PAGE,
-    element: <><About />></>,
+    element: <><Header /> <About />></>,
   },
   {
     path: USER_PAGE,
@@ -64,7 +66,7 @@ const router = createBrowserRouter([
   },
   {
     path: CONTACT_PAGE,
-    element: <><Header/><Contact /><Footer/></>,
+    element: <><Header/><Contact /></>,
   },
   {
     path: USER_PAGE,

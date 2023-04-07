@@ -81,16 +81,16 @@ function Navbar({
   return (
     <div className={styles.listUl}>
       <div className={styles.avatarBlock}>
-        {loading ? (
-          <div>Loading...</div>
-        ) : (
+        {/*{loading ? (*/}
+        {/*  <div>Loading...</div>*/}
+        {/*) : (*/}
           <Avatar
             className={styles.avatarContainer}
             alt="Remy Sharp"
             src={url}
-            sx={{ width: 150, height: 150 }}
+              sx={{ width: 150, height: 150 }}
           />
-        )}
+        {/*// )}*/}
 
         {location.pathname === "/user" && (
           <>
@@ -107,7 +107,9 @@ function Navbar({
           </>
         )}
       </div>
-      <h1 className={styles.avatarName}>{user.name}</h1>
+      <h1 className={styles.avatarName}>
+        {user?.name}
+      </h1>
       {location.pathname === "/user" && (
         <ul>
           <li onClick={changeNavbarAddPost} className={styles.listLi}>

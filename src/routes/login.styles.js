@@ -46,6 +46,7 @@ export const useLoginStyles = createUseStyles({
     fontWeight:"bold",
     borderRadius:"5px",
     padding:"8px 16px",
+    marginTop:"10px",
     cursor:"pointer",
     textTransform:"uppercase",
     border:"1px solid #01bdda",

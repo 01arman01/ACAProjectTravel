@@ -367,7 +367,9 @@ export default function PostCard({ post, imageLoadnig, user }) {
           {likeValue.length} Likes
         </Link>
         <Typography fontSize="sm">
-          <span style={{ fontSize: "12px", fontWeight:"bold" }}>{postValue.title}</span>{" "}
+          <span style={{ fontSize: "12px", fontWeight: "bold" }}>
+            {postValue.title}
+          </span>{" "}
           {openFullText ? postValue.text : postValue.text.slice(0, 15)}
         </Typography>
         <Link

@@ -76,7 +76,7 @@ export default function Register() {
   return (
     !isLoggedIn() && (
       <div className={styles.wrapper}>
-        <img className={styles.bg_img} alt="bg_registerImage"/>
+        <div className={styles.bg_img} ></div>
         <Container maxWidth="xs" sx={{ mt: 2 }} className={styles.container}>
           <Typography
             variant="h5"

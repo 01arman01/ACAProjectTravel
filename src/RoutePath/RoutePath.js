@@ -1,4 +1,4 @@
-export const H0ME_PAGE = '/homepage';
+export const H0ME_PAGE = '/';
 export const USER_PAGE = '/user';
 export const LOGIN_PAGE = '/login';
 export const REGISTER_PAGE = '/register'

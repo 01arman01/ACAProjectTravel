@@ -21,6 +21,7 @@ const useStyles = createUseStyles({
   },
   postsInner: {
     display: "flex",
+    justifyContent:"center",
     flexWrap: "wrap",
     gap: "20px",
   },
@@ -29,15 +30,15 @@ const useStyles = createUseStyles({
     margin: "0 auto",
   },
   postsTitle: {
-    fontWeight: "600",
+    // fontWeight: "600",
     width: "100vw",
-    height: "50px",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    letterSpacing: "0.5em",
+    // height: "50px",
+    // display: "flex",
+    // justifyContent: "center",
+    // alignItems: "center",
+    // letterSpacing: "0.5em",
     borderTop: "2px solid #5CC2C7",
-    borderBottom: "2px solid #5CC2C7",
+    // borderBottom: "2px solid #5CC2C7",
   },
 });
 
@@ -110,7 +111,7 @@ export default function Homepage() {
     <>
       <Main />
       <div className={styles.postsTitle}>
-        -- -- -- -- -- POSTS -- -- -- -- --
+        {/*-- -- -- -- -- POSTS -- -- -- -- --*/}
       </div>
       <div className={styles.postsSection}>
         <div className={styles.container}>

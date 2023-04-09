@@ -1,16 +1,22 @@
-import { useEffect, useState } from "react";
+import {useCallback, useEffect, useState} from "react";
 import { useLocation} from "react-router-dom";
 import OtherUserNavbar from "../components/Navbar/OtherUserNavbar/OtherUserNavbar";
 import { useOtherUserStyles } from "./OtherUser.styles";
 import PostCard from "../components/CardComponent/PostCard";
 import { collection, onSnapshot } from "firebase/firestore";
 import { getDownloadURL, ref } from "firebase/storage";
-import { db, storage } from "../firebase";
-
+import {app, db, storage} from "../firebase";
+import dayjs from "dayjs";
+import { getAuth } from "firebase/auth";
+import {addDoc, doc, updateDoc} from "@firebase/firestore";
+const auth = getAuth(app);
 export default function OtherUser({ route }) {
   const location = useLocation();
   const user = location.state;
   const styles = useOtherUserStyles();
+
+
+
 
   //states
   const [posts, setPosts] = useState([]);
@@ -29,6 +35,8 @@ export default function OtherUser({ route }) {
       setPosts(newData);
     });
   }, [user.id]);
+
+
   return (
     <div className={styles.wrapper}>
       <OtherUserNavbar user={user} />

@@ -46,7 +46,7 @@ export default function Login() {
     try {
       let loginResponse = await signInUser(email, password);
       startSession(loginResponse.user);
-      navigate(USER_PAGE);
+      navigate(H0ME_PAGE);
     } catch (error) {
       setError(error.message);
     }

@@ -60,6 +60,10 @@ export const useHeaderStyles = createUseStyles({
     justifyContent: "space-evenly",
     marginRight: "10px",
   },
+  toolbarLoginBlock:{
+    display:"flex",
+    justifyContent:'center'
+  },
   loginButton: {
     textDecoration: "none",
     padding: "0.5rem 1rem",
@@ -80,6 +84,23 @@ export const useHeaderStyles = createUseStyles({
       display: "none",
     },
   },
+  loginButton1: {
+    textDecoration: "none",
+    padding: "0.5rem 1rem",
+    background: "rgb(8,180,206)",
+    color: "white",
+    border: "none",
+    outline: "none",
+    borderRadius: "20px",
+    fontSize: "0.8rem",
+    fontWeight: "bold",
+    cursor: "pointer",
+    transition: "background .2s linear",
+    "&:hover": {
+      color: "white",
+      backgroundColor: "#1e5aaf",
+    },
+  },
   logoutButton: {
     padding: "0.5rem 1rem",
     background: "rgb(218,6,6)",
@@ -98,6 +119,23 @@ export const useHeaderStyles = createUseStyles({
     },
     "@media (max-width: 740px)": {
       display: "none",
+    },
+  },
+  logoutButton1: {
+    padding: "0.5rem 1rem",
+    background: "rgb(218,6,6)",
+    color: "white",
+    border: "none",
+    outline: "none",
+    borderRadius: "20px",
+    marginRight: "5px",
+    fontSize: "0.8rem",
+    fontWeight: "bold",
+    cursor: "pointer",
+    transition: "background .2s linear",
+    "&:hover": {
+      color: "white",
+      backgroundColor: "#9D0A35",
     },
   },
   userBlock: {

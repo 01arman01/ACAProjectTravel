@@ -1,22 +1,18 @@
 import {useRouteError} from "react-router-dom";
-import {Container, Typography} from "@mui/material";
+// import {Container, Typography} from "@mui/material";
+import Header from "./components/Header/Header";
+import {useStyles} from './error-page.style'
 
 export default function ErrorPage() {
-
+    const styles = useStyles()
     const error = useRouteError();
     console.error(error);
 
     return (
-        <Container maxWidth="xs" sx={{mt: 2}}>
-            <Typography variant="h5" component="h1" gutterBottom>
-                Oops!
-            </Typography>
-            <Typography variant="p" component="p" gutterBottom>
-                Sorry, an unexpected error has occurred.
-            </Typography>
-            <Typography variant="p" component="p" gutterBottom>
-                <i>{error.statusText || error.message}</i>
-            </Typography>
-        </Container>
+        <>
+            <Header/>
+            <div className={styles.hitTheFloor}>404</div>
+            <p className={styles.text}>The page does not exist on the server at the URL you specified.</p>
+        </>
     );
 }

@@ -81,16 +81,13 @@ function Navbar({
   return (
     <div className={styles.listUl}>
       <div className={styles.avatarBlock}>
-        {loading ? (
-          <div>Loading...</div>
-        ) : (
           <Avatar
             className={styles.avatarContainer}
             alt="Remy Sharp"
             src={url}
-            sx={{ width: 150, height: 150 }}
+              sx={{ width: 150, height: 150 }}
           />
-        )}
+
         {location.pathname === "/user" && (
           <>
             {
@@ -106,7 +103,9 @@ function Navbar({
           </>
         )}
       </div>
-      <h1 className={styles.avatarName}>{user.name}</h1>
+      <h1 className={styles.avatarName}>
+        {user?.name}
+      </h1>
       {location.pathname === "/user" && (
         <ul>
           <li onClick={changeNavbarAddPost} className={styles.listLi}>
@@ -127,16 +126,16 @@ function Navbar({
               setShare={setShare}
             />
           )}
-          <li onClick={changeNavbarEditPass} className={styles.listLi}>
-            <ListItem button>
-              <ListItemText primary="Change Password" />
-            </ListItem>
-            {navbarEditPass && (
-              <div className={styles.DropdownClass}>
-                <EditPass />
-              </div>
-            )}
-          </li>
+          {/*<li onClick={changeNavbarEditPass} className={styles.listLi}>*/}
+          {/*  <ListItem button>*/}
+          {/*    <ListItemText primary="Change Password" />*/}
+          {/*  </ListItem>*/}
+          {/*  {navbarEditPass && (*/}
+          {/*    <div className={styles.DropdownClass}>*/}
+          {/*      <EditPass />*/}
+          {/*    </div>*/}
+          {/*  )}*/}
+          {/*</li>*/}
           <li onClick={onImageList} className={styles.listLi}>
             <ListItem button>
               <ListItemText primary="Images" />

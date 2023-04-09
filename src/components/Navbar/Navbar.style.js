@@ -65,6 +65,8 @@ const useStyles = createUseStyles({
   },
   //User info styles
   avatarContainer: {
+    // height:'150px',
+    // width:'150px',
     position: "absolute",
     left: "42px",
   },
@@ -76,6 +78,7 @@ const useStyles = createUseStyles({
     margin:'0 auto',
     position: "relative",
     width:'275px',
+    height:'150px'
     // display:'inline-block',
   },
   plusButton: {

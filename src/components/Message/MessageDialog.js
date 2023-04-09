@@ -29,7 +29,6 @@ import dayjs from "dayjs";
 import { getAuth } from "firebase/auth";
 import SendIcon from "@mui/icons-material/Send";
 import { v4 } from "uuid";
-import {useRef} from "react";
 const auth = getAuth(app);
 
 export default function MessageDialog({ id, url, name, users }) {
@@ -91,7 +90,6 @@ export default function MessageDialog({ id, url, name, users }) {
     });
     setMessage('')
   };
-
   return (
     <div>
       <Badge

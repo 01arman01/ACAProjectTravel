@@ -41,7 +41,7 @@ import  {useStyles} from './PeopleComponent.style'
 
 
 const auth = getAuth(app);
-const drawerWidth = 240;
+// const drawerWidth = 240;
 
 export default function PeopleComponent() {
   const userId = auth.lastNotifiedUid;
@@ -208,7 +208,8 @@ export default function PeopleComponent() {
         </Drawer>
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <Toolbar />
-          <React.Fragment>
+          <React.Fragment
+          >
             <CssBaseline />
             <Paper square sx={{ pb: "50px" }}>
               <Typography
@@ -249,12 +250,14 @@ export default function PeopleComponent() {
                     return (
                       <React.Fragment key={user.id}>
                         <ListItem
+                           className={styles.usersList}
                           sx={{
                             boxShadow:
                               "0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);",
                             borderRadius: 1,
                           }}
                         >
+                          <div className={styles.AvaName}>
                           <ListItemAvatar>
                             <Badge
                               color="secondary"
@@ -273,8 +276,8 @@ export default function PeopleComponent() {
                             }
                             sx={{ cursor: "pointer" }}
                           />
-
-
+                          </div>
+                          <div className={styles.frendMessage}>
                           {friends.find(
                             (elem) =>
                               elem.friendId === user.id &&
@@ -351,6 +354,7 @@ export default function PeopleComponent() {
                             name={user.name}
                             users={users}
                           />
+                          </div>
                         </ListItem>
                       </React.Fragment>
                     );

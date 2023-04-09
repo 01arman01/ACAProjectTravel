@@ -303,7 +303,7 @@ export default function PeopleComponent() {
                                     (elem) =>
                                       elem.userId === user.id &&
                                       elem.request === false
-                                  ).user.id
+                                  ).id
                                 )
                               }
                             >

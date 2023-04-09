@@ -433,6 +433,12 @@ export default function PostCard({ post, imageLoadnig, user }) {
           onChange={(e) => {
             setComment(e.target.value);
           }}
+          onKeyDown={(event)=>{
+            if (event.key === 'Enter'){
+              hendleComment()
+            }
+          }
+          }
         />
         <button
           disabled={!isLoggedIn()}

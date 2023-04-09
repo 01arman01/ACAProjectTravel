@@ -110,7 +110,6 @@ export default function PeopleComponent() {
   };
 
   const acceptFriendRequest = (id) => {
-    console.log(id);
     updateDoc(doc(db, "Friends", id), {
       request: true,
     })
@@ -297,7 +296,7 @@ export default function PeopleComponent() {
                                     (elem) =>
                                       elem.userId === user.id &&
                                       elem.request === false
-                                  ).user.id
+                                  ).id
                                 )
                               }
                             >

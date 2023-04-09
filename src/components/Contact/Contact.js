@@ -1,8 +1,3 @@
-import { useMainStyles } from "../Main/Main.styles";
-import { CgArrowLongDown } from "react-icons/cg";
-import { Link } from "react-router-dom";
-import { REGISTER_PAGE } from "../../RoutePath/RoutePath";
-import { isLoggedIn } from "../../storage/session";
 import { useContactStyles } from "./Contactc.style";
 import contact from "../../imgs/contact.jpg";
 import phoneLogo from "../../imgs/phone_logo.png";

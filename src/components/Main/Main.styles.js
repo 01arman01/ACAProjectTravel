@@ -5,11 +5,9 @@ export const useMainStyles = createUseStyles({
   intro: {
     width: "100vw",
     height: "100vh",
-    // backgroundColor:"red",
     background: `url(${bgImage}) no-repeat`,
     backgroundSize: "cover",
     position: "relative",
-    // opacity:".7"
   },
   container: {
     maxWidth: "1020px",
@@ -18,7 +16,7 @@ export const useMainStyles = createUseStyles({
   introInner: {
     display: "flex",
     flexDirection: "column",
-    gap:"20px",
+    gap: "20px",
     maxWidth: "450px",
     height: "200px",
     position: "absolute",
@@ -38,7 +36,7 @@ export const useMainStyles = createUseStyles({
     height: "10px",
   },
   registerButton: {
-    width:"80px",
+    width: "80px",
     textDecoration: "none",
     padding: "0.5rem 1rem",
     background: "rgb(8,180,206)",
@@ -53,15 +51,14 @@ export const useMainStyles = createUseStyles({
     "&:hover": {
       color: "white",
       backgroundColor: "#1e5aaf",
-      // scale:'1.05'
     },
     "@media (max-width: 620px)": {
       display: "none",
     },
   },
-  learnButton:{
-    width:"120px",
-    textAlign:"center",
+  learnButton: {
+    width: "120px",
+    textAlign: "center",
     textDecoration: "none",
     padding: "7px 10px",
     background: "rgb(8,180,206)",
@@ -76,10 +73,9 @@ export const useMainStyles = createUseStyles({
     "&:hover": {
       color: "white",
       backgroundColor: "#1e5aaf",
-      // scale:'1.05'
     },
     "@media (max-width: 620px)": {
       display: "none",
     },
-  }
+  },
 });

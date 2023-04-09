@@ -241,7 +241,7 @@ export default function PostCard({ post, imageLoadnig, user }) {
             />
           </Box>
           <Typography fontWeight="lg">
-            {location.pathname === "/homepage" ? (
+            {location.pathname === "/" ? (
               <span onClick={onNavigatePage} className={styles.userName}>
                 {user.name}
               </span>

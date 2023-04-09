@@ -37,7 +37,7 @@ export default function Main() {
               </div>
               <div className={styles.phoneContent}>
                 <p className={styles.contentTitle}>Call Us Anytime</p>
-                <p className={styles.phoneNumbers}>+374 99-59-05-59</p>
+                <p className={styles.phoneNumbers}>+374 99-99-99-99</p>
               </div>
             </div>
           </div>

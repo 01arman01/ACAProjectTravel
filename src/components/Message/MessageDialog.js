@@ -89,6 +89,7 @@ export default function MessageDialog({ id, url, name, users }) {
       open: false,
       time: dayjs(new Date()).toDate(),
     });
+    setMessage('')
   };
 
   return (
@@ -175,7 +176,8 @@ export default function MessageDialog({ id, url, name, users }) {
             id="outlined-basic"
             label="Outlined"
             variant="outlined"
-            fullWidth 
+            fullWidth
+            value={message}
             onChange={(e) => setMessage(e.target.value)}
           />
 

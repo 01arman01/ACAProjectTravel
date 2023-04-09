@@ -37,6 +37,8 @@ import { useEffect } from "react";
 import { isLoggedIn } from "../../storage/session";
 import { useNavigate } from "react-router-dom";
 import { OTHERUSER_PAGE } from "../../RoutePath/RoutePath";
+import  {useStyles} from './PeopleComponent.style'
+
 
 const auth = getAuth(app);
 const drawerWidth = 240;
@@ -47,6 +49,7 @@ export default function PeopleComponent() {
   const [timeDate] = React.useState(dayjs(new Date()).toDate().valueOf());
   const [friends, setFriends] = React.useState([]);
   const [page, setPage] = React.useState("People");
+  const styles = useStyles()
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -158,25 +161,25 @@ export default function PeopleComponent() {
 
   return (
     isLoggedIn() && (
-      <Box sx={{ display: "flex" }}>
+      <Box sx={{ display: "flex" }}
+           // className={styles.toolbar}
+      >
+
+
         <Drawer
           variant="permanent"
-          sx={{
-            width: drawerWidth,
-            flexShrink: 0,
-            [`& .MuiDrawer-paper`]: { width: drawerWidth },
-            zIndex: 1,
-          }}
+            className={styles.toolbar}
         >
-          <Toolbar />
-          <Box sx={{ overflow: "auto" }}>
+          <Toolbar
+          />
+          <Box>
             <List>
               <ListItem key={"people"} disablePadding>
                 <ListItemButton onClick={peoplePage}>
                   <ListItemIcon>
                     <PeopleIcon />
                   </ListItemIcon>
-                  <ListItemText primary={"People"} />
+                  <ListItemText primary={"People"} className={styles.media800} />
                 </ListItemButton>
               </ListItem>
               <ListItem key={"friends"} disablePadding>
@@ -184,7 +187,7 @@ export default function PeopleComponent() {
                   <ListItemIcon>
                     <Diversity3Icon />
                   </ListItemIcon>
-                  <ListItemText primary={"Friends"} />
+                  <ListItemText primary={"Friends"} className={styles.media800} />
                 </ListItemButton>
               </ListItem>
             </List>
@@ -196,7 +199,7 @@ export default function PeopleComponent() {
                     <ListItemIcon>
                       {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                     </ListItemIcon>
-                    <ListItemText primary={text} />
+                    <ListItemText primary={text}  className={styles.media800}/>
                   </ListItemButton>
                 </ListItem>
               ))}
@@ -270,6 +273,8 @@ export default function PeopleComponent() {
                             }
                             sx={{ cursor: "pointer" }}
                           />
+
+
                           {friends.find(
                             (elem) =>
                               elem.friendId === user.id &&

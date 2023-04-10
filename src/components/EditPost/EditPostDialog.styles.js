@@ -20,6 +20,9 @@ export const useStyles = createUseStyles({
     },
   },
   cancelBtn: {
+    textTransform:"uppercase",
+    width:"80px",
+    height:"40px",
     backgroundColor: "#fff",
     border: "2px solid #6AC6C8",
     color:"#5CEDF1",

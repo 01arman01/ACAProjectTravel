@@ -112,20 +112,20 @@ export default function EditPostDialog({
           </Button>
           <Container className={styles.btnContainer}></Container>
           <div className={styles.cancelEditBtn}>
-            <Button
+            <button
               className={styles.cancelBtn}
               autoFocus
               onClick={onCloseEditPage}
               sx={{ mt: 3 }}
             >
               Cancel
-            </Button>
+            </button>
             <Button
               className={styles.btn}
               variant="contained"
               onClick={onEditPost}
               type="submit"
-              sx={{ mt: 3 }}
+              // sx={{ mt: 3 }}
             >
               Edit
             </Button>

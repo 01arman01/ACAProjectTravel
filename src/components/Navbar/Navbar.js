@@ -36,6 +36,7 @@ function Navbar({
   const storageRef = ref(storage, `user_image/${user?.id}/${user?.image}`);
   const [url, loading] = useDownloadURL(storageRef);
 
+ console.log(url,user.id,user?.image,loading)
   const changeNavbarAddPost = () => {
     if (!navbarAddPost) {
       setNavbarEditPass(false);

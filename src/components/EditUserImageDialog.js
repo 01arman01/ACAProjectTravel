@@ -25,6 +25,7 @@ export default function EditUserImageDialog({
   const handleClose = () => {
     setOpen(false);
   };
+  
 
   return (
     <div>
@@ -51,7 +52,7 @@ export default function EditUserImageDialog({
                   <img src={url} alt="test" loading="lazy" />
                 </ImageListItem>
               </div>
-            )}{" "}
+            )}
             <ImageListComponent />
           </DialogContentText>
         </DialogContent>

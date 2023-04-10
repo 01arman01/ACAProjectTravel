@@ -54,7 +54,6 @@ export default function PostCard({ post, imageLoadnig, user }) {
 
   //states
   const [openShare, setOpenShare] = useState(false);
-  const [postValue] = useState(post);
   const [likeValue, setLikeValue] = useState(0);
   const [like, setLike] = useState(false);
   const [openFullText, setOpenFullText] = useState(false);
@@ -74,36 +73,36 @@ export default function PostCard({ post, imageLoadnig, user }) {
     onSnapshot(collection(db, "Likes"), (data) => {
       const da = data.docs
         .map((doc) => ({ ...doc.data() }))
-        .filter((doc) => doc.postId === postValue.id);
+        .filter((doc) => doc.postId === post.id);
       const as = da.find((elem) => elem.userId === auth.lastNotifiedUid);
       setLikeValue(da);
       setLike(!!as);
     });
-  }, [auth.lastNotifiedUid, postValue.id]);
+  }, [auth.lastNotifiedUid, post.id]);
 
   useEffect(() => {
     onSnapshot(collection(db, "Comments"), (data) => {
       const newData = data.docs
         .map((doc) => ({ ...doc.data() }))
-        .filter((doc) => doc.postId === postValue.id);
+        .filter((doc) => doc.postId === post.id);
       if (newData[0]) {
         setLastComment(newData[0].comment);
       }
     });
-  }, [postValue.id]);
+  }, [post.id]);
 
   const onAddComment = useCallback(
     async (commentText) => {
       try {
         await addDoc(collection(db, "Comments"), {
           userId: auth.lastNotifiedUid,
-          postId: postValue.id,
+          postId: post.id,
           comment: commentText,
           commentId: v4(),
         });
       } catch (err) {}
     },
-    [auth.lastNotifiedUid, postValue.id]
+    [auth.lastNotifiedUid, post.id]
   );
 
   const onDeleteComment = (comment) => {
@@ -143,7 +142,7 @@ export default function PostCard({ post, imageLoadnig, user }) {
   };
 
   const hendleLike = () => {
-    isLoggedIn() ? onLike(postValue.id) : setLoginStatus(true);
+    isLoggedIn() ? onLike(post.id) : setLoginStatus(true);
   };
   const hendleComment = () => {
     isLoggedIn() ? onAddComment(comment) : setLoginStatus(true);
@@ -176,13 +175,13 @@ export default function PostCard({ post, imageLoadnig, user }) {
   const onDeletePost = async (id, image_id) => {
     await deleteDoc(doc(db, "Posts", id));
     onSnapshot(collection(db, "Likes"), (data) => {
-      const da = data.docs.filter((doc) => doc.data().postId === postValue.id);
+      const da = data.docs.filter((doc) => doc.data().postId === post.id);
       da.forEach((elem) => {
         deleteDoc(doc(db, "Likes", elem.id));
       });
     });
     onSnapshot(collection(db, "Comments"), (data) => {
-      const da = data.docs.filter((doc) => doc.data().postId === postValue.id);
+      const da = data.docs.filter((doc) => doc.data().postId === post.id);
       da.forEach((elem) => {
         deleteDoc(doc(db, "Comments", elem.id));
       });
@@ -267,13 +266,13 @@ export default function PostCard({ post, imageLoadnig, user }) {
                   <EditPostDialog
                     open={openEdit}
                     onCloseEditPage={onCloseEditPage}
-                    post={postValue}
+                    post={post}
                     onUpdatePost={onUpdatePost}
-                    postId={postValue.id}
+                    postId={post.id}
                   />
                   <li
                     onClick={() =>
-                      onDeletePost(postValue.id, postValue.imageId)
+                      onDeletePost(post.id, post.imageId)
                     }
                     className={styles.list}
                   >
@@ -292,8 +291,8 @@ export default function PostCard({ post, imageLoadnig, user }) {
             ) : (
               <>
                 <CardCover>
-                  <video autoPlay loop muted poster={postValue.url}>
-                    <source src={postValue.url} type="video/mp4" />
+                  <video autoPlay loop muted poster={post.url}>
+                    <source src={post.url} type="video/mp4" />
                   </video>
                 </CardCover>
               </>
@@ -318,7 +317,7 @@ export default function PostCard({ post, imageLoadnig, user }) {
                 key={v4()}
                 openCommentPag={openCommentPag}
                 handleCloseComment={handleCloseComment}
-                selectedValue={postValue}
+                selectedValue={post}
                 onAddComment={onAddComment}
                 onDeleteComment={onDeleteComment}
               />
@@ -327,7 +326,7 @@ export default function PostCard({ post, imageLoadnig, user }) {
               <IconButton variant="plain" color="neutral" size="sm">
                 <SendOutlined onClick={handleClickOpenShare} />
                 <Share
-                  postId={postValue.id}
+                  postId={post.id}
                   onUpdatePost={onUpdatePost}
                   shareOpen={openShare}
                   onShareClose={handleClickCloseShare}
@@ -368,9 +367,9 @@ export default function PostCard({ post, imageLoadnig, user }) {
         </Link>
         <Typography fontSize="sm">
           <span style={{ fontSize: "12px", fontWeight: "bold" }}>
-            {postValue.title}
+            {post.title}
           </span>{" "}
-          {openFullText ? postValue.text : postValue.text.slice(0, 15)}
+          {openFullText ? post.text : post.text?.slice(0, 15)}
         </Typography>
         <Link
           component="button"
@@ -390,7 +389,7 @@ export default function PostCard({ post, imageLoadnig, user }) {
           fontSize="10px"
           sx={{ color: "text.tertiary", my: 0.5 }}
         >
-          {postValue.date.toDate().toLocaleTimeString(undefined, {
+          {post.date.toDate().toLocaleTimeString(undefined, {
             year: "numeric",
             month: "2-digit",
             day: "2-digit",
@@ -419,23 +418,23 @@ export default function PostCard({ post, imageLoadnig, user }) {
             display: "flex",
             marginTop: lastComment ? "" : "4px",
           }}
-          onKeyDown={(event) => event.key === "Enter" ? hendleComment() : "" }
+          onKeyDown={(event) => (event.key === "Enter" ? hendleComment() : "")}
         >
           {/* <button
             disabled={!isLoggedIn()}
             className={styles.commentButton}
             onClick={hendleComment}
           ></button> */}
-            <IconButton
-              disabled={!isLoggedIn()}
-              size="sm"
-              variant="plain"
-              color="neutral"
-              sx={{ ml: -1 }}
-            >
-              <Face />
-            </IconButton>
-          
+          <IconButton
+            disabled={!isLoggedIn()}
+            size="sm"
+            variant="plain"
+            color="neutral"
+            sx={{ ml: -1 }}
+          >
+            <Face />
+          </IconButton>
+
           <Input
             disabled={!isLoggedIn()}
             variant="plain"

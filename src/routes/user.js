@@ -38,7 +38,7 @@ export default function User() {
 
   const [imageId, setImageId] = useState(v4);
   const [imageLoadnig, setImageLoadnig] = useState(false);
-  const [user, setUser] = useState('');
+  const [user, setUser] = useState("");
 
   //Auth
   const auth = getAuth(app);
@@ -136,8 +136,7 @@ export default function User() {
   }, [navigate]);
 
   return (
-    isLoggedIn() &&
-    user != null && (
+    isLoggedIn() && (
       <div className={styles.overflo}>
         <div className={styles.usermain}>
           <Navbar

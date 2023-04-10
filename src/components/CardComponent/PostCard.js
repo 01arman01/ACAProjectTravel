@@ -419,11 +419,7 @@ export default function PostCard({ post, imageLoadnig, user }) {
             display: "flex",
             marginTop: lastComment ? "" : "4px",
           }}
-          onKeyDown={(event) => {
-            if (event.key === "Enter") {
-              hendleComment();
-            }
-          }}
+          onKeyDown={(event) => event.key === "Enter" ? hendleComment() : "" }
         >
           <button
             disabled={!isLoggedIn()}

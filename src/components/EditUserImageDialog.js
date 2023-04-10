@@ -61,7 +61,7 @@ export default function EditUserImageDialog({
             <input
               hidden
               accept="image/*"
-              onChange ={(e)=>(onChangeUploadImage(e))}
+              onChange={(e)=>(onChangeUploadImage(e))}
               multiple
               type="file"
             />

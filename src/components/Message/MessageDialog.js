@@ -79,7 +79,6 @@ export default function MessageDialog({ id, url, name, users }) {
       }
     }
   }, [open]);
- 
 
   const onSendMessage = async () => {
     addDoc(collection(db, "Message"), {
@@ -91,7 +90,6 @@ export default function MessageDialog({ id, url, name, users }) {
     });
     setMessage('')
   };
-
   return (
     <div>
       <Badge
@@ -122,7 +120,8 @@ export default function MessageDialog({ id, url, name, users }) {
             ref={descriptionElementRef}
             tabIndex={-1}
           >
-            <List sx={{ mb: 2 }} key={v4()}>
+            <List
+                sx={{ mb: 2 }} key={v4()}>
               {messageList.map((elem) => {
                 if (elem.receiver === id) {
                   const user = users.filter((elem) => elem.id === userId)[0];
@@ -179,6 +178,12 @@ export default function MessageDialog({ id, url, name, users }) {
             fullWidth
             value={message}
             onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={(event)=>{
+              if (event.key === 'Enter'){
+                onSendMessage()
+              }
+            }
+            }
           />
 
           <Button onClick={handleClose}>Cancel</Button>

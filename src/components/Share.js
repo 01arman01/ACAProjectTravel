@@ -23,12 +23,12 @@ export default function Share({
   return (
     <>
       <Dialog onClose={handleShareClose} open={shareOpen}>
-        <DialogTitle>edit post</DialogTitle>
+        <DialogTitle>Share this post?</DialogTitle>
         <DialogActions>
-          <Button onClick={onShareUpdatePost}>Share</Button>
-          <Button onClick={handleShareClose} autoFocus>
-            close
+          <Button onClick={handleShareClose} >
+            No
           </Button>
+          <Button onClick={onShareUpdatePost}>Yes</Button>
         </DialogActions>
       </Dialog>
     </>

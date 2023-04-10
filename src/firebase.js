@@ -14,17 +14,25 @@ import { getStorage } from "firebase/storage";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
-
-
 const firebaseConfig = {
-  apiKey: "AIzaSyAyIahi0nrfvgC75uPEbYTftlKe7B5QGc4",
-  authDomain: "acatravel-2.firebaseapp.com",
-  projectId: "acatravel-2",
-  storageBucket: "acatravel-2.appspot.com",
-  messagingSenderId: "799918154861",
-  appId: "1:799918154861:web:8191e1d599adba776f0b64",
-  measurementId: "G-GFBF2HS4CK"
+  apiKey: "AIzaSyAs8PHYFnyUkCZ0d2Xd4JSaP0z_2u2qCN4",
+  authDomain: "traveling-a4880.firebaseapp.com",
+  projectId: "traveling-a4880",
+  storageBucket: "traveling-a4880.appspot.com",
+  messagingSenderId: "445254501355",
+  appId: "1:445254501355:web:ace4c54e85b31631878fae",
+  measurementId: "G-GYJNE3RS3D",
 };
+
+// const firebaseConfig = {
+//   apiKey: "AIzaSyAyIahi0nrfvgC75uPEbYTftlKe7B5QGc4",
+//   authDomain: "acatravel-2.firebaseapp.com",
+//   projectId: "acatravel-2",
+//   storageBucket: "acatravel-2.appspot.com",
+//   messagingSenderId: "799918154861",
+//   appId: "1:799918154861:web:8191e1d599adba776f0b64",
+//   measurementId: "G-GFBF2HS4CK"
+// };
 
 // const firebaseConfig = {
 //   apiKey: "AIzaSyBiEOmjydppc-KE9AVDbPSW-EP7Ah79EPc",
@@ -39,7 +47,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
-export const storage = getStorage(app)
+export const storage = getStorage(app);
 
 const database = getDatabase(app);
 
@@ -48,15 +56,9 @@ export { database };
 export const db = getFirestore(app);
 
 export const createUser = async (email, password) => {
-  return createUserWithEmailAndPassword(
-    getAuth(app),
-    email,
-    password,
-  );
+  return createUserWithEmailAndPassword(getAuth(app), email, password);
 };
 
 export const signInUser = async (email, password) => {
   return signInWithEmailAndPassword(getAuth(app), email, password);
 };
-
-

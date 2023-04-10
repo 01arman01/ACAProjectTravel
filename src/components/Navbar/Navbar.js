@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import useStyles from "./Navbar.style";
-import EditPass from "./EditPass";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import AddPostDialog from "./AddPostDialog";
@@ -26,7 +25,6 @@ function Navbar({
   setShare,
 }) {
   const [navbarAddPost, setNavbarAddPost] = useState(false);
-  const [navbarEditPass, setNavbarEditPass] = useState(false);
   const [navbarEditUserImage, setNavbarEditUserImage] = useState(false);
   const [uploadImage, setUploadImage] = useState(null);
   const [imgId, setImgId] = useState(v4());
@@ -38,20 +36,12 @@ function Navbar({
 
   const changeNavbarAddPost = () => {
     if (!navbarAddPost) {
-      setNavbarEditPass(false);
       setNavbarEditUserImage(false);
     }
     setNavbarAddPost(true);
   };
   const closeAddPostDialog = () => {
     setNavbarAddPost(false);
-  };
-  const changeNavbarEditPass = () => {
-    if (!navbarEditPass) {
-      setNavbarAddPost(false);
-      setNavbarEditUserImage(false);
-    }
-    setNavbarEditPass(!navbarEditPass);
   };
 
   const onChangeUploadImage = (e) => {

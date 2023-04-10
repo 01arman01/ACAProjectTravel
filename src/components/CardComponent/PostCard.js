@@ -421,11 +421,11 @@ export default function PostCard({ post, imageLoadnig, user }) {
           }}
           onKeyDown={(event) => event.key === "Enter" ? hendleComment() : "" }
         >
-          <button
+          {/* <button
             disabled={!isLoggedIn()}
             className={styles.commentButton}
             onClick={hendleComment}
-          >
+          ></button> */}
             <IconButton
               disabled={!isLoggedIn()}
               size="sm"
@@ -435,7 +435,7 @@ export default function PostCard({ post, imageLoadnig, user }) {
             >
               <Face />
             </IconButton>
-          </button>
+          
           <Input
             disabled={!isLoggedIn()}
             variant="plain"

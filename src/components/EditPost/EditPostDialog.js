@@ -10,14 +10,14 @@ import {
 import { deleteObject, ref, uploadBytes } from "firebase/storage";
 import { useState } from "react";
 import { storage } from "../../firebase";
-import {useStyles}from './EditPostDialog.styles'
+import { useStyles } from "./EditPostDialog.styles";
 
 export default function EditPostDialog({
   open,
   onCloseEditPage,
   post,
   onUpdatePost,
-  postId
+  postId,
 }) {
   //refresh
   const refresh = () => window.location.reload(true);
@@ -26,7 +26,7 @@ export default function EditPostDialog({
   const [text, setText] = useState(post.text);
   const [share] = useState(post.share);
   const [ImageUpload, setImageUpload] = useState(null);
- const styles = useStyles()
+  const styles = useStyles();
   const onEditImage = async () => {
     if (ImageUpload == null) return;
     const desertRef = ref(storage, `Images/${post.imageId}`);
@@ -58,8 +58,11 @@ export default function EditPostDialog({
       onClose={onCloseEditPage}
       aria-labelledby="draggable-dialog-title"
     >
-      <DialogTitle style={{ cursor: "move" }} id="draggable-dialog-title">
-        Subscribe
+      <DialogTitle
+        style={{ cursor: "move", textAlign: "center" }}
+        id="draggable-dialog-title"
+      >
+        Edit Post
       </DialogTitle>
       <DialogContent>
         <img
@@ -91,12 +94,11 @@ export default function EditPostDialog({
             sx={{ mt: 3 }}
             fullWidth
           />
-          <Container
-           className={styles.btnContainer}
-          >
           <Button
-              className={styles.btn}
-              variant="contained" component="label">
+            sx={{marginTop:"10px"}}
+            variant="contained"
+            component="label"
+          >
             Upload Image
             <input
               hidden
@@ -108,19 +110,26 @@ export default function EditPostDialog({
               type="file"
             />
           </Button>
-          <Button
-            className={styles.btn}
-            variant="contained"
-            onClick={onEditPost}
-            type="submit"
-            sx={{ mt: 3 }}
-          >
-            Edit Post
-          </Button>
-          <Button className={styles.btn} autoFocus onClick={onCloseEditPage} sx={{ mt: 3 }}>
-            Cancel
-          </Button>
-          </Container>
+          <Container className={styles.btnContainer}></Container>
+          <div className={styles.cancelEditBtn}>
+            <Button
+              className={styles.cancelBtn}
+              autoFocus
+              onClick={onCloseEditPage}
+              sx={{ mt: 3 }}
+            >
+              Cancel
+            </Button>
+            <Button
+              className={styles.btn}
+              variant="contained"
+              onClick={onEditPost}
+              type="submit"
+              sx={{ mt: 3 }}
+            >
+              Edit
+            </Button>
+          </div>
         </Container>
       </DialogActions>
     </Dialog>
